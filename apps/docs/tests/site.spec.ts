@@ -84,8 +84,23 @@ test.describe('theme switcher', () => {
 });
 
 test.describe('code copy button', () => {
-  test('announces success', async ({ page, context }) => {
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  test('announces success', async ({ page, context, browserName }) => {
+    if (browserName === 'chromium') {
+      await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    } else {
+      // Firefox/WebKit do not expose Chromium's clipboard permission names.
+      // Keep real clipboard integration in Chromium; test UI/copy payload here.
+      await page.addInitScript(() => {
+        let copied = '';
+        Object.defineProperty(navigator, 'clipboard', {
+          configurable: true,
+          value: {
+            writeText: async (text: string) => { copied = text; },
+            readText: async () => copied,
+          },
+        });
+      });
+    }
     await page.goto('/components/button/');
     await page.locator('.demo-copy').first().click();
     await expect(page.locator('.demo-copy-label').first()).toHaveText('COPIED');

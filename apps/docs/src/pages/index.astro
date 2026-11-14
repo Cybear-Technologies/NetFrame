@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { version } from 'netframe/package.json';
 ---
 
 <BaseLayout title="Home">
@@ -24,7 +25,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <!-- Sidebar brand strip -->
     <aside class="landing-sidebar">
-      <span class="landing-sidebar-label">NETFRAME_v0.1.0</span>
+      <span class="landing-sidebar-label">NETFRAME_v{version}</span>
     </aside>
 
     <!-- Hero -->
@@ -34,7 +35,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="hero-tag nf-tracking-display">
           <span class="nf-text-secondary">CYBEAR_TECHNOLOGIES</span>
           <span class="nf-text-subtle">//</span>
-          <span class="nf-text-muted">CSS_LIB_v0.1.0</span>
+          <span class="nf-text-muted">CSS_LIB_v{version}</span>
         </div>
 
         <h1 class="hero-title nf-glitch-hover" data-text="NETFRAME">

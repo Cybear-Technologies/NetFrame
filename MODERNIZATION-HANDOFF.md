@@ -68,6 +68,78 @@ Before finishing, verify that the existing plan is the only file you changed and
 
 This section is current; sections 1–9 below are the audit that drove it. Where they disagree, this section wins. Nothing was staged, committed, pushed, published or deployed. No PRs were modified. This file remains untracked.
 
+## Current remaining checklist — release 0.2.0
+
+**This checklist supersedes the historical status entries below.** User selected **0.2.0** and confirmed CodeQL runs in CI. CodeQL setup is no longer an outstanding task (maintainer-reported, not independently inspected).
+
+### Completed in the version-preparation pass
+
+- Changed the pending Changeset from patch to minor and ran `pnpm run version-packages` successfully. Manifest is now **0.2.0**, `packages/netframe/CHANGELOG.md` was generated, and Changesets consumed `.changeset/fix-package-contract.md` normally. No publishing or Git operations performed.
+- Docs version labels now import the actual package version instead of hard-coding 0.1.0.
+- Frozen install, full check (17 library tests, 27 pages, 73 Chromium tests), npm pack dry-run and whitespace check all exit 0. Pack reports **netframe-0.2.0.tgz**, 85 files. Logs: `/tmp/nf-version-020.log`, `/tmp/nf-020-install.log`, `/tmp/nf-020-check.log`, `/tmp/nf-020-pack.json`.
+- Other completed work: palette/contrast fixes; identity/domain selection; font licensing; package exports/fonts/maps; real installed-tarball test; lint/typechecks; Chromium/Firefox/WebKit tests; release OIDC/provenance code and SHA pins. See implementation records below.
+
+### Final branch-cleanup verification
+
+User reports `dependencies` and `ci` labels are now added. All known in-scope package/code work is complete for **0.2.0**; nested-path hosting remains intentionally deferred for the root-domain site. Corrected stale tracking guidance in AGENTS.md.
+
+Re-ran frozen install and full check (17 library tests, 27-page docs build, 73 Chromium tests), Firefox/WebKit (146 tests), high-level audit and whitespace check: **all exit 0**. Logs: `/tmp/nf-cleanup-install.log`, `/tmp/nf-cleanup-check.log`, `/tmp/nf-cleanup-cross-browser.log`, `/tmp/nf-cleanup-audit.log`.
+
+User authorized deleting this document **if everything is done**. Retained it because the external release/setup/verification tasks below are still unconfirmed. No publishing, release enablement, staging, commits, pushes or GitHub mutations performed. Once those remaining tasks are complete, this handoff can be removed; durable instructions are in RELEASING.md.
+
+### Still required for release
+
+- [ ] Maintainer review/finalize source changes for **0.2.0**, including generated changelog.
+- [ ] Maintainer perform initial npm publication when ready. Account/login and apparent name availability are confirmed, but successful name ownership/publication is not.
+- [ ] Configure npm trusted publisher after bootstrap, then set `NPM_RELEASE_ENABLED=true` only when ready.
+- [ ] Verify actual protected automated publication, OIDC/provenance and version/tag consistency. Cannot be completed by local dry-run.
+- [ ] Verify DNS/hosting serves `https://netframe.cybeartech.com` (deployment is external to package publication).
+
+### Optional / verification only
+
+- [x] Repository labels **dependencies** and **ci** added, confirmed by maintainer. Older docs/library label advice is obsolete. No agent-side GitHub changes.
+- [ ] Run the new **Cross-browser verification** workflow manually once after merge, then confirm nightly runs. Local Firefox/WebKit validation already passed 146 tests.
+- Nested-base-path docs support: **deferred, unnecessary for the chosen root-domain deployment**. Needed only if hosting under a URL prefix such as `/netframe/`; requires code/test work, not a GitHub setting.
+- CodeQL setup: **not outstanding**; user confirms it runs in CI. Check that the default branch has a successful scan/results; add its status to branch protection only if desired. Do not add a duplicate workflow.
+- Full manual accessibility assessment / whole-site scans of every alternate theme remain optional beyond current automated coverage.
+
+## Latest pre-publication pass — 2026-11-14 (historical)
+
+User requested finishing remaining work before publishing. Current HEAD on entry was `44ca142` (`Fix: Enhance package contract, accessibility, and CI/CD robustness`). Initial dirty state: modified handoff plus existing untracked `.changeset/README.md` and `.changeset/fix-package-contract.md`. Prior implementation has been committed by the maintainer since the earlier session. **This handoff is now tracked by Git**; no tracking/staging changes were made to force it back to untracked.
+
+### Completed
+
+- Reviewed user's dry-run: all checks pass, expected CSS/Sass/fonts/licences are present; pnpm native-binary fallback warning is non-blocking. Existing font duplicates in `dist/scss/fonts/` preserve raw Sass-relative asset paths; retained deliberately rather than breaking a supported path.
+- Expanded `packages/netframe/README.md`: CSS/theme imports, theme classes, static hosting/font layout, Sass package importer and configurable font URLs, consumer-owned behaviour/accessibility, GPL/OFL notices.
+- Added a **real tarball installation** regression test: pack into a temporary directory, install offline with lifecycle scripts disabled, verify package is not a workspace symlink, resolve CSS/font exports and compile library + themes through Sass package importer. Temporary files are cleaned.
+- **Release blocker found/fixed:** `@changesets/changelog-github@0.6.0` requires `options.repo`; previous config supplied only a module name. Config now explicitly supplies `JacksonChandler/NetFrame`, with regression coverage. Context7's current docs describe a GitHub environment fallback, but installed 0.6.0 code has no such fallback; followed installed-version evidence. Changesets action v2 source confirms it supplies `GITHUB_TOKEN` to version commands.
+- Added opt-in Firefox and WebKit Playwright projects. All 146 tests pass. Adjusted tooltip keyboard navigation for WebKit's Option+Tab convention; no library CSS change. Clipboard success uses the real clipboard in Chromium, mocked clipboard in Firefox/WebKit because permission names are not portable. Failure/status coverage remains in all engines.
+- Added SHA-pinned nightly/manual `.github/workflows/browsers.yml` for Firefox/WebKit. Default required CI remains Chromium. Context7 version-specific Playwright docs were available through 1.64.1, not installed 1.65.1; project configuration was validated by installed typecheck and successful runs.
+- Updated AGENTS, RELEASING and the existing changeset.
+
+### Validation
+
+- Frozen install: exit 0 (`/tmp/nf-prepublish-install.log`).
+- Final `pnpm run check`: exit 0; lint/typecheck, **17 library tests**, 27 pages, **73 Chromium tests** (`/tmp/nf-prepublish-final-check.log`).
+- Firefox/WebKit: **146/146**, exit 0 (`/tmp/nf-cross-browser-final.log`).
+- Dependency audit: exit 0 (`/tmp/nf-prepublish-audit.log`).
+- Changesets status: exit 0, pending patch proposes **netframe 0.1.1** (`/tmp/nf-prepublish-changeset-status.log`). This is status validation, not a full GitHub-linked changelog/version execution.
+- All three workflow YAML files parse; `git diff --check` exit 0.
+- No publishing, staging, commits, pushes, tags, deployment, or GitHub settings changes by the agent.
+
+### Remaining, distinguished from package blockers
+
+- npm account/login and apparent package-name availability confirmed **by user**, but name is not reserved. Initial publication, trusted publisher configuration, OIDC/provenance execution remain pending by design. Leave `NPM_RELEASE_ENABLED` unset.
+- Maintainer must finalize source revision and intended first version before publishing. Manifest remains **0.1.0**; pending Changeset proposes **0.1.1**. No automatic version bump performed.
+- Domain chosen: `netframe.cybeartech.com`. DNS/hosting and live-site reachability remain external/unverified.
+- **Optional, not a blocker for the chosen root-domain deployment:** nested-base-path docs hosting. Root-relative site links/assets still mean nested hosting is unsupported. No claim of base-path support.
+- Dependabot labels/CodeQL remain separate GitHub configuration work (not changed); nightly workflow requires its first real GitHub run. Existing required CI/protections are user-reported working.
+- Broader manual accessibility review and full alternate-theme browser scans remain outside targeted default-theme axe + palette-token tests. No claim of complete WCAG certification.
+
+## Latest maintainer update — GitHub protections
+
+User reports the test PR works with GitHub Actions and setup A/B/C is complete: main branch protection/required checks, protected `release` environment, and Actions permission to create PRs. This is maintainer-reported, not independently inspected. It supersedes older statements that these GitHub settings and all real Actions execution are pending. npm ownership/bootstrap and trusted-publisher configuration remain unconfirmed; OIDC publishing/provenance are not yet verified. Keep `NPM_RELEASE_ENABLED` unset until npm setup is complete. No GitHub settings or publishing changes made by the agent.
+
 ## Latest decision — canonical docs domain
 
 User selected **https://netframe.cybeartech.com**. Updated Astro `site` and both README documentation links. DNS/hosting configuration remains maintainer work; no deployment performed. npm ownership and GitHub release protections are still pending. Release automation remains disabled. This decision supersedes older domain questions below.
@@ -203,16 +275,11 @@ The browser checks were run interactively and are **not** committed as an automa
 
 ## 0.5 Decisions and maintainer prerequisites — current
 
-1. **Palette:** resolved, option B implemented (§0.000); no pinned contrast exceptions remain.
-2. **Identity:** company/developer resolved. Repository links follow actual origin. **Still choose docs domain**.
-3. **Linters:** resolved and implemented.
-4. **Fonts:** licences shipped; true Orbitron 500 is supplied by existing variable binary. No duplicate download needed.
-5. **Release:** protections, OIDC/provenance and SHA pins approved; code implemented. **External setup pending** per RELEASING.md. Package-name ownership remains unverified; no publication attempted.
-6. **Labels/CodeQL:** not approved, no GitHub settings changed.
+Palette, identity, domain (`netframe.cybeartech.com`), linters, fonts and version (**0.2.0**) are resolved. GitHub protections and CodeQL are confirmed by the maintainer. npm bootstrap/trusted-publisher setup and first automated release verification remain pending. See **Current remaining checklist** above.
 
 ## 0.6 Remaining work — current
 
-Maintainer setup and domain choice above. Afterward: verify actual GitHub CI and protected release, nested-base-path docs support, Firefox/WebKit coverage. All preceding implementation sections are historical snapshots; §0.000 and this section describe current status.
+Use **Current remaining checklist — release 0.2.0** above as the source of truth. Earlier implementation entries and audit sections are historical evidence, not additional unfinished requirements.
 
 # 1. Executive assessment and mission to preserve
 

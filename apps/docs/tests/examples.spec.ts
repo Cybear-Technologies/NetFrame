@@ -163,10 +163,11 @@ test('modal snippet traps focus, inerts the page, and restores focus', async ({ 
   expect(errors).toEqual([]);
 });
 
-test('tooltip opens when its focusable child is keyboard-focused', async ({ page }) => {
+test('tooltip opens when its focusable child is keyboard-focused', async ({ page, browserName }) => {
   await openFixture(page);
   await page.locator('#sec').focus();
-  await page.keyboard.press('Shift+Tab'); // keyboard focus → :focus-visible / :focus-within
+  // Safari's default keyboard navigation requires Option+Tab for buttons.
+  await page.keyboard.press(browserName === 'webkit' ? 'Alt+Shift+Tab' : 'Shift+Tab');
   await expect(page.locator('#tipbtn')).toBeFocused();
   await expect.poll(() => page.locator('#tip').evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
 });

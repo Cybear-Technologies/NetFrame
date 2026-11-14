@@ -162,3 +162,38 @@ test('every shipped font has its OFL licence text alongside it', () => {
     assert.match(fs.readFileSync(path.join(fonts, licence), 'utf8'), /SIL OPEN FONT LICENSE Version 1\.1/);
   }
 });
+
+test('release changelog configuration supplies the canonical repository', () => {
+  const config = JSON.parse(fs.readFileSync(path.join(ROOT, '..', '..', '.changeset', 'config.json'), 'utf8'));
+  assert.deepEqual(config.changelog, ['@changesets/changelog-github', { repo: 'JacksonChandler/NetFrame' }]);
+});
+
+test('a real packed installation resolves CSS, fonts and Sass without workspace links', (t) => {
+  const consumer = fs.mkdtempSync(path.join(os.tmpdir(), 'netframe-packed-'));
+  t.after(() => fs.rmSync(consumer, { recursive: true, force: true }));
+  const packed = JSON.parse(execFileSync('npm', [
+    'pack', '--json', '--ignore-scripts', '--pack-destination', consumer,
+  ], { cwd: ROOT, encoding: 'utf8' }))[0];
+  fs.writeFileSync(path.join(consumer, 'package.json'), JSON.stringify({ private: true }));
+  execFileSync('npm', [
+    'install', '--offline', '--ignore-scripts', '--no-audit', '--no-fund',
+    path.join(consumer, packed.filename),
+  ], { cwd: consumer, encoding: 'utf8' });
+  const installed = path.join(consumer, 'node_modules', 'netframe');
+  assert.ok(!fs.lstatSync(installed).isSymbolicLink(), 'must test the tarball, not a workspace link');
+  execFileSync(process.execPath, ['--input-type=module', '-e', `
+    import { existsSync } from 'node:fs';
+    import { fileURLToPath } from 'node:url';
+    for (const entry of ['netframe', 'netframe/min', 'netframe/themes', 'netframe/themes/min',
+      'netframe/dist/netframe.css', 'netframe/fonts/vt323-400.woff2']) {
+      if (!existsSync(fileURLToPath(import.meta.resolve(entry)))) throw new Error(entry);
+    }
+  `], { cwd: consumer, encoding: 'utf8' });
+  const css = sass.compileString(
+    "@use 'pkg:netframe/scss/netframe' with ($nf-font-path: '/assets/fonts'); @use 'pkg:netframe/scss/themes/themes';",
+    { importers: [new sass.NodePackageImporter(consumer)] },
+  ).css;
+  assert.match(css, /\.nf-button-primary/);
+  assert.match(css, /\.nf-theme-iron-signal/);
+  assert.match(css, /url\("\/assets\/fonts\/vt323-400\.woff2"\)/);
+});

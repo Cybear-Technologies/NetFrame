@@ -15,7 +15,7 @@ packages/netframe/          the published package ("netframe")
   src/tokens|base|mixins|components|utilities|themes|fonts
   src/netframe.scss         main entry (forward order matters: tokens → base → mixins → components → utilities)
   src/themes/themes.scss    separate themes entry → dist/themes.css
-  scripts/build.ts          Sass → PostCSS (autoprefixer, cssnano) → dist/ (atomic swap)
+  scripts/build.ts          Sass → PostCSS (autoprefixer, cssnano) → dist/ (staged directory swap)
   test/*.test.mjs           node:test package + CSS contract tests
 apps/docs/                  Astro docs (private, not published)
   scripts/sync-netframe.mjs copies built netframe dist into public/ (runs automatically on dev/build)
@@ -29,6 +29,7 @@ Generated, never edit by hand: `packages/netframe/dist/`, `apps/docs/dist/`, `ap
 - Node **22.23.4+** (`.nvmrc`), pnpm **9.15.9** (root `packageManager`; Corepack or a recent pnpm will select it). Running another pnpm major can rewrite `node_modules` (store mismatch) and change the lockfile format.
 - Always change manifests and `pnpm-lock.yaml` together (`pnpm add` / `pnpm update`), then run `pnpm install --frozen-lockfile` to confirm.
 - One-time setup for browser tests: `pnpm --filter @netframe/docs exec playwright install chromium`.
+- Extra browser coverage: install `firefox webkit` the same way, then run `pnpm --filter @netframe/docs exec playwright test --project=firefox --project=webkit`. These opt-in projects also run in `.github/workflows/browsers.yml` nightly/manually. Chromium remains the default required check. Firefox/WebKit mock the clipboard success path because Chromium's permission names are not portable; Chromium tests the real clipboard.
 
 ## Commands
 
@@ -81,5 +82,5 @@ Form examples: associate labels (`for`/`id`), link helper text with `aria-descri
 
 - `CONTRIBUTING.md`: contributor workflow.
 - `README.md` and `apps/docs`: consumer-facing usage.
-- `MODERNIZATION-HANDOFF.md` (local, untracked, if present): audit findings and remaining modernization work.
+- `MODERNIZATION-HANDOFF.md` (if present): historical audit and current remaining-work checklist. Its latest checklist supersedes older status entries; release procedures live in `RELEASING.md`.
 - `AGENT.md` (local, ignored, if present): an older feature roadmap. It is not approved scope, and parts of it are stale (Astro 4, manual `cp` sync, helper-mixin locations, "missing tokens fail the build").

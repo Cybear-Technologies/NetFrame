@@ -20,7 +20,11 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`,
     trace: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] }, default: false },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] }, default: false },
+  ],
   webServer: {
     command: `astro preview --port ${PORT}`,
     url: `http://localhost:${PORT}`,

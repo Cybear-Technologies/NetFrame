@@ -5,6 +5,7 @@
 
 import BaseLayout from './BaseLayout.astro';
 import Sidebar from '../components/Sidebar.astro';
+import { version } from 'netframe/package.json';
 
 interface Props {
   title: string;
@@ -62,7 +63,7 @@ const currentPath = Astro.url.pathname;
 
       <!-- Status footer -->
       <footer class="docs-footer nf-tracking-display nf-uppercase">
-        <span class="nf-text-muted">NETFRAME v0.1.0 // CYBEAR_TECHNOLOGIES</span>
+        <span class="nf-text-muted">NETFRAME v{version} // CYBEAR_TECHNOLOGIES</span>
         <span class="nf-text-subtle">GPL-3.0</span>
       </footer>
     </div>

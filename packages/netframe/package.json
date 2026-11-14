@@ -1,11 +1,13 @@
 {
   "name": "netframe",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A cyberpunk-themed CSS component library",
   "type": "module",
   "license": "GPL-3.0-only",
   "author": "Cybear Technologies",
-  "contributors": ["Jackson Chandler"],
+  "contributors": [
+    "Jackson Chandler"
+  ],
   "bugs": "https://github.com/JacksonChandler/NetFrame/issues",
   "keywords": [
     "css",
