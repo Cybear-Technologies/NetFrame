@@ -66,21 +66,39 @@ Horizontal tab navigation with associated content panels. Manage active state vi
 ## JavaScript
 
 ```js
-const tabLists = document.querySelectorAll('.nf-tab-list');
+document.querySelectorAll('.nf-tab-list').forEach((list) => {
+  const tabs = [...list.querySelectorAll('.nf-tab')];
+  const enabled = () => tabs.filter((t) => t.getAttribute('aria-disabled') !== 'true');
 
-tabLists.forEach((list) => {
-  const tabs   = list.querySelectorAll('.nf-tab');
-  const panels = [...tabs].map((t) =>
-    document.getElementById(t.getAttribute('aria-controls'))
-  );
-
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => {
-      tabs.forEach((t, j) => {
-        t.setAttribute('aria-selected', String(i === j));
-        panels[j]?.toggleAttribute('hidden', i !== j);
-      });
+  function select(tab, { focus = false } = {}) {
+    if (tab.getAttribute('aria-disabled') === 'true') return;
+    tabs.forEach((t) => {
+      const active = t === tab;
+      t.setAttribute('aria-selected', String(active));
+      t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
+      document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
     });
+    if (focus) tab.focus();
+  }
+
+  select(tabs.find((t) => t.getAttribute('aria-selected') === 'true') ?? enabled()[0]);
+
+  list.addEventListener('click', (e) => {
+    const tab = e.target.closest('.nf-tab');
+    if (tab) select(tab);
+  });
+
+  // Arrow keys / Home / End move between enabled tabs (automatic activation).
+  list.addEventListener('keydown', (e) => {
+    const order = enabled();
+    const i = order.indexOf(document.activeElement);
+    const next = {
+      ArrowRight: order[(i + 1) % order.length],
+      ArrowLeft: order[(i - 1 + order.length) % order.length],
+      Home: order[0],
+      End: order[order.length - 1],
+    }[e.key];
+    if (next) { e.preventDefault(); select(next, { focus: true }); }
   });
 });
 ```

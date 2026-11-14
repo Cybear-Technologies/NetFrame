@@ -4,7 +4,7 @@
 //
 // Cyber-Renaissance. Gold and black. Inky, architectural, opulent.
 // Primary: Augmented Gold   #E5B100
-// Secondary: Aged Gold      #C89800
+// Secondary: Renaissance Crimson  #E17676
 // Tertiary: Warm Parchment  #E0D8B8
 // Display font overrides to system serif for the mixed-tech aesthetic.
 
@@ -26,8 +26,8 @@
   --nf-color-primary-fixed:     #ffe082;
 
   // Secondary — Renaissance Crimson (distinct from gold)
-  --nf-color-secondary:         #992222;
-  --nf-color-on-secondary:      #ffffff;
+  --nf-color-secondary:         #e17676;
+  --nf-color-on-secondary:      #000000;
   --nf-color-secondary-dim:     #7a1a1a;
 
   // Tertiary — Warm Parchment White
@@ -36,7 +36,7 @@
   --nf-color-tertiary-dim:      #c8c098;
 
   // Semantic
-  --nf-color-error:             #ff5500;
+  --nf-color-error:             #ff6417;
   --nf-color-error-container:   #5a1400;
   --nf-color-on-error:          #000000;
 

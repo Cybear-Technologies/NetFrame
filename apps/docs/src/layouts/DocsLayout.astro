@@ -45,7 +45,7 @@ const currentPath = Astro.url.pathname;
           </select>
           <a
             class="docs-topbar-link nf-tracking-display nf-uppercase nf-text-muted"
-            href="https://github.com/CybearTechnologies/NetFrame"
+            href="https://github.com/JacksonChandler/NetFrame"
             target="_blank"
             rel="noopener"
           >
@@ -185,14 +185,7 @@ const currentPath = Astro.url.pathname;
 </style>
 
 <script>
-  const THEMES = [
-    'nf-theme-night-city',
-    'nf-theme-chiba-city',
-    'nf-theme-neon-80s',
-    'nf-theme-renaissance',
-    'nf-theme-code-rain',
-    'nf-theme-iron-signal',
-  ];
+  import { applyTheme, readTheme } from '../scripts/theme';
 
   // Mobile sidebar toggle
   const toggle = document.querySelector<HTMLButtonElement>('.sidebar-toggle');
@@ -212,14 +205,9 @@ const currentPath = Astro.url.pathname;
   const select = document.getElementById('theme-switcher') as HTMLSelectElement;
 
   // Restore saved theme on load
-  const saved = localStorage.getItem('nf-theme') ?? '';
-  select.value = saved;
+  select.value = readTheme();
 
   select.addEventListener('change', () => {
-    const next = select.value;
-    // Remove all theme classes, apply the selected one
-    document.documentElement.classList.remove(...THEMES);
-    if (next) document.documentElement.classList.add(next);
-    localStorage.setItem('nf-theme', next);
+    select.value = applyTheme(select.value);
   });
 </script>

@@ -12,7 +12,7 @@ yarn add netframe
 import 'netframe/dist/netframe.css';
 ```
 
-Full documentation: [netframe.cybear.dev](https://netframe.cybear.dev)
+Full documentation: [netframe.cybeartech.com](https://netframe.cybeartech.com)
 
 ---
 

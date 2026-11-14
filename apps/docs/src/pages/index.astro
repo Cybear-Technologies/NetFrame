@@ -64,11 +64,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <span class="swatch-name">PRIMARY</span>
           </div>
           <div class="swatch swatch-secondary">
-            <span class="swatch-hex" data-token="--nf-color-secondary">#FF0066</span>
+            <span class="swatch-hex" data-token="--nf-color-secondary">#FF69A4</span>
             <span class="swatch-name">SECONDARY</span>
           </div>
           <div class="swatch swatch-tertiary">
-            <span class="swatch-hex" data-token="--nf-color-tertiary">#7700FF</span>
+            <span class="swatch-hex" data-token="--nf-color-tertiary">#BC82FF</span>
             <span class="swatch-name">TERTIARY</span>
           </div>
           <div class="swatch swatch-bg">
@@ -105,7 +105,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <span class="nf-card-subtitle" data-font-token="--nf-font-label" data-font-category="LABELS">VT323 // LABELS</span>
             </div>
             <div class="nf-card-body">
-              <p style="margin: 0; font-family: var(--nf-font-label); font-size: var(--nf-text-3xl); color: var(--nf-color-tertiary); letter-spacing: var(--nf-tracking-display);">
+              <p style="margin: 0; font-family: var(--nf-font-label); font-size: var(--nf-text-3xl); color: var(--nf-color-secondary); letter-spacing: var(--nf-tracking-display);">
                 INITIALIZING_SYSTEM...
               </p>
             </div>
@@ -301,15 +301,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     &:last-child { border-right: none; }
   }
 
-  .swatch-primary   { background-color: var(--nf-color-primary); }
-  .swatch-secondary { background-color: var(--nf-color-secondary); }
-  .swatch-tertiary  { background-color: var(--nf-color-tertiary); }
+  /* Text on each swatch uses the palette's matching on-* colour, so labels
+     stay readable in every theme. */
+  .swatch-primary   { background-color: var(--nf-color-primary);   color: var(--nf-color-on-primary); }
+  .swatch-secondary { background-color: var(--nf-color-secondary); color: var(--nf-color-on-secondary); }
+  .swatch-tertiary  { background-color: var(--nf-color-tertiary);  color: var(--nf-color-on-tertiary); }
   .swatch-bg        { background-color: var(--nf-color-bg); border: 2px solid var(--nf-color-border); }
 
   .swatch-hex {
     font-family: var(--nf-font-mono);
     font-size: var(--nf-text-sm);
-    color: #000;
     font-weight: bold;
   }
 
@@ -321,7 +322,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-weight: var(--nf-font-weight-medium);
     font-size: var(--nf-text-sm);
     letter-spacing: var(--nf-tracking-display);
-    color: rgba(0,0,0,0.6);
   }
 
   /* Typography grid — always 3 equal columns, collapses to 1 on narrow viewports */
@@ -379,18 +379,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </style>
 
 <script>
-  const THEMES = [
-    'nf-theme-night-city',
-    'nf-theme-chiba-city',
-    'nf-theme-neon-80s',
-    'nf-theme-renaissance',
-    'nf-theme-code-rain',
-    'nf-theme-iron-signal',
-  ];
+  import { applyTheme, readTheme } from '../scripts/theme';
 
   const select = document.getElementById('theme-switcher') as HTMLSelectElement;
-  const saved = localStorage.getItem('nf-theme') ?? '';
-  select.value = saved;
+  select.value = readTheme();
 
   function updateSwatchLabels() {
     const style = getComputedStyle(document.documentElement);
@@ -409,7 +401,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const value = style.getPropertyValue(token).trim();
       if (value) {
         // Extract first font family name, strip quotes, normalize to UPPER_SNAKE
-        const firstName = value.split(',')[0].trim().replace(/['"]/g, '');
+        const firstName = (value.split(',')[0] ?? '').trim().replace(/['"]/g, '');
         const normalized = firstName.toUpperCase().replace(/\s+/g, '_');
         el.textContent = `${normalized} // ${category}`;
       }
@@ -417,10 +409,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   select.addEventListener('change', () => {
-    const next = select.value;
-    document.documentElement.classList.remove(...THEMES);
-    if (next) document.documentElement.classList.add(next);
-    localStorage.setItem('nf-theme', next);
+    select.value = applyTheme(select.value);
     updateSwatchLabels();
     updateFontLabels();
   });

@@ -12,15 +12,16 @@
   --nf-color-on-primary: #000000;
   --nf-color-primary-dim: #02e600;
   --nf-color-primary-fixed: #77ff61;
-  --nf-color-secondary: #ff0066;
+  --nf-color-secondary: #ff69a4;
   --nf-color-on-secondary: #000000;
   --nf-color-secondary-dim: #cc0052;
-  --nf-color-tertiary: #7700ff;
-  --nf-color-on-tertiary: #ffffff;
+  --nf-color-tertiary: #bc82ff;
+  --nf-color-on-tertiary: #000000;
   --nf-color-tertiary-dim: #5500cc;
   --nf-color-error: #ffb4ab;
   --nf-color-error-container: #93000a;
   --nf-color-on-error: #690005;
+  --nf-color-warning: #fca311;
   --nf-color-text: #e2e2e2;
   --nf-color-text-muted: #c8d6c0;
   --nf-color-text-subtle: #a0b098;
@@ -116,7 +117,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("../fonts/space-grotesk-700.woff2") format("woff2");
+  src: url("./fonts/space-grotesk-700.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
@@ -124,7 +125,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("../fonts/jetbrains-mono-400.woff2") format("woff2");
+  src: url("./fonts/jetbrains-mono-400.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
@@ -132,7 +133,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url("../fonts/jetbrains-mono-500.woff2") format("woff2");
+  src: url("./fonts/jetbrains-mono-500.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
@@ -140,7 +141,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("../fonts/russo-one-400.woff2") format("woff2");
+  src: url("./fonts/russo-one-400.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
@@ -148,7 +149,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("../fonts/orbitron-400.woff2") format("woff2");
+  src: url("./fonts/orbitron-400.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
@@ -156,7 +157,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url("../fonts/orbitron-400.woff2") format("woff2");
+  src: url("./fonts/orbitron-400.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
@@ -164,7 +165,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("../fonts/orbitron-700.woff2") format("woff2");
+  src: url("./fonts/orbitron-700.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
@@ -172,7 +173,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("../fonts/vt323-400.woff2") format("woff2");
+  src: url("./fonts/vt323-400.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 *,
@@ -511,6 +512,7 @@ hr {
 }
 .nf-button-primary:hover {
   background-color: var(--nf-color-secondary);
+  color: var(--nf-color-on-secondary);
   border-color: var(--nf-color-secondary);
   box-shadow: 4px 4px 0px 0px var(--nf-color-secondary);
 }
@@ -527,6 +529,7 @@ hr {
 }
 .nf-button-secondary:hover {
   background-color: var(--nf-color-tertiary);
+  color: var(--nf-color-on-tertiary);
   border-color: var(--nf-color-tertiary);
   box-shadow: 4px 4px 0px 0px var(--nf-color-tertiary);
 }
@@ -556,6 +559,7 @@ hr {
 }
 .nf-button-danger:hover {
   background-color: var(--nf-color-error-container);
+  color: var(--nf-color-text);
   border-color: var(--nf-color-error);
 }
 .nf-button-danger:active {
@@ -676,21 +680,30 @@ hr {
 
 .nf-input-error,
 .nf-select-error,
-.nf-textarea-error {
+.nf-textarea-error,
+.nf-input[aria-invalid=true],
+.nf-select[aria-invalid=true],
+.nf-textarea[aria-invalid=true] {
   border-color: var(--nf-color-error);
   color: var(--nf-color-error);
 }
-.nf-input-error::-moz-placeholder, .nf-select-error::-moz-placeholder, .nf-textarea-error::-moz-placeholder {
+.nf-input-error::-moz-placeholder, .nf-select-error::-moz-placeholder, .nf-textarea-error::-moz-placeholder, .nf-input[aria-invalid=true]::-moz-placeholder, .nf-select[aria-invalid=true]::-moz-placeholder, .nf-textarea[aria-invalid=true]::-moz-placeholder {
   color: color-mix(in srgb, var(--nf-color-error) 40%, transparent);
 }
 .nf-input-error::placeholder,
 .nf-select-error::placeholder,
-.nf-textarea-error::placeholder {
+.nf-textarea-error::placeholder,
+.nf-input[aria-invalid=true]::placeholder,
+.nf-select[aria-invalid=true]::placeholder,
+.nf-textarea[aria-invalid=true]::placeholder {
   color: color-mix(in srgb, var(--nf-color-error) 40%, transparent);
 }
 .nf-input-error:focus,
 .nf-select-error:focus,
-.nf-textarea-error:focus {
+.nf-textarea-error:focus,
+.nf-input[aria-invalid=true]:focus,
+.nf-select[aria-invalid=true]:focus,
+.nf-textarea[aria-invalid=true]:focus {
   border-color: var(--nf-color-error);
 }
 
@@ -1036,7 +1049,7 @@ hr {
 }
 
 .nf-avatar-status-away {
-  background-color: var(--nf-color-warning, #fca311);
+  background-color: var(--nf-color-warning);
 }
 
 .nf-avatar-status-busy {
@@ -1260,7 +1273,7 @@ hr {
   position: relative;
   display: inline-flex;
 }
-.nf-tooltip-wrap:hover .nf-tooltip, .nf-tooltip-wrap:focus-visible .nf-tooltip {
+.nf-tooltip-wrap:hover .nf-tooltip, .nf-tooltip-wrap:focus-visible .nf-tooltip, .nf-tooltip-wrap:focus-within .nf-tooltip {
   opacity: 1;
   pointer-events: auto;
   transform: translateX(-50%) translateY(0);
@@ -1292,7 +1305,7 @@ hr {
   top: calc(100% + var(--nf-space-2));
   transform: translateX(-50%) translateY(calc(-1 * var(--nf-space-1)));
 }
-.nf-tooltip-wrap:hover .nf-tooltip-bottom, .nf-tooltip-wrap:focus-visible .nf-tooltip-bottom {
+.nf-tooltip-wrap:hover .nf-tooltip-bottom, .nf-tooltip-wrap:focus-visible .nf-tooltip-bottom, .nf-tooltip-wrap:focus-within .nf-tooltip-bottom {
   transform: translateX(-50%) translateY(0);
 }
 
@@ -1303,7 +1316,7 @@ hr {
   top: 50%;
   transform: translateX(var(--nf-space-1)) translateY(-50%);
 }
-.nf-tooltip-wrap:hover .nf-tooltip-left, .nf-tooltip-wrap:focus-visible .nf-tooltip-left {
+.nf-tooltip-wrap:hover .nf-tooltip-left, .nf-tooltip-wrap:focus-visible .nf-tooltip-left, .nf-tooltip-wrap:focus-within .nf-tooltip-left {
   transform: translateX(0) translateY(-50%);
 }
 
@@ -1313,7 +1326,7 @@ hr {
   top: 50%;
   transform: translateX(calc(-1 * var(--nf-space-1))) translateY(-50%);
 }
-.nf-tooltip-wrap:hover .nf-tooltip-right, .nf-tooltip-wrap:focus-visible .nf-tooltip-right {
+.nf-tooltip-wrap:hover .nf-tooltip-right, .nf-tooltip-wrap:focus-visible .nf-tooltip-right, .nf-tooltip-wrap:focus-within .nf-tooltip-right {
   transform: translateX(0) translateY(-50%);
 }
 

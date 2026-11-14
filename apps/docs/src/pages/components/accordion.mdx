@@ -14,28 +14,19 @@ Expandable sections driven by `aria-expanded` on the trigger. Height animation r
 
 <ComponentDemo stacked title="Accordion" code={`<div class="nf-accordion">
   <div class="nf-accordion-item">
-    <button class="nf-accordion-trigger" aria-expanded="true" aria-controls="panel-1">
-      SYSTEM_STATUS
-      <span class="nf-accordion-icon"></span>
-    </button>
+    <button class="nf-accordion-trigger" aria-expanded="true" aria-controls="panel-1">SYSTEM_STATUS<span class="nf-accordion-icon"></span></button>
     <div class="nf-accordion-content" id="panel-1">
       <div class="nf-accordion-body">All subsystems nominal. Uplink active.</div>
     </div>
   </div>
   <div class="nf-accordion-item">
-    <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-2">
-      NETWORK_LOGS
-      <span class="nf-accordion-icon"></span>
-    </button>
+    <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-2">NETWORK_LOGS<span class="nf-accordion-icon"></span></button>
     <div class="nf-accordion-content" id="panel-2" style="height: 0;">
       <div class="nf-accordion-body">No anomalies detected in the last 24h.</div>
     </div>
   </div>
   <div class="nf-accordion-item">
-    <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-3">
-      THREAT_ANALYSIS
-      <span class="nf-accordion-icon"></span>
-    </button>
+    <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-3">THREAT_ANALYSIS<span class="nf-accordion-icon"></span></button>
     <div class="nf-accordion-content" id="panel-3" style="height: 0;">
       <div class="nf-accordion-body">0 active threats. ICE integrity at 100%.</div>
     </div>
@@ -43,28 +34,19 @@ Expandable sections driven by `aria-expanded` on the trigger. Height animation r
 </div>`}>
   <div class="nf-accordion" style="width: 100%; max-width: 28rem;">
     <div class="nf-accordion-item">
-      <button class="nf-accordion-trigger" aria-expanded="true">
-        SYSTEM_STATUS
-        <span class="nf-accordion-icon"></span>
-      </button>
+      <button class="nf-accordion-trigger" aria-expanded="true">SYSTEM_STATUS<span class="nf-accordion-icon"></span></button>
       <div class="nf-accordion-content">
         <div class="nf-accordion-body">All subsystems nominal. Uplink active.</div>
       </div>
     </div>
     <div class="nf-accordion-item">
-      <button class="nf-accordion-trigger" aria-expanded="false">
-        NETWORK_LOGS
-        <span class="nf-accordion-icon"></span>
-      </button>
+      <button class="nf-accordion-trigger" aria-expanded="false">NETWORK_LOGS<span class="nf-accordion-icon"></span></button>
       <div class="nf-accordion-content" style="height: 0;">
         <div class="nf-accordion-body">No anomalies detected in the last 24h.</div>
       </div>
     </div>
     <div class="nf-accordion-item">
-      <button class="nf-accordion-trigger" aria-expanded="false">
-        THREAT_ANALYSIS
-        <span class="nf-accordion-icon"></span>
-      </button>
+      <button class="nf-accordion-trigger" aria-expanded="false">THREAT_ANALYSIS<span class="nf-accordion-icon"></span></button>
       <div class="nf-accordion-content" style="height: 0;">
         <div class="nf-accordion-body">0 active threats. ICE integrity at 100%.</div>
       </div>
@@ -79,13 +61,33 @@ Toggle `aria-expanded` and animate the content height:
 ```js
 document.querySelectorAll('.nf-accordion-trigger').forEach((trigger) => {
   const panel = document.getElementById(trigger.getAttribute('aria-controls'));
-  if (trigger.getAttribute('aria-expanded') === 'false') {
-    panel.style.height = '0';
+  if (!panel) return;
+
+  function setExpanded(expanded) {
+    trigger.setAttribute('aria-expanded', String(expanded));
+    // `inert` keeps links/buttons inside a collapsed panel out of the tab order
+    // and the accessibility tree, which `height: 0` alone does not.
+    panel.inert = !expanded;
+    panel.style.height = expanded ? panel.scrollHeight + 'px' : '0';
   }
+
+  // Release the fixed height after expanding so content can reflow/resize.
+  panel.addEventListener('transitionend', () => {
+    if (trigger.getAttribute('aria-expanded') === 'true') panel.style.height = 'auto';
+  });
+
+  const initiallyOpen = trigger.getAttribute('aria-expanded') === 'true';
+  setExpanded(initiallyOpen);
+  if (initiallyOpen) panel.style.height = 'auto'; // no transition runs on load
+
   trigger.addEventListener('click', () => {
     const expanded = trigger.getAttribute('aria-expanded') === 'true';
-    trigger.setAttribute('aria-expanded', String(!expanded));
-    panel.style.height = expanded ? '0' : panel.scrollHeight + 'px';
+    if (expanded) {
+      // Pin the current height first so the collapse can animate from it.
+      panel.style.height = panel.scrollHeight + 'px';
+      panel.offsetHeight; // force reflow
+    }
+    setExpanded(!expanded);
   });
 });
 ```

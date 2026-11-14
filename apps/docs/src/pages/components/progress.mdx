@@ -10,13 +10,15 @@ import ComponentDemo from '../../components/ComponentDemo.astro';
 
 Linear bars and SVG rings for communicating async progress.
 
+The classes only draw the bar. Give the `.nf-progress` (or `.nf-progress-ring`) element `role="progressbar"`, an accessible name (`aria-label` or `aria-labelledby`), and `aria-valuenow`/`aria-valuemin`/`aria-valuemax`, updated together with the bar `width`. Omit `aria-valuenow` while indeterminate.
+
 ## Bar
 
-<ComponentDemo stacked title="Default" code={`<div class="nf-progress">
+<ComponentDemo stacked title="Default" code={`<div class="nf-progress" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
   <div class="nf-progress-bar" style="width: 65%;"></div>
 </div>`}>
   <div style="width: 100%; max-width: 28rem;">
-    <div class="nf-progress">
+    <div class="nf-progress" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
       <div class="nf-progress-bar" style="width: 65%;"></div>
     </div>
   </div>
@@ -24,23 +26,23 @@ Linear bars and SVG rings for communicating async progress.
 
 ## Sizes
 
-<ComponentDemo stacked title="SM / Default / LG" code={`<div class="nf-progress nf-progress-sm">
+<ComponentDemo stacked title="SM / Default / LG" code={`<div class="nf-progress nf-progress-sm" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
   <div class="nf-progress-bar" style="width: 40%;"></div>
 </div>
-<div class="nf-progress">
+<div class="nf-progress" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
   <div class="nf-progress-bar" style="width: 65%;"></div>
 </div>
-<div class="nf-progress nf-progress-lg">
+<div class="nf-progress nf-progress-lg" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
   <div class="nf-progress-bar" style="width: 80%;"></div>
 </div>`}>
   <div style="width: 100%; max-width: 28rem; display: flex; flex-direction: column; gap: var(--nf-space-4);">
-    <div class="nf-progress nf-progress-sm">
+    <div class="nf-progress nf-progress-sm" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
       <div class="nf-progress-bar" style="width: 40%;"></div>
     </div>
-    <div class="nf-progress">
+    <div class="nf-progress" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
       <div class="nf-progress-bar" style="width: 65%;"></div>
     </div>
-    <div class="nf-progress nf-progress-lg">
+    <div class="nf-progress nf-progress-lg" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
       <div class="nf-progress-bar" style="width: 80%;"></div>
     </div>
   </div>
@@ -48,29 +50,29 @@ Linear bars and SVG rings for communicating async progress.
 
 ## Color variants
 
-<ComponentDemo stacked title="Primary / Secondary / Tertiary / Error" code={`<div class="nf-progress">
+<ComponentDemo stacked title="Primary / Secondary / Tertiary / Error" code={`<div class="nf-progress" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
   <div class="nf-progress-bar" style="width: 75%;"></div>
 </div>
-<div class="nf-progress nf-progress-secondary">
+<div class="nf-progress nf-progress-secondary" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
   <div class="nf-progress-bar" style="width: 55%;"></div>
 </div>
-<div class="nf-progress nf-progress-tertiary">
+<div class="nf-progress nf-progress-tertiary" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
   <div class="nf-progress-bar" style="width: 40%;"></div>
 </div>
-<div class="nf-progress nf-progress-error">
+<div class="nf-progress nf-progress-error" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
   <div class="nf-progress-bar" style="width: 20%;"></div>
 </div>`}>
   <div style="width: 100%; max-width: 28rem; display: flex; flex-direction: column; gap: var(--nf-space-4);">
-    <div class="nf-progress">
+    <div class="nf-progress" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
       <div class="nf-progress-bar" style="width: 75%;"></div>
     </div>
-    <div class="nf-progress nf-progress-secondary">
+    <div class="nf-progress nf-progress-secondary" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
       <div class="nf-progress-bar" style="width: 55%;"></div>
     </div>
-    <div class="nf-progress nf-progress-tertiary">
+    <div class="nf-progress nf-progress-tertiary" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
       <div class="nf-progress-bar" style="width: 40%;"></div>
     </div>
-    <div class="nf-progress nf-progress-error">
+    <div class="nf-progress nf-progress-error" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
       <div class="nf-progress-bar" style="width: 20%;"></div>
     </div>
   </div>
@@ -78,11 +80,11 @@ Linear bars and SVG rings for communicating async progress.
 
 ## Indeterminate
 
-<ComponentDemo stacked title="Indeterminate" code={`<div class="nf-progress nf-progress-indeterminate">
+<ComponentDemo stacked title="Indeterminate" code={`<div class="nf-progress nf-progress-indeterminate" role="progressbar" aria-label="Loading">
   <div class="nf-progress-bar"></div>
 </div>`}>
   <div style="width: 100%; max-width: 28rem;">
-    <div class="nf-progress nf-progress-indeterminate">
+    <div class="nf-progress nf-progress-indeterminate" role="progressbar" aria-label="Loading">
       <div class="nf-progress-bar"></div>
     </div>
   </div>
@@ -91,14 +93,14 @@ Linear bars and SVG rings for communicating async progress.
 ## Labeled
 
 <ComponentDemo stacked title="With percentage" code={`<div class="nf-progress-labeled">
-  <div class="nf-progress">
+  <div class="nf-progress" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
     <div class="nf-progress-bar" style="width: 72%;"></div>
   </div>
   <span class="nf-progress-value">72%</span>
 </div>`}>
   <div style="width: 100%; max-width: 28rem;">
     <div class="nf-progress-labeled">
-      <div class="nf-progress">
+      <div class="nf-progress" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" aria-label="Upload progress">
         <div class="nf-progress-bar" style="width: 72%;"></div>
       </div>
       <span class="nf-progress-value">72%</span>
@@ -110,15 +112,15 @@ Linear bars and SVG rings for communicating async progress.
 
 SVG ring controlled by `--nf-ring-progress` (0–100):
 
-<ComponentDemo title="Progress ring" code={`<div class="nf-progress-ring" style="--nf-ring-progress: 75; --nf-ring-size: 4rem;">
-  <svg viewBox="0 0 32 32">
+<ComponentDemo title="Progress ring" code={`<div class="nf-progress-ring" style="--nf-ring-progress: 75; --nf-ring-size: 4rem;" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Sync progress">
+  <svg viewBox="0 0 32 32" aria-hidden="true">
     <circle class="nf-ring-track" cx="16" cy="16" r="15" />
     <circle class="nf-ring-fill" cx="16" cy="16" r="15" />
   </svg>
   <span class="nf-ring-label">75%</span>
 </div>`}>
-  <div class="nf-progress-ring" style="--nf-ring-progress: 75; --nf-ring-size: 4rem;">
-    <svg viewBox="0 0 32 32">
+  <div class="nf-progress-ring" style="--nf-ring-progress: 75; --nf-ring-size: 4rem;" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="Sync progress">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
       <circle class="nf-ring-track" cx="16" cy="16" r="15" />
       <circle class="nf-ring-fill" cx="16" cy="16" r="15" />
     </svg>

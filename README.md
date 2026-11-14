@@ -98,7 +98,7 @@ localStorage.setItem('nf-theme', 'nf-theme-iron-signal');
 
 ### DEFAULT
 
-> Terminal Green `#00FF00` · Hot Pink `#FF0066` · UV Violet `#7700FF`
+> Terminal Green `#00FF00` · Hot Pink `#FF69A4` · UV Violet `#BC82FF`
 
 The baseline. True black void. Neon triad — green/pink/violet. Hard pixel-offset shadows. CRT scanlines at 5% opacity.
 
@@ -106,7 +106,7 @@ The baseline. True black void. Neon triad — green/pink/violet. Hard pixel-offs
 
 ### `nf-theme-night-city`
 
-> Hazard Yellow `#FCEE09` · Neon Cyan `#00F0FF` · Blood Red `#FF003C`
+> Hazard Yellow `#FCEE09` · Neon Cyan `#00F0FF` · Blood Red `#FF547C`
 
 Blade Runner rain-soaked streets. Yellow primary cuts through the smog. High-contrast danger aesthetic.
 
@@ -122,7 +122,7 @@ Neuromancer's cyberspace. Two-color terminal. Teal data streams on dark urban su
 
 ### `nf-theme-neon-80s`
 
-> Hot Magenta `#FF00FF` · Retro Blue `#00D9FF` · UV `#7000FF`
+> Hot Magenta `#FF73FF` · Retro Blue `#00D9FF` · UV `#C497FF`
 
 RetroWave synthpop. Heavier scanlines. Grid-burst aesthetic. The decade that invented neon.
 
@@ -130,7 +130,7 @@ RetroWave synthpop. Heavier scanlines. Grid-burst aesthetic. The decade that inv
 
 ### `nf-theme-renaissance`
 
-> Augmented Gold `#E5B100` · Renaissance Crimson `#992222` · Warm Parchment `#E0D8B8`
+> Augmented Gold `#E5B100` · Renaissance Crimson `#E17676` · Warm Parchment `#E0D8B8`
 
 Cyber-Renaissance. Palatino/Didot serif display font. Gold and ink. Opulent, architectural, inky black surfaces.
 
@@ -146,7 +146,7 @@ Single-color. All text, all borders, all accents — one shade of green. Maximum
 
 ### `nf-theme-iron-signal`
 
-> Revolutionary Red `#FF0000` · Cathode Amber `#FFB000` · Cold Steel `#B4B4B4`
+> Revolutionary Red `#FF5E5E` · Cathode Amber `#FFB000` · Cold Steel `#B4B4B4`
 
 Cyber-Soviet. Tactical Monolith. Russo One display headers. Orbitron body text. Massive borders. Instant state changes — zero transition duration. Red-channel CRT phosphor shift.
 
@@ -168,7 +168,7 @@ Every `--nf-*` token is a live CSS custom property. Override on `:root`, no rebu
 }
 ```
 
-Full token reference → [netframe.cybear.dev/theming](https://netframe.cybear.dev/theming)
+Full token reference → [netframe.cybeartech.com/theming](https://netframe.cybeartech.com/theming)
 
 ---
 
@@ -181,7 +181,7 @@ packages/
       base/           reset, typography, fonts (@font-face)
       components/     20 component SCSS partials
       mixins/         focus-ring, neon-glow, offset-shadow
-      themes/         7 theme class overrides
+      themes/         6 alternate theme class overrides
       tokens/         colors, typography, spacing, motion
       utilities/      glow, scanlines, glitch, layout
     dist/
@@ -192,7 +192,7 @@ packages/
       fonts/          self-hosted woff2 files
       scss/           raw source for Sass consumers
 apps/
-  docs/               Astro 4 documentation site
+  docs/               Astro documentation site
 .changeset/           versioning config
 .github/workflows/    CI + release automation
 ```
@@ -201,7 +201,7 @@ apps/
 
 ## `// DEV_ENVIRONMENT`
 
-Requires **Node 20** · **pnpm 9**
+Requires **Node 22.23.4+** · **pnpm 9.15.9** (pinned via `packageManager`; Corepack or pnpm will pick it up)
 
 ```sh
 # Install dependencies
@@ -227,12 +227,15 @@ Docs site only:
 pnpm --filter @netframe/docs dev   # http://localhost:4321
 ```
 
-After rebuilding the library, sync to docs:
+The docs copy the built library into `apps/docs/public/` automatically on `dev` and `build`
+(and re-copy while `pnpm --filter netframe run dev` rebuilds). Build the library first.
+
+Checks:
 
 ```sh
-cp packages/netframe/dist/netframe.css apps/docs/public/
-cp packages/netframe/dist/themes.css   apps/docs/public/
-cp -r packages/netframe/dist/fonts/.   apps/docs/public/fonts/
+pnpm run typecheck   # build script types
+pnpm run test        # builds the library, then runs package/CSS tests
+pnpm run check       # typecheck + test + full build
 ```
 
 ---

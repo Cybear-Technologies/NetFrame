@@ -13,9 +13,7 @@ Absolutely-positioned menus anchored to a trigger. Toggle visibility with `aria-
 ## Basic
 
 <ComponentDemo title="Open dropdown" code={`<div class="nf-dropdown">
-  <button class="nf-button nf-button-ghost nf-dropdown-trigger" aria-expanded="true" aria-haspopup="menu">
-    OPTIONS
-  </button>
+  <button class="nf-button nf-button-ghost nf-dropdown-trigger" aria-expanded="true" aria-haspopup="menu">OPTIONS</button>
   <ul class="nf-dropdown-menu" role="menu">
     <li role="none"><button class="nf-dropdown-item" role="menuitem">SCAN_NODE</button></li>
     <li role="none"><button class="nf-dropdown-item" role="menuitem">PURGE_CACHE</button></li>
@@ -23,9 +21,7 @@ Absolutely-positioned menus anchored to a trigger. Toggle visibility with `aria-
   </ul>
 </div>`}>
   <div class="nf-dropdown" style="margin-bottom: 8rem;">
-    <button class="nf-button nf-button-ghost nf-dropdown-trigger" aria-expanded="true" aria-haspopup="menu">
-      OPTIONS
-    </button>
+    <button class="nf-button nf-button-ghost nf-dropdown-trigger" aria-expanded="true" aria-haspopup="menu">OPTIONS</button>
     <ul class="nf-dropdown-menu" role="menu">
       <li role="none"><button class="nf-dropdown-item" role="menuitem">SCAN_NODE</button></li>
       <li role="none"><button class="nf-dropdown-item" role="menuitem">PURGE_CACHE</button></li>
@@ -37,9 +33,7 @@ Absolutely-positioned menus anchored to a trigger. Toggle visibility with `aria-
 ## With dividers and labels
 
 <ComponentDemo title="Grouped menu" code={`<div class="nf-dropdown">
-  <button class="nf-button nf-button-primary nf-dropdown-trigger" aria-expanded="true">
-    NODE_ACTIONS
-  </button>
+  <button class="nf-button nf-button-primary nf-dropdown-trigger" aria-expanded="true">NODE_ACTIONS</button>
   <ul class="nf-dropdown-menu" role="menu">
     <li class="nf-dropdown-label" role="none">DIAGNOSTICS</li>
     <li role="none"><button class="nf-dropdown-item" role="menuitem">RUN_SCAN</button></li>
@@ -49,9 +43,7 @@ Absolutely-positioned menus anchored to a trigger. Toggle visibility with `aria-
   </ul>
 </div>`}>
   <div class="nf-dropdown" style="margin-bottom: 10rem;">
-    <button class="nf-button nf-button-primary nf-dropdown-trigger" aria-expanded="true">
-      NODE_ACTIONS
-    </button>
+    <button class="nf-button nf-button-primary nf-dropdown-trigger" aria-expanded="true">NODE_ACTIONS</button>
     <ul class="nf-dropdown-menu" role="menu">
       <li class="nf-dropdown-label" role="none">DIAGNOSTICS</li>
       <li role="none"><button class="nf-dropdown-item" role="menuitem">RUN_SCAN</button></li>
@@ -78,18 +70,36 @@ Add `.nf-dropdown-menu-right` to align the menu to the right edge of the trigger
 document.querySelectorAll('.nf-dropdown').forEach((dropdown) => {
   const trigger = dropdown.querySelector('.nf-dropdown-trigger');
   const menu    = dropdown.querySelector('.nf-dropdown-menu');
+  const items   = () => [...menu.querySelectorAll('.nf-dropdown-item:not([aria-disabled="true"]):not(:disabled)')];
+
+  // The CSS hides the menu only for aria-hidden="true" (or .nf-hidden),
+  // so always write the literal string rather than toggling the attribute.
+  function setOpen(open, { focusTrigger = false } = {}) {
+    trigger.setAttribute('aria-expanded', String(open));
+    menu.setAttribute('aria-hidden', String(!open));
+    if (open) items()[0]?.focus();
+    else if (focusTrigger) trigger.focus();
+  }
+
+  setOpen(trigger.getAttribute('aria-expanded') === 'true');
 
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
-    const open = trigger.getAttribute('aria-expanded') === 'true';
-    trigger.setAttribute('aria-expanded', String(!open));
-    menu.toggleAttribute('aria-hidden', open ? null : true);
+    setOpen(trigger.getAttribute('aria-expanded') !== 'true');
+  });
+
+  // Arrow keys move between items; Escape closes and returns focus.
+  menu.addEventListener('keydown', (e) => {
+    const list = items();
+    const i = list.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); list[(i + 1) % list.length]?.focus(); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); list[(i - 1 + list.length) % list.length]?.focus(); }
+    if (e.key === 'Escape')    { setOpen(false, { focusTrigger: true }); }
   });
 
   // Close on outside click
-  document.addEventListener('click', () => {
-    trigger.setAttribute('aria-expanded', 'false');
-    menu.setAttribute('aria-hidden', 'true');
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target)) setOpen(false);
   });
 });
 ```

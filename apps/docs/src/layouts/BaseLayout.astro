@@ -5,8 +5,11 @@
 
 interface Props {
   title: string;
-  description?: string;
+  description?: string | undefined;
 }
+
+// Phosphor Icons (thin weight), bundled locally instead of executing a CDN script.
+import '@phosphor-icons/web/thin';
 
 const { title, description = 'NetFrame — Cyberpunk CSS component library by Cybear Technologies' } = Astro.props;
 ---
@@ -19,18 +22,20 @@ const { title, description = 'NetFrame — Cyberpunk CSS component library by Cy
     <meta name="description" content={description} />
     <title>{title} // NETFRAME</title>
 
-    <!-- Phosphor Icons (thin weight) -->
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/thin/index.js" type="module"></script>
-
     <!-- NetFrame CSS -->
     <link rel="stylesheet" href="/netframe.css" />
     <link rel="stylesheet" href="/themes.css" />
   </head>
   <!-- Theme class applied before paint to avoid flash -->
   <script is:inline>
+    // Inline copy of readTheme() from src/scripts/theme.ts (must run pre-paint).
     (function () {
-      var t = localStorage.getItem('nf-theme');
-      if (t) document.documentElement.classList.add(t);
+      try {
+        var t = localStorage.getItem('nf-theme');
+        if (t && /^nf-theme-[a-z0-9-]+$/.test(t)) document.documentElement.classList.add(t);
+      } catch (e) {
+        // Storage blocked: fall back to the default palette.
+      }
     })();
   </script>
   <body class="nf-crt">

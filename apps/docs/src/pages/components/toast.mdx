@@ -77,7 +77,7 @@ Non-blocking notifications stacked in a fixed region. The left border accent com
 
 ## Usage
 
-Append toasts into a fixed `.nf-toast-region` container, then remove them after a timeout:
+Append toasts into a fixed `.nf-toast-region` live region (present in the page before the first toast, so screen readers pick up insertions), then remove them after a timeout:
 
 ```html
 <div class="nf-toast-region nf-toast-top-right" id="toast-region" aria-live="polite"></div>
@@ -88,23 +88,54 @@ function showToast({ title, message, type = 'info', duration = 4000 }) {
   const region = document.getElementById('toast-region');
   const toast = document.createElement('div');
   toast.className = `nf-toast nf-toast-${type}`;
-  toast.innerHTML = `
-    <div class="nf-toast-content">
-      <div class="nf-toast-title">${title}</div>
-      <div class="nf-toast-message">${message}</div>
-    </div>
-    <button class="nf-toast-close" aria-label="Dismiss">✕</button>
-  `;
+  // Errors interrupt; everything else waits for the polite region.
+  if (type === 'error') toast.setAttribute('role', 'alert');
 
-  const close = toast.querySelector('.nf-toast-close');
-  const dismiss = () => {
-    toast.classList.add('nf-toast-dismissing');
-    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+  // Build with textContent, never innerHTML: titles and messages often
+  // contain user or server data.
+  const content = document.createElement('div');
+  content.className = 'nf-toast-content';
+  const heading = document.createElement('div');
+  heading.className = 'nf-toast-title';
+  heading.textContent = title;
+  const body = document.createElement('div');
+  body.className = 'nf-toast-message';
+  body.textContent = message;
+  content.append(heading, body);
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'nf-toast-close';
+  close.setAttribute('aria-label', 'Dismiss');
+  close.textContent = '✕';
+  toast.append(content, close);
+
+  let timer;
+  let removed = false;
+  const remove = () => {
+    if (removed) return;
+    removed = true;
+    toast.remove();
   };
+  const dismiss = () => {
+    clearTimeout(timer);
+    toast.classList.add('nf-toast-dismissing');
+    toast.addEventListener('animationend', remove, { once: true });
+    setTimeout(remove, 1000); // fallback if animations are disabled
+  };
+  const start = () => { clearTimeout(timer); timer = setTimeout(dismiss, duration); };
+  const pause = () => clearTimeout(timer);
 
+  // Let people stop the timer while reading or interacting (WCAG 2.2.1).
+  toast.addEventListener('mouseenter', pause);
+  toast.addEventListener('mouseleave', start);
+  toast.addEventListener('focusin', pause);
+  toast.addEventListener('focusout', start);
   close.addEventListener('click', dismiss);
+
   region.appendChild(toast);
-  setTimeout(dismiss, duration);
+  start();
+  return toast;
 }
 ```
 

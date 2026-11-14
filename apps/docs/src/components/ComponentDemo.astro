@@ -9,7 +9,6 @@ interface Props {
 }
 
 const { title, code, stacked = false } = Astro.props;
-const escaped = code.replace(/`/g, '\\`');
 ---
 
 <div class="demo-wrap">
@@ -24,25 +23,47 @@ const escaped = code.replace(/`/g, '\\`');
     <!-- Code block -->
     <div class="demo-code-wrap">
       <div class="demo-code-bar">
-        <button class="demo-copy" data-code={code} aria-label="Copy code">
-          <i class="ph-thin ph-copy"></i>
-          COPY
+        <button type="button" class="demo-copy" data-code={code} aria-label="Copy code">
+          <i class="ph-thin ph-copy" aria-hidden="true"></i>
+          <span class="demo-copy-label">COPY</span>
         </button>
+        <span class="demo-copy-status nf-sr-only" role="status" aria-live="polite"></span>
       </div>
-      <pre class="demo-code"><code>{code}</code></pre>
+      <!-- tabindex: keyboard users must be able to scroll long examples -->
+      <pre class="demo-code" tabindex="0" aria-label={title ? `${title} code` : 'Example code'}><code>{code}</code></pre>
     </div>
   </div>
 </div>
 
 <script>
+  const RESET_MS = 1500;
+
+  async function copyText(text: string): Promise<boolean> {
+    try {
+      if (!navigator.clipboard?.writeText) return false;
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Permission denied, insecure context, or document not focused.
+      return false;
+    }
+  }
+
   document.querySelectorAll<HTMLButtonElement>('.demo-copy').forEach((btn) => {
+    const label = btn.querySelector<HTMLElement>('.demo-copy-label');
+    const status = btn.parentElement?.querySelector<HTMLElement>('.demo-copy-status');
+    let timer: number | undefined;
+
     btn.addEventListener('click', async () => {
-      const code = btn.dataset['code'] ?? '';
-      await navigator.clipboard.writeText(code);
-      btn.textContent = 'COPIED';
-      setTimeout(() => {
-        btn.innerHTML = '<i class="ph-thin ph-copy"></i> COPY';
-      }, 1500);
+      const ok = await copyText(btn.dataset['code'] ?? '');
+      const message = ok ? 'COPIED' : 'COPY FAILED';
+      if (label) label.textContent = message;
+      if (status) status.textContent = ok ? 'Code copied to clipboard' : 'Copy failed';
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (label) label.textContent = 'COPY';
+        if (status) status.textContent = '';
+      }, RESET_MS);
     });
   });
 </script>

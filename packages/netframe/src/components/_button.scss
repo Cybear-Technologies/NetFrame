@@ -54,6 +54,7 @@
 
   &:hover {
     background-color: var(--nf-color-secondary);
+    color: var(--nf-color-on-secondary);
     border-color: var(--nf-color-secondary);
     @include nf-offset-shadow(var(--nf-color-secondary));
   }
@@ -72,6 +73,7 @@
 
   &:hover {
     background-color: var(--nf-color-tertiary);
+    color: var(--nf-color-on-tertiary);
     border-color: var(--nf-color-tertiary);
     @include nf-offset-shadow(var(--nf-color-tertiary));
   }
@@ -104,8 +106,11 @@
   border-color: var(--nf-color-error);
   @include nf-offset-shadow(var(--nf-color-error));
 
+  // Hover swaps to the dark error container; switch to light text so the
+  // label stays readable (error-container is dark in every palette).
   &:hover {
     background-color: var(--nf-color-error-container);
+    color: var(--nf-color-text);
     border-color: var(--nf-color-error);
   }
 

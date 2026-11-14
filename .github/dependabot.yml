@@ -2,7 +2,11 @@ version: 2
 
 updates:
   # ---------------------------------------------------------------------------
-  # Root workspace — pnpm lockfile
+  # npm — whole pnpm workspace (root, packages/netframe, apps/docs)
+  #
+  # One root entry covers every workspace package and keeps pnpm-lock.yaml in
+  # sync. Separate per-directory entries produced duplicate, manifest-only PRs
+  # without lockfile changes, which fail `pnpm install --frozen-lockfile`.
   # ---------------------------------------------------------------------------
   - package-ecosystem: npm
     directory: /
@@ -15,6 +19,11 @@ updates:
     labels:
       - dependencies
     groups:
+      # Astro and its integrations must move together (MDX peers on Astro).
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
       dev-tooling:
         patterns:
           - "typescript"
@@ -23,47 +32,13 @@ updates:
           - "postcss"
           - "autoprefixer"
           - "cssnano"
+          - "@types/node"
         update-types:
           - minor
           - patch
-
-  # ---------------------------------------------------------------------------
-  # Docs site — apps/docs
-  # ---------------------------------------------------------------------------
-  - package-ecosystem: npm
-    directory: /apps/docs
-    schedule:
-      interval: weekly
-      day: monday
-      time: "06:00"
-      timezone: America/Chicago
-    open-pull-requests-limit: 5
-    labels:
-      - dependencies
-      - docs
-    groups:
-      astro:
+      changesets:
         patterns:
-          - "astro"
-          - "@astrojs/*"
-        update-types:
-          - minor
-          - patch
-
-  # ---------------------------------------------------------------------------
-  # Library — packages/netframe
-  # ---------------------------------------------------------------------------
-  - package-ecosystem: npm
-    directory: /packages/netframe
-    schedule:
-      interval: weekly
-      day: monday
-      time: "06:00"
-      timezone: America/Chicago
-    open-pull-requests-limit: 5
-    labels:
-      - dependencies
-      - library
+          - "@changesets/*"
 
   # ---------------------------------------------------------------------------
   # GitHub Actions

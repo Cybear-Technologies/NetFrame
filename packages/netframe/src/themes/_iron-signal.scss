@@ -4,12 +4,13 @@
 //
 // Cyber-Soviet. Tactical Monolith.
 // Industrial, heavy, and authoritative. Mechanized UI with zero softness.
-// Primary:   Revolutionary Red  #FF0000
+// Primary:   Revolutionary Red  #FF5E5E
 // Secondary: Cathode Amber      #FFB000
 // Tertiary:  Cold Steel         #B4B4B4
 // Fonts:     Russo One (display), Orbitron (body/mono), JetBrains Mono (labels)
 //
-// Note: on-primary (#ffffff) on #ff0000 = 4.0:1. Designed for bold/large text.
+// Contrast: brand colours are tuned to reach 4.5:1 as text on every surface
+// and against their on-* colours (checked by test/css.test.mjs).
 
 .nf-theme-iron-signal {
   // ---------------------------------------------------------------------------
@@ -29,8 +30,8 @@
   // Primary — Revolutionary Red
   // ---------------------------------------------------------------------------
 
-  --nf-color-primary:           #ff0000;
-  --nf-color-on-primary:        #ffffff;
+  --nf-color-primary:           #ff5e5e;
+  --nf-color-on-primary:        #000000;
   --nf-color-primary-dim:       #cc0000;
   --nf-color-primary-fixed:     #ff8888;
 
@@ -54,7 +55,7 @@
   // Semantic — coral-red error, distinct from pure primary
   // ---------------------------------------------------------------------------
 
-  --nf-color-error:             #ff4444;
+  --nf-color-error:             #ff5e5e;
   --nf-color-error-container:   #4d0000;
   --nf-color-on-error:          #000000;
 

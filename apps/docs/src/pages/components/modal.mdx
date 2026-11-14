@@ -69,16 +69,24 @@ const overlay = document.getElementById('modal-overlay');
 const modal   = overlay.querySelector('.nf-modal');
 const trigger = document.getElementById('open-modal');
 const close   = modal.querySelector('.nf-modal-close');
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+let isOpen = false;
 
 function openModal() {
+  isOpen = true;
   overlay.classList.remove('nf-hidden');
   overlay.removeAttribute('aria-hidden');
+  // Keep keyboard and screen-reader focus out of the page behind the dialog.
+  overlay.parentElement.querySelectorAll(':scope > :not(#modal-overlay)').forEach((el) => (el.inert = true));
   modal.focus();
 }
 
 function closeModal() {
+  if (!isOpen) return; // Escape on a closed modal must not steal focus.
+  isOpen = false;
   overlay.classList.add('nf-hidden');
   overlay.setAttribute('aria-hidden', 'true');
+  overlay.parentElement.querySelectorAll(':scope > [inert]').forEach((el) => (el.inert = false));
   trigger.focus();
 }
 
@@ -88,9 +96,19 @@ overlay.addEventListener('click', (e) => {
   if (e.target === overlay) closeModal();
 });
 document.addEventListener('keydown', (e) => {
+  if (!isOpen) return;
   if (e.key === 'Escape') closeModal();
+  if (e.key === 'Tab') {
+    // Wrap focus inside the dialog.
+    const items = [...modal.querySelectorAll(FOCUSABLE)];
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
 });
 ```
+
+Place the overlay as a direct child of `<body>` so the `inert` step covers the rest of the page.
 
 ## Class reference
 
