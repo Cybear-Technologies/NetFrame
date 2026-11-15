@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:cloudflare": "pnpm --filter netframe run build && astro build",
     "lint": "astro check",
     "preview": "astro preview",
     "test:browser": "playwright test"
