@@ -22,8 +22,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 4329;
 const VISUAL = '**/visual/**';
-// The focused mobile smoke suite: navigation drawer and touch behaviour.
-const MOBILE = /(docs-nav|mobile-smoke)\.spec\.ts$/;
+// Focused mobile coverage: navigation, touch behaviour, and first-batch native components.
+const MOBILE = /(docs-nav|mobile-smoke|first-batch|tag|tooltip)\.spec\.ts$/;
 
 export default defineConfig({
   testDir: './tests',
@@ -42,8 +42,8 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: VISUAL },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] }, testIgnore: VISUAL, default: false },
     { name: 'webkit', use: { ...devices['Desktop Safari'] }, testIgnore: VISUAL, default: false },
-    { name: 'mobile-chromium', use: { ...devices['Pixel 7'] }, testMatch: MOBILE, default: false },
-    { name: 'mobile-webkit', use: { ...devices['iPhone 14'] }, testMatch: MOBILE, default: false },
+    { name: 'mobile-chromium', use: { ...devices['Pixel 7'] }, testMatch: MOBILE, testIgnore: VISUAL, default: false },
+    { name: 'mobile-webkit', use: { ...devices['iPhone 14'] }, testMatch: MOBILE, testIgnore: VISUAL, default: false },
     {
       name: 'visual',
       use: { ...devices['Desktop Chrome'], deviceScaleFactor: 1 },

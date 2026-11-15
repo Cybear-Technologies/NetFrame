@@ -167,6 +167,9 @@ function buildTokens() {
 
 // Behaviour is consumer-owned. These patterns are the docs' own controllers.
 const PATTERNS = [
+  { name: 'closable tags', page: 'components/tag', heading: 'JavaScript', markup: false,
+    note: 'Needs a data-tag-group containing data-tag-list with direct .nf-tag children and .nf-tag-close buttons, plus a surviving data-tag-fallback focus target. Optional data-tag-status is an established polite status region. Copy the complete Closable tags example from the docs.' },
+  { name: 'alert', page: 'components/alert', heading: 'JavaScript' },
   { name: 'accordion', page: 'components/accordion', heading: 'JavaScript' },
   { name: 'dropdown', page: 'components/dropdown', heading: 'JavaScript' },
   { name: 'tabs', page: 'components/tabs', heading: 'JavaScript' },

@@ -1,0 +1,68 @@
+// NetFrame — Input group
+// Copyright (C) 2026 Cybear Technologies
+// SPDX-License-Identifier: GPL-3.0-only
+
+// Direct children only: addons, .nf-input, .nf-select, .nf-button.
+// Use the explicit stacked modifier when content cannot fit one row.
+.nf-input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+
+  > .nf-input,
+  > .nf-select {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+  }
+
+  > .nf-button,
+  > .nf-input-group-addon {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 40%;
+  }
+
+  > :not(:first-child) {
+    margin-inline-start: calc(-1 * var(--nf-border-medium));
+  }
+
+  // Each control retains its own focus ring, drawn above adjacent borders.
+  > .nf-input:focus,
+  > .nf-select:focus,
+  > .nf-button:focus-visible {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.nf-input-group-addon {
+  display: flex;
+  align-items: center;
+  padding: var(--nf-space-3) var(--nf-space-4);
+  border: var(--nf-border-medium) solid var(--nf-color-primary);
+  background-color: var(--nf-color-surface-high);
+  color: var(--nf-color-text);
+  font-family: var(--nf-font-body);
+  font-size: var(--nf-text-md);
+  overflow-wrap: anywhere;
+}
+
+.nf-input-group-stacked {
+  flex-direction: column;
+
+  > .nf-input,
+  > .nf-select,
+  > .nf-button,
+  > .nf-input-group-addon {
+    flex: auto;
+    width: 100%;
+    max-width: 100%;
+    margin-inline-start: 0;
+  }
+
+  > :not(:first-child) {
+    margin-top: calc(-1 * var(--nf-border-medium));
+  }
+}

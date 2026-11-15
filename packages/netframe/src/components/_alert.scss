@@ -1,0 +1,90 @@
+// NetFrame — Alert
+// Copyright (C) 2026 Cybear Technologies
+// SPDX-License-Identifier: GPL-3.0-only
+
+@use '../mixins/focus-ring' as *;
+
+.nf-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nf-space-3);
+  width: 100%;
+  min-width: 0;
+  padding: var(--nf-space-4);
+  border: var(--nf-border-medium) solid var(--nf-color-border-strong);
+  border-inline-start-width: 4px;
+  background-color: var(--nf-color-surface-high);
+  color: var(--nf-color-text);
+  font-family: var(--nf-font-body);
+  font-size: var(--nf-text-md);
+  overflow-wrap: anywhere;
+
+  &[hidden] { display: none; }
+}
+
+.nf-alert-info    { border-inline-start-color: var(--nf-color-tertiary); }
+.nf-alert-success { border-inline-start-color: var(--nf-color-primary); }
+.nf-alert-warning { border-inline-start-color: var(--nf-color-secondary); }
+.nf-alert-error   { border-inline-start-color: var(--nf-color-error); }
+
+.nf-alert-icon { flex: none; }
+
+.nf-alert-content {
+  flex: 1;
+  min-width: 0;
+
+  > :last-child { margin-bottom: 0; }
+
+  a:not(.nf-button) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+.nf-alert-title {
+  font-family: var(--nf-font-label);
+  font-size: var(--nf-text-lg);
+  letter-spacing: var(--nf-tracking-display);
+  color: var(--nf-color-text);
+  margin: 0 0 var(--nf-space-2);
+}
+
+.nf-alert-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nf-space-3);
+  margin-top: var(--nf-space-3);
+}
+
+.nf-alert-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: var(--nf-border-thin) solid currentColor;
+  background-color: transparent;
+  color: var(--nf-color-text);
+  font: inherit;
+  cursor: crosshair;
+  @include nf-focus-ring(var(--nf-color-tertiary));
+
+  &[hidden] { display: none; }
+
+  &:hover { color: var(--nf-color-tertiary); }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+@media (pointer: coarse) {
+  .nf-alert-close {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}

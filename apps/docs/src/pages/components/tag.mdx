@@ -5,6 +5,7 @@ description: 'Closable chip / tag elements.'
 ---
 
 import ComponentDemo from '../../components/ComponentDemo.astro';
+import ExampleBehavior from '../../components/ExampleBehavior.astro';
 
 # Tag
 
@@ -28,30 +29,35 @@ Inline chip elements for categorization and filtering. Optionally closable.
 
 ## With close button
 
-<ComponentDemo title="Closable tags" code={`<span class="nf-tag nf-tag-primary">
-    UPLINK
-    <button class="nf-tag-close" aria-label="Remove UPLINK tag"></button>
-  </span>
-  <span class="nf-tag nf-tag-secondary">
-    ICE_CORE
-    <button class="nf-tag-close" aria-label="Remove ICE_CORE tag"></button>
-  </span>
-  <span class="nf-tag">
-    NODE_047
-    <button class="nf-tag-close" aria-label="Remove NODE_047 tag"></button>
-  </span>`}>
-  <span class="nf-tag nf-tag-primary">
-    UPLINK
-    <button class="nf-tag-close" aria-label="Remove UPLINK tag"></button>
-  </span>
-  <span class="nf-tag nf-tag-secondary">
-    ICE_CORE
-    <button class="nf-tag-close" aria-label="Remove ICE_CORE tag"></button>
-  </span>
-  <span class="nf-tag">
-    NODE_047
-    <button class="nf-tag-close" aria-label="Remove NODE_047 tag"></button>
-  </span>
+The optional controller below runs this demo. Close buttons use `type="button"` so removing a tag never submits a surrounding form. They stay hidden until the controller initializes. Keep the tag label in an inline span; multiline bare text in MDX can become a paragraph and introduce unwanted spacing.
+
+<ComponentDemo stacked title="Closable tags" code={`<section data-tag-group aria-label="Selected filters">
+    <div data-tag-list style="display:flex;flex-wrap:wrap;gap:var(--nf-space-2)">
+      <span class="nf-tag nf-tag-primary">
+        <span>UPLINK</span>
+        <button class="nf-tag-close" type="button" aria-label="Remove UPLINK tag" hidden></button>
+      </span>
+      <span class="nf-tag nf-tag-secondary">
+        <span>ICE_CORE</span>
+        <button class="nf-tag-close" type="button" aria-label="Remove ICE_CORE tag" hidden></button>
+      </span>
+      <span class="nf-tag">
+        <span>NODE_047</span>
+        <button class="nf-tag-close" type="button" aria-label="Remove NODE_047 tag" hidden></button>
+      </span>
+    </div>
+    <p class="nf-helper" role="status" data-tag-status></p>
+    <a href="#tag-list" data-tag-fallback>Browse tag examples</a>
+  </section>`}>
+  <section data-tag-group aria-label="Selected filters">
+    <div data-tag-list style="display:flex;flex-wrap:wrap;gap:var(--nf-space-2)">
+      <span class="nf-tag nf-tag-primary"><span>UPLINK</span><button class="nf-tag-close" type="button" aria-label="Remove UPLINK tag" hidden></button></span>
+      <span class="nf-tag nf-tag-secondary"><span>ICE_CORE</span><button class="nf-tag-close" type="button" aria-label="Remove ICE_CORE tag" hidden></button></span>
+      <span class="nf-tag"><span>NODE_047</span><button class="nf-tag-close" type="button" aria-label="Remove NODE_047 tag" hidden></button></span>
+    </div>
+    <p class="nf-helper" role="status" data-tag-status></p>
+    <a href="#tag-list" data-tag-fallback>Browse tag examples</a>
+  </section>
 </ComponentDemo>
 
 ## Tag list
@@ -71,6 +77,42 @@ Inline chip elements for categorization and filtering. Optionally closable.
     <span class="nf-tag nf-tag-tertiary">OPEN_SOURCE</span>
   </div>
 </ComponentDemo>
+
+<ExampleBehavior component="tag" />
+
+## JavaScript
+
+NetFrame remains CSS-only. This consumer-owned controller removes a direct tag child of `data-tag-list`. If focus was in the removed tag, it moves to the next enabled close button, then the previous one, then the surviving `data-tag-fallback` link/control. Choose a logical fallback for your application. Outside focus is preserved, disabled buttons are ignored, and separate groups stay independent. The optional status region announces the remaining count without taking focus. Native `disabled` suppresses activation; `aria-disabled` alone requires the guard below.
+
+```js
+document.querySelectorAll('[data-tag-group]').forEach((group) => {
+  const list = group.querySelector('[data-tag-list]');
+  const fallback = group.querySelector('[data-tag-fallback]');
+  const status = group.querySelector('[data-tag-status]');
+  if (!list || !fallback) return;
+  const buttons = () => [...list.querySelectorAll('.nf-tag-close')]
+    .filter((button) => button.closest('[data-tag-group]') === group);
+  buttons().forEach((button) => { button.hidden = false; });
+
+  group.addEventListener('click', (event) => {
+    const button = event.target.closest('.nf-tag-close');
+    if (!button || button.closest('[data-tag-group]') !== group ||
+        button.disabled || button.getAttribute('aria-disabled') === 'true') return;
+    const tag = button.closest('.nf-tag');
+    if (!tag || tag.parentElement !== list) return;
+    const order = buttons().filter((item) => !item.disabled &&
+      item.getAttribute('aria-disabled') !== 'true' && !item.hidden);
+    const index = order.indexOf(button);
+    if (tag.contains(document.activeElement)) {
+      (order[index + 1] ?? order[index - 1] ?? fallback).focus();
+    }
+    tag.remove();
+    if (status) status.textContent = `Tag removed. ${list.querySelectorAll('.nf-tag').length} tags remaining.`;
+  });
+});
+```
+
+Coarse-pointer close buttons have 44px targets; mouse sizes remain compact. Long tag labels wrap while the close control keeps its size. Removal is immediate and has no animation. Screen-reader announcements still require manual verification.
 
 ## Class reference
 

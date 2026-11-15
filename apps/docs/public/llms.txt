@@ -17,6 +17,7 @@ Install: `npm install netframe`, then `import 'netframe/dist/netframe.css'` (opt
 ## Components
 
 - [Accordion](https://netframe.cybeartech.com/components/accordion/): Expand and collapse content sections.
+- [Alert](https://netframe.cybeartech.com/components/alert/): Persistent callouts, feedback, and form-error summaries.
 - [Avatar](https://netframe.cybeartech.com/components/avatar/): User profile images with status indicators.
 - [Badge](https://netframe.cybeartech.com/components/badge/): Compact status labels and notification indicators.
 - [Breadcrumb](https://netframe.cybeartech.com/components/breadcrumb/): Hierarchical path navigation.
@@ -25,12 +26,14 @@ Install: `npm install netframe`, then `import 'netframe/dist/netframe.css'` (opt
 - [Divider](https://netframe.cybeartech.com/components/divider/): Structural horizontal and vertical separators.
 - [Drawer](https://netframe.cybeartech.com/components/drawer/): Slide-in panels from the left or right edge.
 - [Dropdown](https://netframe.cybeartech.com/components/dropdown/): Contextual menus anchored to a trigger element.
+- [Input group](https://netframe.cybeartech.com/components/input-group/): Attached addons and actions composing native form controls.
 - [Input](https://netframe.cybeartech.com/components/input/): Text inputs, selects, checkboxes, radios, and range sliders.
 - [Modal](https://netframe.cybeartech.com/components/modal/): Focused dialogs that block the page.
 - [Pagination](https://netframe.cybeartech.com/components/pagination/): Page navigation for large datasets.
 - [Progress](https://netframe.cybeartech.com/components/progress/): Progress bars and rings for async operations.
 - [Skeleton](https://netframe.cybeartech.com/components/skeleton/): Loading placeholder shimmer blocks.
 - [Spinner](https://netframe.cybeartech.com/components/spinner/): Animated loading indicators.
+- [Switch](https://netframe.cybeartech.com/components/switch/): Native on/off settings with keyboard and form behavior.
 - [Table](https://netframe.cybeartech.com/components/table/): Data tables with sortable headers and row states.
 - [Tabs](https://netframe.cybeartech.com/components/tabs/): Horizontal tab navigation.
 - [Tag](https://netframe.cybeartech.com/components/tag/): Closable chip / tag elements.

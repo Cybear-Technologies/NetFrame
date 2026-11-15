@@ -1,0 +1,204 @@
+---
+layout: '../../layouts/DocsLayout.astro'
+title: 'Alert'
+description: 'Persistent callouts, feedback, and form-error summaries.'
+---
+
+import ComponentDemo from '../../components/ComponentDemo.astro';
+import ExampleBehavior from '../../components/ExampleBehavior.astro';
+
+# Alert
+
+Persistent in-page messages, never auto-dismissed. Hard-edged status rails use the same mappings as Toast: info → tertiary, success → primary, warning → secondary, error → error. Text labels carry meaning without color or an icon library.
+
+## Optional dismissal
+
+Static callouts have **no live-region role**. The optional controller below reveals the close button only after initialization. Each `data-alert-demo` requires a surviving `data-alert-return` focus target; choose a logical next control in your application. No focus moves when the notice appears or when dismissal happens while focus is elsewhere. Native `disabled` suppresses activation; `aria-disabled` alone needs the controller's guard.
+
+<ComponentDemo stacked title="Dismissible maintenance notice" code={`<section data-alert-demo aria-label="Persistent maintenance notice">
+    <div class="nf-alert nf-alert-warning" data-alert>
+      <span class="nf-alert-icon" aria-hidden="true">!</span>
+      <div class="nf-alert-content">
+        <p class="nf-alert-title">MAINTENANCE_WINDOW</p>
+        <p>Uploads pause at 02:00 UTC. Your existing files remain available.</p>
+        <div class="nf-alert-actions">
+          <a class="nf-button nf-button-ghost" href="#error-summary">Review form guidance</a>
+        </div>
+      </div>
+      <button class="nf-alert-close" type="button" data-alert-close
+        aria-label="Dismiss maintenance notice" hidden>×</button>
+    </div>
+    <button class="nf-button nf-button-ghost" type="button" data-alert-return>Continue working</button>
+  </section>`}>
+  <section data-alert-demo aria-label="Persistent maintenance notice">
+    <div class="nf-alert nf-alert-warning" data-alert>
+      <span class="nf-alert-icon" aria-hidden="true">!</span>
+      <div class="nf-alert-content">
+        <p class="nf-alert-title">MAINTENANCE_WINDOW</p>
+        <p>Uploads pause at 02:00 UTC. Your existing files remain available.</p>
+        <div class="nf-alert-actions">
+          <a class="nf-button nf-button-ghost" href="#error-summary">Review form guidance</a>
+        </div>
+      </div>
+      <button class="nf-alert-close" type="button" data-alert-close
+        aria-label="Dismiss maintenance notice" hidden>×</button>
+    </div>
+    <button class="nf-button nf-button-ghost" type="button" data-alert-return>Continue working</button>
+  </section>
+</ComponentDemo>
+
+## Variants
+
+Content, long links, and action labels wrap in narrow columns. Put actions inside `.nf-alert-content` using `.nf-alert-actions`; keep the dismiss control as a direct sibling. Omit the optional icon and close control for a plain callout. Icons are consumer-supplied and decorative icons need `aria-hidden="true"`.
+
+<ComponentDemo stacked title="Static callouts" code={`<div class="nf-alert nf-alert-info">
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">INFO</p>
+      <p>Persistent info message. Read this before continuing.</p>
+    </div>
+  </div>
+  <div class="nf-alert nf-alert-success">
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">SUCCESS</p>
+      <p>Persistent success message. Read this before continuing.</p>
+    </div>
+  </div>
+  <div class="nf-alert nf-alert-warning">
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">WARNING</p>
+      <p>Persistent warning message. Read this before continuing.</p>
+    </div>
+  </div>
+  <div class="nf-alert nf-alert-error">
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">ERROR</p>
+      <p>Persistent error message. Read this before continuing.</p>
+    </div>
+  </div>`}>
+  <div class="nf-alert nf-alert-info">
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">INFO</p>
+      <p>Persistent info message. Read this before continuing.</p>
+    </div>
+  </div>
+  <div class="nf-alert nf-alert-success">
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">SUCCESS</p>
+      <p>Persistent success message. Read this before continuing.</p>
+    </div>
+  </div>
+  <div class="nf-alert nf-alert-warning">
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">WARNING</p>
+      <p>Persistent warning message. Read this before continuing.</p>
+    </div>
+  </div>
+  <div class="nf-alert nf-alert-error">
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">ERROR</p>
+      <p>Persistent error message. Read this before continuing.</p>
+    </div>
+  </div>
+</ComponentDemo>
+
+## Form error summary
+
+Do not use color alone. Provide explicit error text, links to the invalid controls, individual labels, `aria-invalid="true"`, and helper associations. After a failed submission, your validation code may focus a summary with `tabindex="-1"`; do not focus it merely because it exists. This example is static guidance, not a validation engine.
+
+<ComponentDemo stacked title="Error navigation" code={`<div class="nf-field">
+    <div class="nf-alert nf-alert-error" id="error-summary">
+      <div class="nf-alert-content">
+        <p class="nf-alert-title">CHECK_THE_FORM</p>
+        <p><a href="#upload-name">Upload name: enter a name before saving.</a></p>
+      </div>
+    </div>
+    <label class="nf-label" for="upload-name">Upload name (required)</label>
+    <input class="nf-input" id="upload-name" name="upload-name" required
+      aria-invalid="true" aria-describedby="upload-name-error" />
+    <span class="nf-helper nf-helper-error" id="upload-name-error">Error: enter an upload name.</span>
+  </div>`}>
+  <div class="nf-field">
+    <div class="nf-alert nf-alert-error" id="error-summary">
+      <div class="nf-alert-content">
+        <p class="nf-alert-title">CHECK_THE_FORM</p>
+        <p><a href="#upload-name">Upload name: enter a name before saving.</a></p>
+      </div>
+    </div>
+    <label class="nf-label" for="upload-name">Upload name (required)</label>
+    <input class="nf-input" id="upload-name" name="upload-name" required
+      aria-invalid="true" aria-describedby="upload-name-error" />
+    <span class="nf-helper nf-helper-error" id="upload-name-error">Error: enter an upload name.</span>
+  </div>
+</ComponentDemo>
+
+## Dynamic feedback
+
+Establish an empty live region **before** updating its text. Use polite `role="status"` for routine feedback; reserve `role="alert"` for urgent changes. Do not add a role to already-filled static content and assume it announces. Keep actions outside the message region. This demonstration checks locally; it makes no network request and never moves focus.
+
+<ComponentDemo stacked title="Polite connection feedback" code={`<section data-feedback-demo aria-label="Routine feedback">
+    <div class="nf-alert nf-alert-info">
+      <div class="nf-alert-content">
+        <p class="nf-alert-title">SYNC_STATUS</p>
+        <p role="status" data-feedback-message></p>
+      </div>
+    </div>
+    <button class="nf-button" type="button" data-feedback-update>Check connection</button>
+  </section>`}>
+  <section data-feedback-demo aria-label="Routine feedback">
+    <div class="nf-alert nf-alert-info">
+      <div class="nf-alert-content">
+        <p class="nf-alert-title">SYNC_STATUS</p>
+        <p role="status" data-feedback-message></p>
+      </div>
+    </div>
+    <button class="nf-button" type="button" data-feedback-update>Check connection</button>
+  </section>
+</ComponentDemo>
+
+<ExampleBehavior component="alert" />
+
+## JavaScript
+
+Optional consumer-owned controller, executed unchanged by these live demos. Uses scoped hooks so multiple notices do not collide. It neither auto-dismisses nor adds live-region roles.
+
+```js
+document.querySelectorAll('[data-alert-demo]').forEach((demo) => {
+  const alert = demo.querySelector('[data-alert]');
+  const close = alert?.querySelector('[data-alert-close]');
+  const next = demo.querySelector('[data-alert-return]');
+  if (!alert || !close || !next) return;
+  close.hidden = false;
+  close.addEventListener('click', () => {
+    if (close.disabled || close.getAttribute('aria-disabled') === 'true') return;
+    const restore = alert.contains(document.activeElement);
+    if (restore) next.focus();
+    alert.remove();
+  });
+});
+
+document.querySelectorAll('[data-feedback-demo]').forEach((demo) => {
+  const message = demo.querySelector('[data-feedback-message]');
+  demo.querySelector('[data-feedback-update]')?.addEventListener('click', () => {
+    if (message) message.textContent = 'Connection ready. Your files are up to date.';
+  });
+});
+```
+
+## Compatibility and verification limits
+
+CSS only; optional controller uses standard DOM APIs. Same browser floor as NetFrame: Chrome/Edge 111+, Firefox 113+, Safari 16.2+. Automated scans cannot confirm live announcements. Screen-reader announcement and physical-device checks remain manual requirements; no specific screen-reader/browser combination is certified here.
+
+## Class reference
+
+| Class | Description |
+|---|---|
+| `nf-alert` | Persistent surface with wrapping content |
+| `nf-alert-info` | Informational tertiary status rail |
+| `nf-alert-success` | Success primary status rail |
+| `nf-alert-warning` | Warning secondary status rail |
+| `nf-alert-error` | Error status rail |
+| `nf-alert-icon` | Optional non-shrinking consumer icon |
+| `nf-alert-content` | Shrinkable content column |
+| `nf-alert-title` | Visible message heading |
+| `nf-alert-actions` | Wrapping actions inside content |
+| `nf-alert-close` | Optional dismissal button; needs consumer behavior |

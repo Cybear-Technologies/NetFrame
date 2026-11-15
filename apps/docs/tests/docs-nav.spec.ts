@@ -112,7 +112,7 @@ test.describe('phone width (390x844)', () => {
       if (how === 'close button') await closeBtn(page).click();
       if (how === 'scrim') await page.locator('#nav-scrim').click({ position: { x: 380, y: 400 } });
       if (how === 'link') {
-        await page.locator('#docs-sidebar a', { hasText: 'INPUT' }).click();
+        await page.locator('#docs-sidebar').getByRole('link', { name: 'INPUT', exact: true }).click();
         await expect(page).toHaveURL(/\/components\/input\/?$/);
         await settle(page);
         // The new page starts closed and unlocked.

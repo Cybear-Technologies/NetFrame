@@ -100,6 +100,33 @@ test('brand colours reach 4.5:1 as text on every surface and behind their on-* c
   assert.deepEqual(failures, []);
 });
 
+test('alerts use opaque surfaces with readable text and links in all seven palettes', () => {
+  assert.equal(rules.get('.nf-alert')['background-color'], 'var(--nf-color-surface-high)');
+  assert.equal(rules.get('.nf-alert').color, 'var(--nf-color-text)');
+  for (const [name, palette] of Object.entries(palettes())) {
+    const color = (token) => resolveColor(`var(--nf-color-${token})`, palette);
+    for (const token of ['text', 'primary', 'secondary', 'tertiary']) {
+      assert.ok(contrast(color(token), color('surface-high')) >= 4.5, `${name}: alert ${token}`);
+    }
+  }
+  for (const [variant, token] of Object.entries({ info: 'tertiary', success: 'primary', warning: 'secondary', error: 'error' })) {
+    assert.equal(rules.get(`.nf-alert-${variant}`)['border-inline-start-color'], `var(--nf-color-${token})`);
+  }
+});
+
+test('switch state indicators and readonly boundaries meet non-text contrast in every palette', () => {
+  for (const [name, palette] of Object.entries(palettes())) {
+    const color = (token) => resolveColor(`var(--nf-color-${token})`, palette);
+    for (const [fg, bg] of [['text', 'surface-lowest'], ['text-muted', 'surface-lowest'], ['primary', 'surface-lowest'], ['on-primary', 'primary'], ['text-muted', 'surface-low']]) {
+      assert.ok(contrast(color(fg), color(bg)) >= 3, `${name}: ${fg} / ${bg}`);
+    }
+  }
+  assert.equal(rules.get('.nf-input[readonly]')['border-color'], 'var(--nf-color-text-muted)');
+  assert.equal(rules.get('.nf-select').appearance, 'auto');
+  assert.equal(rules.get('.nf-select')['background-image'], undefined);
+  assert.equal(rules.get('.nf-input:focus-visible')['outline-offset'], '2px');
+});
+
 test('tooltips open when a focusable child of the wrapper has focus', () => {
   assert.ok(rules.has('.nf-tooltip-wrap:focus-within .nf-tooltip'));
   for (const pos of ['bottom', 'left', 'right']) {

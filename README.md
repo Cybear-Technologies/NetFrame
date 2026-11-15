@@ -70,7 +70,7 @@ Compiled CSS loads fonts from `./fonts/` next to it, so ship `dist/fonts/` with 
 
 ## `// PAYLOAD`
 
-### 20 components
+### 23 components
 
 | Component | Component | Component | Component |
 | --- | --- | --- | --- |
@@ -79,6 +79,7 @@ Compiled CSS loads fonts from `./fonts/` next to it, so ship `dist/fonts/` with 
 | Tooltip | Modal | Drawer | Toast |
 | Progress | Spinner | Tabs | Accordion |
 | Breadcrumb | Pagination | Divider | Skeleton |
+| Alert | Switch | Input group | — |
 
 **4 utility groups** — Glow/shadows · Scanlines/CRT · Glitch animation · Layout
 
@@ -213,7 +214,7 @@ packages/
   netframe/
     src/
       base/           reset, typography, fonts (@font-face)
-      components/     20 component SCSS partials
+      components/     23 component SCSS partials
       mixins/         focus-ring, glitch, neon-glow, scanlines, truncate
       themes/         6 alternate theme class overrides
       tokens/         colors, typography, spacing, motion

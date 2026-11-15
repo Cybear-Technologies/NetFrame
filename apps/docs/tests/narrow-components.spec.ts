@@ -165,11 +165,24 @@ test.describe('modal and drawer on small screens', () => {
         expect(box.right).toBeLessThanOrEqual(width);
         expect(box.width).toBeLessThanOrEqual(width * 0.9 + 1);
         expect(await isReachable(page.locator('.nf-drawer-header .nf-button'))).toBe(true);
-        for (const b of await page.locator('.nf-drawer-footer .nf-button').all()) expect(await isReachable(b), 'footer action fully visible').toBe(true);
+        for (const b of await page.locator('.nf-drawer-footer .nf-button').all()) expect(await reachableAfterScroll(b), 'footer action reachable without clipping').toBe(true);
+        expect(await isReachable(page.locator('.nf-drawer-header .nf-button'))).toBe(true);
         expect(await page.locator('.nf-drawer-body').evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
       });
     });
   }
+
+  test('drawer scroll fallback keeps footer actions and sticky close control reachable on very short screens', async ({ page }) => {
+    await page.setViewportSize({ width: 667, height: 240 });
+    await loadFixture(page, drawer);
+    const panel = page.locator('.nf-drawer');
+    await finishAnimations(panel);
+    expect(await panel.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
+    for (const b of await page.locator('.nf-drawer-footer .nf-button').all()) {
+      expect(await reachableAfterScroll(b)).toBe(true);
+    }
+    expect(await isReachable(page.locator('.nf-drawer-header .nf-button'))).toBe(true);
+  });
 });
 
 test.describe('toast width and position', () => {
@@ -257,12 +270,37 @@ test.describe('tabs with many labels (documented controller)', () => {
   });
 
   test('a selected tab that starts off-screen is scrolled into view on load, without scrolling the page', async ({ page }) => {
-    await loadFixture(page, `<div style="height:200px">spacer</div>${markup(tabs.length - 1)}`);
-    const t = await rect(page.locator(`#t${tabs.length - 1}`));
-    const l = await rect(page.locator('.nf-tab-list'));
-    expect(t.x).toBeGreaterThanOrEqual(l.x - 1);
-    expect(t.right).toBeLessThanOrEqual(l.right + 1);
+    // Force a real font swap after the inline controller has initialized.
+    await page.route('**/*.woff2', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      await route.continue();
+    });
+    await loadFixture(page, `<div style="height:200px">spacer</div>${markup(tabs.length - 1)}`,
+      `<style>.nf-tab{font-family:'JetBrains Mono',sans-serif}</style>`);
+    await expect.poll(async () => {
+      const t = await rect(page.locator(`#t${tabs.length - 1}`));
+      const l = await rect(page.locator('.nf-tab-list'));
+      return t.x >= l.x - 1 && t.right <= l.right + 1;
+    }).toBe(true);
     expect(await page.evaluate(() => scrollY)).toBe(0);
+  });
+
+  test('selected tab stays visible after label growth and container resizing without scrolling the page', async ({ page }) => {
+    await loadFixture(page, `<div style="height:200px">spacer</div>${markup(tabs.length - 1)}`);
+    // Deterministic metric change, independent of installed fallback fonts.
+    await page.locator('.nf-tab-list').evaluate((el) => {
+      el.style.fontSize = '24px';
+      el.querySelectorAll<HTMLElement>('.nf-tab').forEach((tab) => { tab.style.fontSize = 'inherit'; });
+    });
+    for (const width of [320, 280]) {
+      await page.setViewportSize({ width, height: 568 });
+      await expect.poll(async () => {
+        const t = await rect(page.locator(`#t${tabs.length - 1}`));
+        const l = await rect(page.locator('.nf-tab-list'));
+        return t.x >= l.x - 1 && t.right <= l.right + 1;
+      }).toBe(true);
+      expect(await page.evaluate(() => scrollY)).toBe(0);
+    }
   });
 });
 

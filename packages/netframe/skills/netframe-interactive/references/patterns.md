@@ -4,6 +4,91 @@
 
 NetFrame ships CSS only. These optional controllers are copied from the docs and run in the docs test suite. State lives in ARIA attributes; use unique `id`s per instance.
 
+## Closable tags
+
+Docs: https://netframe.cybeartech.com/components/tag/
+
+Needs a data-tag-group containing data-tag-list with direct .nf-tag children and .nf-tag-close buttons, plus a surviving data-tag-fallback focus target. Optional data-tag-status is an established polite status region. Copy the complete Closable tags example from the docs.
+
+Controller:
+
+```js
+document.querySelectorAll('[data-tag-group]').forEach((group) => {
+  const list = group.querySelector('[data-tag-list]');
+  const fallback = group.querySelector('[data-tag-fallback]');
+  const status = group.querySelector('[data-tag-status]');
+  if (!list || !fallback) return;
+  const buttons = () => [...list.querySelectorAll('.nf-tag-close')]
+    .filter((button) => button.closest('[data-tag-group]') === group);
+  buttons().forEach((button) => { button.hidden = false; });
+
+  group.addEventListener('click', (event) => {
+    const button = event.target.closest('.nf-tag-close');
+    if (!button || button.closest('[data-tag-group]') !== group ||
+        button.disabled || button.getAttribute('aria-disabled') === 'true') return;
+    const tag = button.closest('.nf-tag');
+    if (!tag || tag.parentElement !== list) return;
+    const order = buttons().filter((item) => !item.disabled &&
+      item.getAttribute('aria-disabled') !== 'true' && !item.hidden);
+    const index = order.indexOf(button);
+    if (tag.contains(document.activeElement)) {
+      (order[index + 1] ?? order[index - 1] ?? fallback).focus();
+    }
+    tag.remove();
+    if (status) status.textContent = `Tag removed. ${list.querySelectorAll('.nf-tag').length} tags remaining.`;
+  });
+});
+```
+
+## Alert
+
+Docs: https://netframe.cybeartech.com/components/alert/
+
+Reference markup:
+
+```html
+<section data-alert-demo aria-label="Persistent maintenance notice">
+  <div class="nf-alert nf-alert-warning" data-alert>
+    <span class="nf-alert-icon" aria-hidden="true">!</span>
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">MAINTENANCE_WINDOW</p>
+      <p>Uploads pause at 02:00 UTC. Your existing files remain available.</p>
+      <div class="nf-alert-actions">
+        <a class="nf-button nf-button-ghost" href="#error-summary">Review form guidance</a>
+      </div>
+    </div>
+    <button class="nf-alert-close" type="button" data-alert-close
+      aria-label="Dismiss maintenance notice" hidden>×</button>
+  </div>
+  <button class="nf-button nf-button-ghost" type="button" data-alert-return>Continue working</button>
+</section>
+```
+
+Controller:
+
+```js
+document.querySelectorAll('[data-alert-demo]').forEach((demo) => {
+  const alert = demo.querySelector('[data-alert]');
+  const close = alert?.querySelector('[data-alert-close]');
+  const next = demo.querySelector('[data-alert-return]');
+  if (!alert || !close || !next) return;
+  close.hidden = false;
+  close.addEventListener('click', () => {
+    if (close.disabled || close.getAttribute('aria-disabled') === 'true') return;
+    const restore = alert.contains(document.activeElement);
+    if (restore) next.focus();
+    alert.remove();
+  });
+});
+
+document.querySelectorAll('[data-feedback-demo]').forEach((demo) => {
+  const message = demo.querySelector('[data-feedback-message]');
+  demo.querySelector('[data-feedback-update]')?.addEventListener('click', () => {
+    if (message) message.textContent = 'Connection ready. Your files are up to date.';
+  });
+});
+```
+
 ## Accordion
 
 Docs: https://netframe.cybeartech.com/components/accordion/
@@ -183,14 +268,24 @@ document.querySelectorAll('.nf-tab-list').forEach((list) => {
       t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
       document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
     });
-    // Keep the selected tab visible when the tab list scrolls (many or long labels).
-    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
-    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
-    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
+    revealSelected();
     if (focus) tab.focus();
   }
 
+  function revealSelected() {
+    const tab = tabs.find((t) => t.getAttribute('aria-selected') === 'true');
+    if (!tab) return;
+    // Scroll only the list, never the page. Font swaps and container resizing
+    // can change these bounds after the initial selection.
+    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
+    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
+    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
+  }
+
   select(enabled().find((t) => t.getAttribute('aria-selected') === 'true') ?? enabled()[0]);
+  const resize = new ResizeObserver(revealSelected);
+  resize.observe(list);
+  tabs.forEach((tab) => resize.observe(tab));
 
   list.addEventListener('click', (e) => {
     const tab = e.target.closest('.nf-tab');

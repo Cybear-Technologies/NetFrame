@@ -1,0 +1,167 @@
+---
+layout: '../../layouts/DocsLayout.astro'
+title: 'Input group'
+description: 'Attached addons and actions composing native form controls.'
+---
+
+import ComponentDemo from '../../components/ComponentDemo.astro';
+
+# Input group
+
+Attach a prefix, suffix, or action to existing Input, Select, and Button components. No library JavaScript, implicit group semantics, or shared disabled state.
+
+## Search with decorative prefix
+
+Label the real input. Hide decorative icons or prefixes from assistive technology. A compact Go action leaves room for the search value on a narrow phone; its accessible name is Go: search records. This GET form submits to the same docs page and shows the query in the URL; no search service is provided.
+
+<ComponentDemo stacked title="Native search form" code={`<form role="search" action="/components/input-group/" method="get" style="width:100%">
+    <div class="nf-field">
+      <label class="nf-label" for="site-search">Search records</label>
+      <div class="nf-input-group">
+        <span class="nf-input-group-addon" aria-hidden="true">&gt;_</span>
+        <input class="nf-input" id="site-search" name="q" type="search" />
+        <button class="nf-button nf-button-primary nf-button-sm" type="submit" aria-label="Go: search records">Go</button>
+      </div>
+    </div>
+  </form>`}>
+  <form role="search" action="/components/input-group/" method="get" style="width:100%">
+    <div class="nf-field">
+      <label class="nf-label" for="site-search">Search records</label>
+      <div class="nf-input-group">
+        <span class="nf-input-group-addon" aria-hidden="true">&gt;_</span>
+        <input class="nf-input" id="site-search" name="q" type="search" />
+        <button class="nf-button nf-button-primary nf-button-sm" type="submit" aria-label="Go: search records">Go</button>
+      </div>
+    </div>
+  </form>
+</ComponentDemo>
+
+## Meaningful units
+
+Connect meaningful suffixes with `aria-describedby`; do not hide units needed to understand the value. Keep required instructions and labels visible.
+
+<ComponentDemo stacked title="Suffix with units" code={`<div class="nf-field">
+    <label class="nf-label" for="transfer-limit">Transfer limit (required)</label>
+    <div class="nf-input-group">
+      <input class="nf-input" id="transfer-limit" name="limit" type="number"
+        min="1" value="25" required aria-describedby="transfer-unit" />
+      <span class="nf-input-group-addon" id="transfer-unit">MiB</span>
+    </div>
+  </div>`}>
+  <div class="nf-field">
+    <label class="nf-label" for="transfer-limit">Transfer limit (required)</label>
+    <div class="nf-input-group">
+      <input class="nf-input" id="transfer-limit" name="limit" type="number"
+        min="1" value="25" required aria-describedby="transfer-unit" />
+      <span class="nf-input-group-addon" id="transfer-unit">MiB</span>
+    </div>
+  </div>
+</ComponentDemo>
+
+## Multiple controls and select
+
+Give **every** control its own label. This stacked example preserves the native select picker and arrow. Submit and reset use normal browser behavior. Inputs, single-row selects, addons, and buttons must be direct children of the group; listbox selects (`multiple`/`size`), wrappers, textarea, nested groups, and arbitrary child elements are not supported.
+
+<ComponentDemo stacked title="Select and text control" code={`<form action="/components/input-group/" method="get" style="width:100%">
+    <div class="nf-field">
+      <label class="nf-label" for="record-kind">Record kind</label>
+      <label class="nf-label" for="record-name">Record name</label>
+      <div class="nf-input-group nf-input-group-stacked">
+        <select class="nf-select" id="record-kind" name="kind">
+          <option value="node">Node</option>
+          <option value="archive">Archive</option>
+        </select>
+        <input class="nf-input" id="record-name" name="record" value="NODE_01" />
+        <button class="nf-button nf-button-primary" type="submit">Find record</button>
+      </div>
+    </div>
+  </form>`}>
+  <form action="/components/input-group/" method="get" style="width:100%">
+    <div class="nf-field">
+      <label class="nf-label" for="record-kind">Record kind</label>
+      <label class="nf-label" for="record-name">Record name</label>
+      <div class="nf-input-group nf-input-group-stacked">
+        <select class="nf-select" id="record-kind" name="kind">
+          <option value="node">Node</option>
+          <option value="archive">Archive</option>
+        </select>
+        <input class="nf-input" id="record-name" name="record" value="NODE_01" />
+        <button class="nf-button nf-button-primary" type="submit">Find record</button>
+      </div>
+    </div>
+  </form>
+</ComponentDemo>
+
+## Narrow layout strategy
+
+Default `.nf-input-group` is one attached row. Use a bordered button variant such as `.nf-button-primary` or `.nf-button-ghost`; bare `.nf-button` intentionally retains its transparent border. Controls shrink; each addon or action is bounded to 40% and its text wraps. Use short option labels in a horizontal native select: browsers do not wrap selected option text.
+
+Use **`.nf-input-group-stacked` explicitly** for long prefixes, long actions, several controls, or a narrow parent. It stacks every direct child to full width. Horizontal siblings share one overlapped border; stacked siblings share one overlapped horizontal border. No automatic viewport breakpoint is implied: the parent may be narrow even on desktop. There is no clipping or hidden-overflow workaround.
+
+Each focusable child keeps its own raised focus ring. Validation belongs to the affected control, not the whole group. A disabled input does not disable its adjacent action; the Reset below deliberately remains available.
+
+<ComponentDemo stacked title="Validation, read only, and disabled" code={`<form action="/components/input-group/" method="get" style="width:100%">
+    <div class="nf-field">
+      <label class="nf-label" for="group-error">Endpoint (required)</label>
+      <div class="nf-input-group nf-input-group-stacked">
+        <span class="nf-input-group-addon" id="endpoint-prefix">HTTPS endpoint on the private network</span>
+        <input class="nf-input" id="group-error" name="endpoint" required
+          value="INVALID_ENDPOINT" aria-invalid="true"
+          aria-describedby="endpoint-prefix endpoint-error" />
+        <button class="nf-button nf-button-primary" type="submit">Validate and save this endpoint configuration</button>
+      </div>
+      <span class="nf-helper nf-helper-error" id="endpoint-error">Error: enter a valid private endpoint.</span>
+      <label class="nf-label" for="group-readonly">Assigned node (read only)</label>
+      <div class="nf-input-group">
+        <input class="nf-input" id="group-readonly" name="node" value="NODE_01" readonly />
+        <span class="nf-input-group-addon" aria-hidden="true">ID</span>
+      </div>
+      <label class="nf-label" for="group-disabled">Managed key (disabled)</label>
+      <div class="nf-input-group">
+        <input class="nf-input" id="group-disabled" name="key" value="ADMIN_ONLY" disabled />
+        <button class="nf-button nf-button-ghost" type="reset">Reset</button>
+      </div>
+    </div>
+  </form>`}>
+  <form action="/components/input-group/" method="get" style="width:100%">
+    <div class="nf-field">
+      <label class="nf-label" for="group-error">Endpoint (required)</label>
+      <div class="nf-input-group nf-input-group-stacked">
+        <span class="nf-input-group-addon" id="endpoint-prefix">HTTPS endpoint on the private network</span>
+        <input class="nf-input" id="group-error" name="endpoint" required
+          value="INVALID_ENDPOINT" aria-invalid="true"
+          aria-describedby="endpoint-prefix endpoint-error" />
+        <button class="nf-button nf-button-primary" type="submit">Validate and save this endpoint configuration</button>
+      </div>
+      <span class="nf-helper nf-helper-error" id="endpoint-error">Error: enter a valid private endpoint.</span>
+      <label class="nf-label" for="group-readonly">Assigned node (read only)</label>
+      <div class="nf-input-group">
+        <input class="nf-input" id="group-readonly" name="node" value="NODE_01" readonly />
+        <span class="nf-input-group-addon" aria-hidden="true">ID</span>
+      </div>
+      <label class="nf-label" for="group-disabled">Managed key (disabled)</label>
+      <div class="nf-input-group">
+        <input class="nf-input" id="group-disabled" name="key" value="ADMIN_ONLY" disabled />
+        <button class="nf-button nf-button-ghost" type="reset">Reset</button>
+      </div>
+    </div>
+  </form>
+</ComponentDemo>
+
+## Native state ownership
+
+Readonly text controls remain focusable and submitted, but cannot be edited. Disabled controls are omitted from submission and native keyboard navigation. Prefer native `disabled`; `aria-disabled` supplies styling and semantics only, so consumers must prevent activation/editing if they use it instead.
+
+`aria-invalid` does not perform validation or block submission. Provide linked error text and your application validation. Required fields still use native constraint validation. The static endpoint error above is illustrative, not a URL-validation engine. Use [Alert's error summary](/components/alert/#form-error-summary) for navigation to invalid controls.
+
+## Compatibility
+
+Same browser floor as NetFrame: Chrome/Edge 111+, Firefox 113+, Safari 16.2+. Selects deliberately keep their native arrow rather than a hard-coded green SVG. Native pickers and option truncation remain platform-owned; use stacked markup and suitable labels rather than promising arbitrary strings fit one row. No new runtime dependencies or exports.
+
+## Class reference
+
+| Class | Description |
+|---|---|
+| `nf-input-group` | Joined row of direct input, select, addon, or button children |
+| `nf-input-group-addon` | Bounded, wrapping prefix or suffix; associate meaningful content |
+| `nf-input-group-stacked` | Explicit full-width vertical composition with shared borders |

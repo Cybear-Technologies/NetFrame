@@ -12,6 +12,8 @@ Form controls. Wrap each control in `.nf-field` for consistent label + helper te
 
 Connect every `.nf-label` to its control with `for`/`id` (or wrap the control in the `<label>`), and point the control at its helper text with `aria-describedby`. For errors, set `aria-invalid="true"`: it applies the same error styling as `.nf-input-error`, so the visual and announced states stay in sync.
 
+For binary on/off settings, use the dedicated [Switch](/components/switch/) component. It retains native checkbox submission and reset behavior. Use [Input group](/components/input-group/) to attach prefixes, units, selects, and actions.
+
 ## Text input
 
 <ComponentDemo stacked title="Default" code={`<div class="nf-field">
@@ -69,6 +71,14 @@ Connect every `.nf-label` to its control with `for`/`id` (or wrap the control in
   </div>
 </ComponentDemo>
 
+## Readonly, disabled, and focus
+
+Readonly text controls remain focusable and included in submission. Disabled controls cannot be edited, are skipped by Tab, and are omitted from submission. `aria-disabled="true"` only supplies styling and semantics; prefer native `disabled` because ARIA does not suppress editing or activation. See [Input group state examples](/components/input-group/#narrow-layout-strategy).
+
+Required instructions belong in the label or associated helper text; `required` retains native browser validation. `aria-invalid="true"` and a linked error message describe application errors, but do not replace validation. [Alert error summaries](/components/alert/#form-error-summary) link back to invalid controls.
+
+Keyboard focus uses an explicit outline independently of the control border, including inside attached groups. Selects now retain the native arrow, which adapts to platform themes and forced colors rather than embedding a green SVG.
+
 ## Checkbox & Radio
 
 <ComponentDemo title="Checkbox" code={`<label class="nf-checkbox">
@@ -102,7 +112,7 @@ Connect every `.nf-label` to its control with `for`/`id` (or wrap the control in
 | `nf-helper` | Helper text; link it with `aria-describedby` |
 | `nf-helper-error` | Error helper text |
 | `nf-input` | Text input |
-| `nf-select` | Select with a custom arrow |
+| `nf-select` | Native select with a platform arrow |
 | `nf-textarea` | Multi-line text input |
 | `nf-input-error` | Error state for an input (same look as `aria-invalid="true"`) |
 | `nf-select-error` | Error state for a select |

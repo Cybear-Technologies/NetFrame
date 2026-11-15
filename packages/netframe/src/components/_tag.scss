@@ -2,6 +2,8 @@
 // Copyright (C) 2026 Cybear Technologies
 // SPDX-License-Identifier: GPL-3.0-only
 
+@use '../mixins/focus-ring' as *;
+
 // ---------------------------------------------------------------------------
 // Base
 // ---------------------------------------------------------------------------
@@ -52,6 +54,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 1rem;
   height: 1rem;
   padding: 0;
@@ -62,12 +65,28 @@
   cursor: crosshair;
   line-height: 1;
   font-size: var(--nf-text-base);
+  @include nf-focus-ring(var(--nf-color-tertiary));
+
+  &[hidden] { display: none; }
 
   &:hover {
     opacity: 1;
   }
 
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
   &::before {
     content: '×';
+  }
+}
+
+@media (pointer: coarse) {
+  .nf-tag-close {
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }

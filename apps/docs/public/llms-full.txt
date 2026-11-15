@@ -12,6 +12,8 @@ Generated from the repository by `scripts/build-skills.mjs`.
 
 NetFrame ships styles only. Open/closed and selected state is read from ARIA attributes and `hidden`, so your JavaScript sets those. `references/patterns.md` has the reference markup and a controller for each pattern. These are the docs' own snippets, executed by the NetFrame browser test suite, so prefer them over rewriting.
 
+Native switches require no controller: the checkbox's `checked` property owns state, and native submission/reset rules apply. Do not synchronize redundant `aria-checked`.
+
 ## Principles
 
 1. **State in attributes, literal strings.** Write `aria-expanded="true"` or `"false"` and `aria-hidden="true"` or `"false"`. The CSS hides menus only for `aria-hidden="true"` or `.nf-hidden`; toggling the attribute on and off will not hide them.
@@ -33,6 +35,8 @@ NetFrame ships styles only. Open/closed and selected state is read from ARIA att
 | Blocking dialog | Modal |
 | Side panel | Drawer |
 | Transient messages | Toast |
+| Removable filter chips | Closable tags (preserve focus when removing the active close control) |
+| Persistent callouts with optional dismissal or dynamic feedback | Alert (static callouts need no controller) |
 | Click-to-sort columns | Table sorting |
 | Paged lists | Pagination (local demo; for real navigation use anchors with real URLs) |
 | Unread indicator with a list | Notification disclosure (badge dot) |
@@ -135,6 +139,9 @@ import 'netframe/dist/themes.css'; // optional: six alternate palettes
 
 NetFrame styles states; you supply the semantics.
 
+- Switches use a native checkbox with `role="switch"`; `checked` owns state, not redundant `aria-checked`. Use native `disabled`; unchecked and disabled values are omitted from submission.
+- Alerts are persistent, not automatically live regions. Establish a polite status region before routine updates; reserve alerts for urgent changes. Dismissal must preserve focus.
+- Input groups support direct control/addon/button children; use `nf-input-group-stacked` for long content or narrow parents. Meaningful units use `aria-describedby`.
 - Every form control needs a `<label for>`; link helper or error text with `aria-describedby`; mark invalid fields with `aria-invalid="true"` (styled like `nf-input-error`).
 - Progress bars and rings need `role="progressbar"`, an accessible name and `aria-valuenow/min/max`. Omit `aria-valuenow` when indeterminate.
 - Links styled as buttons stay `<a class="nf-button">`; do not add `role="button"`.
@@ -154,12 +161,12 @@ NetFrame styles states; you supply the semantics.
 
 1. Look up each component in `references/classes.md` and read its docs page for markup structure.
 2. Write markup using only those classes; add any custom styles with tokens.
-3. For anything with behaviour, copy the matching controller from the `netframe-interactive` skill.
+3. Keep native form behavior. For optional custom behavior, copy the matching controller from the `netframe-interactive` skill.
 4. Check keyboard use, focus visibility, labels and contrast before finishing.
 
 ## Components and utilities
 
-Components: accordion, avatar, badge, breadcrumb, button, card, divider, drawer, dropdown, input (field, select, textarea, checkbox, radio, range), modal, pagination, progress, skeleton, spinner, table, tabs, tag, toast, tooltip. Utility groups: glow and shadows, scanlines and CRT, glitch, layout. The per-class tables are in `references/classes.md`.
+Components: accordion, alert, avatar, badge, breadcrumb, button, card, divider, drawer, dropdown, input (field, select, textarea, checkbox, radio, range), input group, modal, pagination, progress, skeleton, spinner, switch, table, tabs, tag, toast, tooltip. Utility groups: glow and shadows, scanlines and CRT, glitch, layout. The per-class tables are in `references/classes.md`.
 
 ---
 
@@ -179,6 +186,24 @@ Docs: https://netframe.cybeartech.com/components/accordion/
 | `nf-accordion-icon` | CSS caret — flips when trigger has `aria-expanded="true"` |
 | `nf-accordion-item` | Individual collapsible section |
 | `nf-accordion-trigger` | Clickable header button — set `aria-expanded` |
+
+## Alert (component)
+
+Docs: https://netframe.cybeartech.com/components/alert/
+
+| Class | Description |
+| --- | --- |
+| `nf-alert` | Persistent surface with wrapping content |
+| `nf-alert-actions` | Wrapping actions inside content |
+| `nf-alert-close` | Optional dismissal button; needs consumer behavior |
+| `nf-alert-content` | Shrinkable content column |
+| `nf-alert-error` | Error status rail |
+| `nf-alert-icon` | Optional non-shrinking consumer icon |
+| `nf-alert-info` | Informational tertiary status rail |
+| `nf-alert-success` | Success primary status rail |
+| `nf-alert-title` | Visible message heading |
+| `nf-alert-warning` | Warning secondary status rail |
+| `nf-button` | Base — required on all buttons |
 
 ## Avatar (component)
 
@@ -324,10 +349,23 @@ Docs: https://netframe.cybeartech.com/components/input/
 | `nf-label` | Field label; associate it with `for`/`id` |
 | `nf-radio` | Styled radio button |
 | `nf-range` | Range slider |
-| `nf-select` | Select with a custom arrow |
+| `nf-select` | Native select with a platform arrow |
 | `nf-select-error` | Error state for a select |
 | `nf-textarea` | Multi-line text input |
 | `nf-textarea-error` | Error state for a textarea |
+
+## Input-group (component)
+
+Docs: https://netframe.cybeartech.com/components/input-group/
+
+| Class | Description |
+| --- | --- |
+| `nf-button` | Base — required on all buttons |
+| `nf-input` | Text input |
+| `nf-input-group` | Joined row of direct input, select, addon, or button children |
+| `nf-input-group-addon` | Bounded, wrapping prefix or suffix; associate meaningful content |
+| `nf-input-group-stacked` | Explicit full-width vertical composition with shared borders |
+| `nf-select` | Native select with a platform arrow |
 
 ## Modal (component)
 
@@ -413,6 +451,17 @@ Docs: https://netframe.cybeartech.com/components/spinner/
 | `nf-spinner-sm` | 1rem |
 | `nf-spinner-tertiary` | Tertiary-colour cells |
 | `nf-spinner-xl` | 4rem |
+
+## Switch (component)
+
+Docs: https://netframe.cybeartech.com/components/switch/
+
+| Class | Description |
+| --- | --- |
+| `nf-switch` | Wrapping clickable label for a native on/off checkbox |
+| `nf-switch-input` | Visually hidden, keyboard-accessible native checkbox |
+| `nf-switch-label` | Stable accessible label; wraps long text |
+| `nf-switch-track` | Decorative square track and position-based state indicator |
 
 ## Table (component)
 
@@ -977,6 +1026,91 @@ Apply one class to `<html>` (or any container). Each overrides the tokens listed
 
 NetFrame ships CSS only. These optional controllers are copied from the docs and run in the docs test suite. State lives in ARIA attributes; use unique `id`s per instance.
 
+## Closable tags
+
+Docs: https://netframe.cybeartech.com/components/tag/
+
+Needs a data-tag-group containing data-tag-list with direct .nf-tag children and .nf-tag-close buttons, plus a surviving data-tag-fallback focus target. Optional data-tag-status is an established polite status region. Copy the complete Closable tags example from the docs.
+
+Controller:
+
+```js
+document.querySelectorAll('[data-tag-group]').forEach((group) => {
+  const list = group.querySelector('[data-tag-list]');
+  const fallback = group.querySelector('[data-tag-fallback]');
+  const status = group.querySelector('[data-tag-status]');
+  if (!list || !fallback) return;
+  const buttons = () => [...list.querySelectorAll('.nf-tag-close')]
+    .filter((button) => button.closest('[data-tag-group]') === group);
+  buttons().forEach((button) => { button.hidden = false; });
+
+  group.addEventListener('click', (event) => {
+    const button = event.target.closest('.nf-tag-close');
+    if (!button || button.closest('[data-tag-group]') !== group ||
+        button.disabled || button.getAttribute('aria-disabled') === 'true') return;
+    const tag = button.closest('.nf-tag');
+    if (!tag || tag.parentElement !== list) return;
+    const order = buttons().filter((item) => !item.disabled &&
+      item.getAttribute('aria-disabled') !== 'true' && !item.hidden);
+    const index = order.indexOf(button);
+    if (tag.contains(document.activeElement)) {
+      (order[index + 1] ?? order[index - 1] ?? fallback).focus();
+    }
+    tag.remove();
+    if (status) status.textContent = `Tag removed. ${list.querySelectorAll('.nf-tag').length} tags remaining.`;
+  });
+});
+```
+
+## Alert
+
+Docs: https://netframe.cybeartech.com/components/alert/
+
+Reference markup:
+
+```html
+<section data-alert-demo aria-label="Persistent maintenance notice">
+  <div class="nf-alert nf-alert-warning" data-alert>
+    <span class="nf-alert-icon" aria-hidden="true">!</span>
+    <div class="nf-alert-content">
+      <p class="nf-alert-title">MAINTENANCE_WINDOW</p>
+      <p>Uploads pause at 02:00 UTC. Your existing files remain available.</p>
+      <div class="nf-alert-actions">
+        <a class="nf-button nf-button-ghost" href="#error-summary">Review form guidance</a>
+      </div>
+    </div>
+    <button class="nf-alert-close" type="button" data-alert-close
+      aria-label="Dismiss maintenance notice" hidden>×</button>
+  </div>
+  <button class="nf-button nf-button-ghost" type="button" data-alert-return>Continue working</button>
+</section>
+```
+
+Controller:
+
+```js
+document.querySelectorAll('[data-alert-demo]').forEach((demo) => {
+  const alert = demo.querySelector('[data-alert]');
+  const close = alert?.querySelector('[data-alert-close]');
+  const next = demo.querySelector('[data-alert-return]');
+  if (!alert || !close || !next) return;
+  close.hidden = false;
+  close.addEventListener('click', () => {
+    if (close.disabled || close.getAttribute('aria-disabled') === 'true') return;
+    const restore = alert.contains(document.activeElement);
+    if (restore) next.focus();
+    alert.remove();
+  });
+});
+
+document.querySelectorAll('[data-feedback-demo]').forEach((demo) => {
+  const message = demo.querySelector('[data-feedback-message]');
+  demo.querySelector('[data-feedback-update]')?.addEventListener('click', () => {
+    if (message) message.textContent = 'Connection ready. Your files are up to date.';
+  });
+});
+```
+
 ## Accordion
 
 Docs: https://netframe.cybeartech.com/components/accordion/
@@ -1156,14 +1290,24 @@ document.querySelectorAll('.nf-tab-list').forEach((list) => {
       t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
       document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
     });
-    // Keep the selected tab visible when the tab list scrolls (many or long labels).
-    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
-    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
-    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
+    revealSelected();
     if (focus) tab.focus();
   }
 
+  function revealSelected() {
+    const tab = tabs.find((t) => t.getAttribute('aria-selected') === 'true');
+    if (!tab) return;
+    // Scroll only the list, never the page. Font swaps and container resizing
+    // can change these bounds after the initial selection.
+    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
+    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
+    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
+  }
+
   select(enabled().find((t) => t.getAttribute('aria-selected') === 'true') ?? enabled()[0]);
+  const resize = new ResizeObserver(revealSelected);
+  resize.observe(list);
+  tabs.forEach((tab) => resize.observe(tab));
 
   list.addEventListener('click', (e) => {
     const tab = e.target.closest('.nf-tab');

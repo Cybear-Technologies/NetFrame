@@ -1,0 +1,98 @@
+---
+layout: '../../layouts/DocsLayout.astro'
+title: 'Switch'
+description: 'Native on/off settings with keyboard and form behavior.'
+---
+
+import ComponentDemo from '../../components/ComponentDemo.astro';
+
+# Switch
+
+Binary on/off settings using a **native checkbox** with `role="switch"`. No JavaScript is required. Use [Checkbox](/components/input/#checkbox--radio) for selection or mixed/indeterminate states instead.
+
+## Explicit saving
+
+This example saves **on submission**, not immediately. The GET request reloads this documentation page with submitted values in its URL; it does not persist account settings. A real application owns persistence. Reset restores the initial checked values.
+
+<ComponentDemo stacked title="Native settings form" code={`<form action="/components/switch/" method="get">
+    <div class="nf-field">
+      <label class="nf-switch">
+        <input class="nf-switch-input" type="checkbox" role="switch"
+          name="notifications" value="enabled" checked
+          aria-describedby="notification-help" />
+        <span class="nf-switch-track" aria-hidden="true"></span>
+        <span class="nf-switch-label">NOTIFICATIONS</span>
+      </label>
+      <p class="nf-helper" id="notification-help">Saved only when you submit this form.</p>
+      <label class="nf-switch">
+        <input class="nf-switch-input" type="checkbox" role="switch"
+          name="telemetry" value="enabled" />
+        <span class="nf-switch-track" aria-hidden="true"></span>
+        <span class="nf-switch-label">OPTIONAL_TELEMETRY</span>
+      </label>
+      <label class="nf-switch">
+        <input class="nf-switch-input" type="checkbox" role="switch"
+          name="managed" value="enabled" checked disabled
+          aria-describedby="managed-help" />
+        <span class="nf-switch-track" aria-hidden="true"></span>
+        <span class="nf-switch-label">MANAGED_BY_ADMINISTRATOR</span>
+      </label>
+      <p class="nf-helper" id="managed-help">Disabled: only an administrator can change this setting.</p>
+      <button class="nf-button nf-button-primary" type="submit">Save settings</button>
+      <button class="nf-button nf-button-ghost" type="reset">Reset settings</button>
+    </div>
+  </form>`}>
+  <form action="/components/switch/" method="get">
+    <div class="nf-field">
+      <label class="nf-switch">
+        <input class="nf-switch-input" type="checkbox" role="switch"
+          name="notifications" value="enabled" checked
+          aria-describedby="notification-help" />
+        <span class="nf-switch-track" aria-hidden="true"></span>
+        <span class="nf-switch-label">NOTIFICATIONS</span>
+      </label>
+      <p class="nf-helper" id="notification-help">Saved only when you submit this form.</p>
+      <label class="nf-switch">
+        <input class="nf-switch-input" type="checkbox" role="switch"
+          name="telemetry" value="enabled" />
+        <span class="nf-switch-track" aria-hidden="true"></span>
+        <span class="nf-switch-label">OPTIONAL_TELEMETRY</span>
+      </label>
+      <label class="nf-switch">
+        <input class="nf-switch-input" type="checkbox" role="switch"
+          name="managed" value="enabled" checked disabled
+          aria-describedby="managed-help" />
+        <span class="nf-switch-track" aria-hidden="true"></span>
+        <span class="nf-switch-label">MANAGED_BY_ADMINISTRATOR</span>
+      </label>
+      <p class="nf-helper" id="managed-help">Disabled: only an administrator can change this setting.</p>
+      <button class="nf-button nf-button-primary" type="submit">Save settings</button>
+      <button class="nf-button nf-button-ghost" type="reset">Reset settings</button>
+    </div>
+  </form>
+</ComponentDemo>
+
+## Markup contract
+
+Use a wrapping `label.nf-switch` containing, in order: `input.nf-switch-input[type="checkbox"][role="switch"]`, decorative `span.nf-switch-track[aria-hidden="true"]`, and `span.nf-switch-label`. The full label is clickable; long text wraps and the square-ended track does not shrink. Do not put links or buttons inside that label.
+
+The native `checked` property is the single source of truth. Do **not** add redundant `aria-checked`, change the accessible label when toggling, or set `indeterminate`. Space toggles the focused control. The input stays keyboard-accessible and is never hidden with `display:none`.
+
+Only checked, named, enabled controls contribute their `value` to normal form submission. Unchecked and disabled switches are omitted. If your server needs an explicit false value, normalize missing values there; avoid duplicate hidden fields unless your server deliberately handles repeated names.
+
+Use native `disabled` to prevent changes. `aria-disabled="true"` provides styling and semantics only; it does not suppress click, keyboard, or form submission. Consumer code must guard those paths if using it. Invalid switches accept `aria-invalid="true"`; also provide explicit error text linked by `aria-describedby`.
+
+## Accessibility and compatibility
+
+Focus transfers visually to the track; thumb position distinguishes on/off without relying only on color. Forced colors uses system colors; reduced motion removes thumb animation. Coarse-pointer labels have a 44px minimum height without inflating mouse controls.
+
+Same browser floor as NetFrame: Chrome/Edge 111+, Firefox 113+, Safari 16.2+. Current Chromium, Firefox, and WebKit are the automated targets. Screen-reader/browser combinations and physical-device behavior require manual validation; automated checks are not an announcement certification.
+
+## Class reference
+
+| Class | Description |
+|---|---|
+| `nf-switch` | Wrapping clickable label for a native on/off checkbox |
+| `nf-switch-input` | Visually hidden, keyboard-accessible native checkbox |
+| `nf-switch-track` | Decorative square track and position-based state indicator |
+| `nf-switch-label` | Stable accessible label; wraps long text |

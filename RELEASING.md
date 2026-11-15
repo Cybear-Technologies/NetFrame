@@ -2,6 +2,8 @@
 
 ## Status
 
+- `netframe@0.2.4` is prepared in the working tree at the maintainer's requested exact version. Pending mobile, first-batch component, drawer/tabs, tag, and tooltip Changesets have been consolidated into `packages/netframe/CHANGELOG.md` and consumed; no additional minor bump is pending. This is local release preparation, not confirmation of npm publication. Push/merge and release-environment approval remain maintainer actions.
+
 - `netframe@0.2.0` was published manually (no provenance). `0.2.1` was the first release through GitHub Actions trusted publishing (git tag `netframe@0.2.1` created). At the time of writing the registry listing was still propagating: confirm `npm view netframe versions dist-tags` shows 0.2.1 as `latest`, and that the npm page shows a provenance badge.
 - `0.0.0-stage` is a placeholder version on npm from the initial setup. Harmless; npm does not allow reuse of its number.
 - Release automation is enabled (`NPM_RELEASE_ENABLED=true`). Trusted publisher: `Cybear-Technologies` / `NetFrame`, `release.yml`, environment `release`.
@@ -48,9 +50,14 @@ Cloudflare project settings (Workers & Pages → Create → connect `Cybear-Tech
 | --- | --- |
 | Root directory | `apps/docs` |
 | Build command | `pnpm run build:cloudflare` (single line; Cloudflare installs dependencies itself) |
-| Deploy command | `npx wrangler deploy` |
+| Production deploy command | `npx wrangler deploy` |
+| Non-production branch deploy command | `npx wrangler preview` |
 | Variables | `NODE_VERSION=22`, `PNPM_VERSION=9.15.9` |
 | Custom domain | `netframe.cybeartech.com` (project → Settings → Domains) |
+
+Wrangler 4.162.0 requires a top-level `previews` block for `wrangler preview`; `apps/docs/wrangler.jsonc` opts in with `"previews": {}`. Keep `assets`, `compatibility_date`, and the custom 404 configuration at the top level, not inside `previews`. A log saying `wrangler preview` identifies a Preview deployment, not the production `wrangler deploy` path. If the failing build is meant for production, correct its deploy command in the Cloudflare dashboard instead. The open-beta warning is informational; the missing block is the blocking error. See [Worker Previews configuration](https://developers.cloudflare.com/workers/previews/configuration/#wrangler-configuration-file).
+
+Local validation without uploading: build the site, then run `wrangler deploy --dry-run` from `apps/docs`. The Preview command has no dry-run option in 4.162.0; do not run it as a supposedly write-free check.
 
 `build:cloudflare` (in `apps/docs/package.json`) builds the library, then the docs. Keep the dashboard field to that one short command: a pasted line break splits `&&` chains and `sh` fails with `Syntax error: "&&" unexpected`. The library must build before the docs: the docs copy its CSS and fonts into `public/`. The canonical origin is `https://netframe.cybeartech.com`, served at the domain root (links are root-relative).
 
