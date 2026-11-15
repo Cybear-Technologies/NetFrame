@@ -68,6 +68,12 @@ Before finishing, verify that the existing plan is the only file you changed and
 
 This section is current; sections 1–9 below are the audit that drove it. Where they disagree, this section wins. Nothing was staged, committed, pushed, published or deployed. No PRs were modified. This file remains untracked.
 
+## TypeScript compatibility constraint — confirmed by CI
+
+User supplied CI output confirming `astro check` rejects TypeScript 7.0 and recommends retaining 6.x; `@astrojs/ts-content-mapper` support for 7.1+ is experimental. All three manifests already use `^6.0.3` (excludes 7); no dependency or lockfile change needed. Added Dependabot ignore for TypeScript >=7 and documented the constraint in AGENTS.md. This strengthens the earlier TypeScript-7 PR deferral: Astro checker incompatibility, not merely workspace alignment. Do not remove Astro checking to accept the bump. Revisit compiler/tooling together when a supported migration exists.
+
+Verification: `pnpm run lint` and `pnpm run typecheck` exit 0; Dependabot YAML parses, ignore rule asserted, all three compiler ranges verified. Logs: `/tmp/nf-typescript-compat-lint.log`, `/tmp/nf-typescript-compat-typecheck.log`. No PR changes, installs, commits or publishing.
+
 ## Latest notification-control repair — preparing 0.2.0
 
 Replaced the bare details/summary demo with NotificationExample.astro and explicitly copied demo-only CSS. It now renders a framed list with row separators, timestamps/read labels, unread count, stable-width/reserved-space layout, and native buttons. The exact optional MDX controller runs via ExampleBehavior: repeated click, outside click, Escape (restores focus), focus leaving the control, and explicit mark-all-read (clears dot, zeroes count, announces read state, preserves panel/focus and read state across reopening). No library runtime added. Copied HTML/CSS + JavaScript are self-contained; IDs must be unique for multiple instances.

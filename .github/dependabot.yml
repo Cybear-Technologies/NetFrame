@@ -16,6 +16,11 @@ updates:
       time: "06:00"
       timezone: America/Chicago
     open-pull-requests-limit: 10
+    # astro check rejects TypeScript 7. Keep workspace compilers on 6.x until
+    # Astro has a supported replacement; ts-content-mapper is experimental.
+    ignore:
+      - dependency-name: typescript
+        versions: [">=7.0.0"]
     labels:
       - dependencies
     groups:

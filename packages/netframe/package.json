@@ -8,7 +8,7 @@
   "contributors": [
     "Jackson Chandler"
   ],
-  "bugs": "https://github.com/JacksonChandler/NetFrame/issues",
+  "bugs": "https://github.com/Cybear-Technologies/NetFrame/issues",
   "keywords": [
     "css",
     "cyberpunk",
@@ -17,10 +17,10 @@
     "sass",
     "scss"
   ],
-  "homepage": "https://github.com/JacksonChandler/NetFrame#readme",
+  "homepage": "https://github.com/Cybear-Technologies/NetFrame#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JacksonChandler/NetFrame.git",
+    "url": "git+https://github.com/Cybear-Technologies/NetFrame.git",
     "directory": "packages/netframe"
   },
   "exports": {

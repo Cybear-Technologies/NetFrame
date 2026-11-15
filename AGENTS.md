@@ -27,6 +27,7 @@ Generated, never edit by hand: `packages/netframe/dist/`, `apps/docs/dist/`, `ap
 ## Toolchain
 
 - Node **22.23.4+** (`.nvmrc`), pnpm **9.15.9** (root `packageManager`; Corepack or a recent pnpm will select it). Running another pnpm major can rewrite `node_modules` (store mismatch) and change the lockfile format.
+- Keep TypeScript on **6.x**, aligned across root/library/docs. `astro check` currently rejects TypeScript 7. Dependabot ignores TypeScript >=7 until a supported Astro typechecking migration is validated. Do not drop Astro checks or adopt experimental `@astrojs/ts-content-mapper` just to merge a compiler bump.
 - Always change manifests and `pnpm-lock.yaml` together (`pnpm add` / `pnpm update`), then run `pnpm install --frozen-lockfile` to confirm.
 - One-time setup for browser tests: `pnpm --filter @netframe/docs exec playwright install chromium`.
 - Extra browser coverage: install `firefox webkit` the same way, then run `pnpm --filter @netframe/docs exec playwright test --project=firefox --project=webkit`. These opt-in projects also run in `.github/workflows/browsers.yml` nightly/manually. Chromium remains the default required check. Firefox/WebKit mock the clipboard success path because Chromium's permission names are not portable; Chromium tests the real clipboard.
