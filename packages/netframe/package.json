@@ -66,7 +66,7 @@
     "test": "tsx scripts/build.ts && node --test \"test/*.test.mjs\""
   },
   "devDependencies": {
-    "@types/node": "^22.20.5",
+    "@types/node": "^26.6.6",
     "autoprefixer": "^10.6.2",
     "cssnano": "^7.1.9",
     "postcss": "^8.5.33",
