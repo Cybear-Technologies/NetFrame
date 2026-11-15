@@ -2726,6 +2726,10 @@ hr {
   color: var(--nf-color-text-muted);
 }
 
+.nf-text-subtle {
+  color: var(--nf-color-text-subtle);
+}
+
 .nf-text-error {
   color: var(--nf-color-error);
 }

@@ -1,0 +1,45 @@
+# NetFrame
+
+> Cyberpunk CSS component library by Cybear Technologies. Plain CSS with `nf-` classes and `--nf-*` tokens, seven palettes, self-hosted fonts, no JavaScript runtime. npm package: `netframe`.
+
+Install: `npm install netframe`, then `import 'netframe/dist/netframe.css'` (optional: `netframe/dist/themes.css`).
+
+## Reference for agents
+
+- [Full reference (usage, theming, interactive patterns, every class and token)](https://netframe.cybeartech.com/llms-full.txt)
+- [Agent skills (Claude Code, GitHub Copilot, Codex)](https://netframe.cybeartech.com/agents/)
+
+## Guides
+
+- [Getting started](https://netframe.cybeartech.com/getting-started/): install, imports, Sass, fonts
+- [Theming](https://netframe.cybeartech.com/theming/): tokens and alternate themes
+
+## Components
+
+- [Accordion](https://netframe.cybeartech.com/components/accordion/): Expand and collapse content sections.
+- [Avatar](https://netframe.cybeartech.com/components/avatar/): User profile images with status indicators.
+- [Badge](https://netframe.cybeartech.com/components/badge/): Compact status labels and notification indicators.
+- [Breadcrumb](https://netframe.cybeartech.com/components/breadcrumb/): Hierarchical path navigation.
+- [Button](https://netframe.cybeartech.com/components/button/): Trigger actions and navigate. Five variants, three sizes.
+- [Card](https://netframe.cybeartech.com/components/card/): Surface containers with header, body, and footer sections.
+- [Divider](https://netframe.cybeartech.com/components/divider/): Structural horizontal and vertical separators.
+- [Drawer](https://netframe.cybeartech.com/components/drawer/): Slide-in panels from the left or right edge.
+- [Dropdown](https://netframe.cybeartech.com/components/dropdown/): Contextual menus anchored to a trigger element.
+- [Input](https://netframe.cybeartech.com/components/input/): Text inputs, selects, checkboxes, radios, and range sliders.
+- [Modal](https://netframe.cybeartech.com/components/modal/): Focused dialogs that block the page.
+- [Pagination](https://netframe.cybeartech.com/components/pagination/): Page navigation for large datasets.
+- [Progress](https://netframe.cybeartech.com/components/progress/): Progress bars and rings for async operations.
+- [Skeleton](https://netframe.cybeartech.com/components/skeleton/): Loading placeholder shimmer blocks.
+- [Spinner](https://netframe.cybeartech.com/components/spinner/): Animated loading indicators.
+- [Table](https://netframe.cybeartech.com/components/table/): Data tables with sortable headers and row states.
+- [Tabs](https://netframe.cybeartech.com/components/tabs/): Horizontal tab navigation.
+- [Tag](https://netframe.cybeartech.com/components/tag/): Closable chip / tag elements.
+- [Toast](https://netframe.cybeartech.com/components/toast/): Non-blocking notification messages.
+- [Tooltip](https://netframe.cybeartech.com/components/tooltip/): Short contextual text on hover or focus.
+
+## Utilities
+
+- [Glitch](https://netframe.cybeartech.com/utilities/glitch/): RGB-split glitch animation utilities.
+- [Glow](https://netframe.cybeartech.com/utilities/glow/): Pixel-offset shadows, ambient glows, and text glow utilities.
+- [Layout](https://netframe.cybeartech.com/utilities/layout/): Flex, text, color, and border layout helper utilities.
+- [Scanlines](https://netframe.cybeartech.com/utilities/scanlines/): CRT scanline overlay and pixel grid texture utilities.

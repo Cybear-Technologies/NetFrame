@@ -62,12 +62,47 @@ The raw Sass default font path is `../fonts`; configure it for your generated
 stylesheet location. `pkg:` imports require Sass's Node package importer, not
 just a `node_modules` load path.
 
+## Browser support
+
+NetFrame uses `color-mix()`, which needs Chrome/Edge 111+, Firefox 113+ or Safari 16.2+.
+The docs test suite runs on current Chromium, Firefox and WebKit.
+
 ## Behaviour and accessibility
 
 NetFrame supplies CSS, not JavaScript controllers. Interactive components need
 consumer-owned behaviour, ARIA state and keyboard/focus management. The docs
-provide optional JavaScript examples. Preserve visible focus indicators and
-check contrast when overriding tokens.
+provide tested optional JavaScript examples. Preserve visible focus indicators and
+check contrast when overriding tokens. The built-in palettes keep text at WCAG AA
+contrast (4.5:1) on every surface.
+
+## Agent skills
+
+The package includes three skills that teach coding agents the real classes, tokens and
+accessibility patterns: `netframe-usage`, `netframe-theming` and `netframe-interactive`.
+Install them from your project root (needs Node 18+; makes no network calls):
+
+```sh
+npx netframe skills claude    # Claude Code    -> .claude/skills
+npx netframe skills copilot   # GitHub Copilot -> .github/skills
+npx netframe skills codex     # Codex          -> .codex/skills
+npx netframe skills all       # every agent above
+```
+
+Add `--dry-run` to preview. The command only writes the `netframe-*` folders and never touches
+your other skills. Prefer to copy by hand?
+
+```sh
+mkdir -p .claude/skills && cp -R node_modules/netframe/skills/* .claude/skills/
+mkdir -p .github/skills && cp -R node_modules/netframe/skills/* .github/skills/
+mkdir -p .codex/skills && cp -R node_modules/netframe/skills/* .codex/skills/
+```
+
+Copilot also reads `.claude/skills` and `.agents/skills`; Codex reads `~/.agents/skills` for all projects.
+
+Run the command again after upgrading. Any agent can also read
+`node_modules/netframe/skills/<name>/SKILL.md` directly. An LLM-friendly index is at
+[netframe.cybeartech.com/llms.txt](https://netframe.cybeartech.com/llms.txt) and the full
+reference at [`/llms-full.txt`](https://netframe.cybeartech.com/llms-full.txt).
 
 Full documentation: [netframe.cybeartech.com](https://netframe.cybeartech.com)
 

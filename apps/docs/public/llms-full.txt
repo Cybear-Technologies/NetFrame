@@ -1,0 +1,1582 @@
+# NetFrame (full reference for LLM agents)
+
+> Cyberpunk CSS component library by Cybear Technologies. Plain CSS, no JavaScript runtime. Docs: https://netframe.cybeartech.com
+
+Generated from the repository by `scripts/build-skills.mjs`.
+
+---
+
+<!-- skill: netframe-interactive -->
+
+# Interactive NetFrame patterns
+
+NetFrame ships styles only. Open/closed and selected state is read from ARIA attributes and `hidden`, so your JavaScript sets those. `references/patterns.md` has the reference markup and a controller for each pattern. These are the docs' own snippets, executed by the NetFrame browser test suite, so prefer them over rewriting.
+
+## Principles
+
+1. **State in attributes, literal strings.** Write `aria-expanded="true"` or `"false"` and `aria-hidden="true"` or `"false"`. The CSS hides menus only for `aria-hidden="true"` or `.nf-hidden`; toggling the attribute on and off will not hide them.
+2. **Keyboard parity.** Every pointer action has a key: Enter/Space activate, Escape closes, arrow keys move within menus and tab lists, Home/End jump. Disabled items are skipped.
+3. **Manage focus.** Opening a menu focuses its first item; Escape returns focus to the trigger. Modals and drawers trap focus, make the page behind `inert`, and restore focus on close.
+4. **Link controls to content.** Tabs and accordion triggers use `aria-controls` pointing at a real `id`. Give every instance unique ids.
+5. **Collapsed content stays out of the tab order.** Use `hidden` or `inert`, not just `height: 0`.
+6. **Text, not HTML.** Build dynamic content (toasts, notifications) with `textContent` or DOM APIs. Never inject untrusted strings with `innerHTML`.
+7. **Announce changes.** Toast regions are polite live regions; error toasts use `role="alert"`. Update counts and status text alongside any visual change.
+8. **Respect reduced motion.** The accordion controller skips its height animation under `prefers-reduced-motion: reduce`; honour the setting in any animation you add.
+
+## Choosing a pattern
+
+| Need | Pattern in `references/patterns.md` |
+| --- | --- |
+| Menu from a button | Dropdown |
+| Switch between panels | Tabs |
+| Expand and collapse sections | Accordion |
+| Blocking dialog | Modal |
+| Side panel | Drawer |
+| Transient messages | Toast |
+| Click-to-sort columns | Table sorting |
+| Paged lists | Pagination (local demo; for real navigation use anchors with real URLs) |
+| Unread indicator with a list | Notification disclosure (badge dot) |
+
+## Verifying
+
+After wiring a pattern, test: mouse, keyboard only, repeated open and close, Escape, clicking outside, a disabled item, and a narrow viewport. Run an automated check such as axe on the page.
+
+---
+
+<!-- skill: netframe-theming -->
+
+# Theming NetFrame
+
+Every design value is a CSS custom property on `:root`. Override a token with plain CSS; no rebuild. The full default list and every theme's overrides are in `references/tokens.md`.
+
+## Override tokens
+
+```css
+:root {
+  --nf-color-primary: #bd00ff;
+  --nf-color-on-primary: #000000; /* always update the matching on-* colour */
+}
+
+.my-section { --nf-color-primary: #ff6b00; } /* scoped override */
+```
+
+Only override token names that appear in `references/tokens.md`.
+
+## Alternate themes
+
+Import `netframe/dist/themes.css`, then add one class to `<html>` or any container: `nf-theme-night-city`, `nf-theme-chiba-city`, `nf-theme-neon-80s`, `nf-theme-renaissance`, `nf-theme-code-rain`, `nf-theme-iron-signal`. No class means the default palette.
+
+```js
+// Validate before applying; the docs site stores the choice under "nf-theme".
+const THEME = /^nf-theme-[a-z0-9-]+$/;
+function applyTheme(name) {
+  const root = document.documentElement;
+  [...root.classList].forEach((c) => THEME.test(c) && root.classList.remove(c));
+  if (THEME.test(name)) root.classList.add(name);
+  try { localStorage.setItem('nf-theme', name); } catch { /* storage blocked */ }
+}
+```
+
+Apply the saved class before first paint (a tiny inline script in `<head>`) to avoid a flash. Wrap storage access in `try/catch`; it can be blocked.
+
+## Contrast rules for custom palettes
+
+NetFrame's own palettes keep brand colours at 4.5:1 or better as text on every surface token, and every fill at 4.5:1 against its `on-*` colour. A custom palette must do the same.
+
+- A brand colour used as text must reach 4.5:1 against `--nf-color-bg` and each `--nf-color-surface-*` token.
+- Change `--nf-color-primary`, `-secondary` or `-tertiary` together with their `on-*` pair and the `-dim` variant.
+- Hover states swap the foreground along with the background; verify them.
+- Test with a contrast checker or axe; do not eyeball neon colours.
+
+## Fonts
+
+Typography tokens are `--nf-font-display`, `--nf-font-body`, `--nf-font-mono`, `--nf-font-label`. Bundled fonts (Space Grotesk, JetBrains Mono, VT323, Orbitron, Russo One) are self-hosted under their SIL OFL licences; keep the `fonts/` directory and its licence files with the CSS when you redistribute.
+
+## Gotchas
+
+- Themes override tokens only. Component rules still read tokens, so a theme change recolours everything.
+- Iron Signal removes transition durations on purpose; do not "fix" that.
+- Keep `border-radius: 0` tokens at zero; the hard edge is the design.
+
+---
+
+<!-- skill: netframe-usage -->
+
+# Using NetFrame
+
+NetFrame is plain CSS: `nf-*` classes and `--nf-*` custom properties. It has no JavaScript runtime and no framework dependency; it works in any markup. Docs: https://netframe.cybeartech.com
+
+## Rules that prevent most mistakes
+
+1. **Use only classes listed in `references/classes.md`.** Every class there exists in the shipped CSS. Do not invent `nf-` names or Tailwind-style utilities. If something is missing, write a small custom rule using tokens.
+2. **Base class plus modifier.** `nf-button` is required, then add `nf-button-primary`, `nf-button-lg`, and so on. A modifier alone does nothing.
+3. **Use tokens, not literals.** Colours, spacing and fonts come from `var(--nf-color-*)`, `var(--nf-space-*)`, `var(--nf-font-*)`. Never hard-code hex values that a token covers.
+4. **Keep the hard-edged look.** `border-radius: 0`, hard offset shadows, `cursor: crosshair` on interactive elements. Do not add rounded corners, soft drop shadows or `cursor: pointer`.
+5. **CSS only means behaviour is yours.** Dropdowns, tabs, accordions, modals, drawers, toasts, table sorting and pagination need JavaScript you provide. Load the `netframe-interactive` skill before building any of them.
+
+## Install and import
+
+```sh
+npm install netframe
+```
+
+```js
+import 'netframe/dist/netframe.css';
+import 'netframe/dist/themes.css'; // optional: six alternate palettes
+```
+
+- Compiled CSS loads fonts from `./fonts/` next to the CSS file. A bundler copies them; for static hosting copy `node_modules/netframe/dist/fonts/` beside the stylesheet.
+- No bundler: `<link rel="stylesheet" href="https://unpkg.com/netframe/dist/netframe.min.css">`.
+- Sass: `@use 'pkg:netframe/scss/netframe' with ($nf-font-path: '/assets/fonts');` requires Dart Sass's Node package importer. `$nf-font-path` defaults to `../fonts`.
+- Add `class="nf-crt"` to `<body>` for the CRT scanline overlay. It is decorative and ignores pointer events.
+- Themes and token overrides: load the `netframe-theming` skill.
+
+## Accessibility contract
+
+NetFrame styles states; you supply the semantics.
+
+- Every form control needs a `<label for>`; link helper or error text with `aria-describedby`; mark invalid fields with `aria-invalid="true"` (styled like `nf-input-error`).
+- Progress bars and rings need `role="progressbar"`, an accessible name and `aria-valuenow/min/max`. Omit `aria-valuenow` when indeterminate.
+- Links styled as buttons stay `<a class="nf-button">`; do not add `role="button"`.
+- Interactive state lives in ARIA attributes with literal string values (`aria-expanded="false"`).
+- Do not remove focus styles. Keep text at 4.5:1 contrast against its surface when you introduce colours.
+- Spinners and animated utilities respect `prefers-reduced-motion`; keep a visible text label for loading states.
+- The unread dot (`nf-badge-dot`) is decorative. Always pair it with text that states the count or status.
+
+## Workflow
+
+1. Look up each component in `references/classes.md` and read its docs page for markup structure.
+2. Write markup using only those classes; add any custom styles with tokens.
+3. For anything with behaviour, copy the matching controller from the `netframe-interactive` skill.
+4. Check keyboard use, focus visibility, labels and contrast before finishing.
+
+## Components and utilities
+
+Components: accordion, avatar, badge, breadcrumb, button, card, divider, drawer, dropdown, input (field, select, textarea, checkbox, radio, range), modal, pagination, progress, skeleton, spinner, table, tabs, tag, toast, tooltip. Utility groups: glow and shadows, scanlines and CRT, glitch, layout. The per-class tables are in `references/classes.md`.
+
+---
+
+# NetFrame class reference
+
+Every class below exists in the shipped CSS. A dash means the docs page does not describe it; read the page.
+
+## Accordion (component)
+
+Docs: https://netframe.cybeartech.com/components/accordion/
+
+| Class | Description |
+| --- | --- |
+| `nf-accordion` | Outer wrapper |
+| `nf-accordion-body` | Inner content with padding |
+| `nf-accordion-content` | Animated height wrapper — set `height` via JS |
+| `nf-accordion-icon` | CSS caret — flips when trigger has `aria-expanded="true"` |
+| `nf-accordion-item` | Individual collapsible section |
+| `nf-accordion-trigger` | Clickable header button — set `aria-expanded` |
+
+## Avatar (component)
+
+Docs: https://netframe.cybeartech.com/components/avatar/
+
+| Class | Description |
+| --- | --- |
+| `nf-avatar` | Base container — default 2.5rem, primary border |
+| `nf-avatar-group` | Flex wrapper that overlaps children |
+| `nf-avatar-initials` | Text fallback inside the avatar |
+| `nf-avatar-lg` | 3.5rem |
+| `nf-avatar-secondary` | Secondary border + initials color |
+| `nf-avatar-sm` | 2rem |
+| `nf-avatar-status` | Status dot — position absolute, bottom-right |
+| `nf-avatar-status-away` | Warning yellow dot |
+| `nf-avatar-status-busy` | Error red dot |
+| `nf-avatar-status-offline` | Subtle grey dot |
+| `nf-avatar-status-online` | Primary green dot |
+| `nf-avatar-tertiary` | Tertiary border + initials color |
+| `nf-avatar-xl` | 5rem |
+| `nf-avatar-xs` | 1.5rem |
+
+## Badge (component)
+
+Docs: https://netframe.cybeartech.com/components/badge/
+
+| Class | Description |
+| --- | --- |
+| `nf-badge` | Base — required on all badges |
+| `nf-badge-dot` | Framed square unread-notification marker — add to its parent, pair with state text |
+| `nf-badge-error` | Error red fill |
+| `nf-badge-ghost` | Low-opacity primary tint, no border |
+| `nf-badge-outline` | Transparent with primary border |
+| `nf-badge-primary` | Terminal Green fill |
+| `nf-badge-secondary` | Secondary (Hot Pink) fill |
+| `nf-badge-tertiary` | Tertiary fill |
+
+## Breadcrumb (component)
+
+Docs: https://netframe.cybeartech.com/components/breadcrumb/
+
+| Class | Description |
+| --- | --- |
+| `nf-breadcrumb` | `<ol>` wrapper — flex row with `/` separators |
+| `nf-breadcrumb-current` | Highlights the current page — disables pointer events |
+| `nf-breadcrumb-item` | `<li>` — adds `/` separator via `::after` (except last) |
+| `nf-breadcrumb-link` | Anchor or span inside each item |
+
+## Button (component)
+
+Docs: https://netframe.cybeartech.com/components/button/
+
+| Class | Description |
+| --- | --- |
+| `nf-button` | Base — required on all buttons |
+| `nf-button-danger` | Error color fill |
+| `nf-button-ghost` | Transparent, green border |
+| `nf-button-icon` | Square icon-only button |
+| `nf-button-lg` | Large size |
+| `nf-button-outline` | Transparent, muted border |
+| `nf-button-primary` | Terminal Green fill |
+| `nf-button-secondary` | Secondary (Hot Pink) fill |
+| `nf-button-sm` | Small size |
+
+## Card (component)
+
+Docs: https://netframe.cybeartech.com/components/card/
+
+| Class | Description |
+| --- | --- |
+| `nf-card` | Base surface container |
+| `nf-card-body` | Main content area |
+| `nf-card-elevated` | Brighter surface with an offset shadow |
+| `nf-card-footer` | Footer row for actions |
+| `nf-card-header` | Header row; holds the title and subtitle |
+| `nf-card-inset` | Lowest, recessed surface |
+| `nf-card-interactive` | Hover and focus states for a clickable card |
+| `nf-card-primary` | Primary (green) accent border |
+| `nf-card-secondary` | Secondary (pink) accent border |
+| `nf-card-subtitle` | Muted secondary line in the header |
+| `nf-card-title` | Card title text |
+
+## Divider (component)
+
+Docs: https://netframe.cybeartech.com/components/divider/
+
+| Class | Description |
+| --- | --- |
+| `nf-divider` | Horizontal rule — 2px border-top |
+| `nf-divider-label` | Label text inside `.nf-divider-labeled` |
+| `nf-divider-labeled` | Flex row with line on each side of a label |
+| `nf-divider-primary` | Primary green accent |
+| `nf-divider-secondary` | Secondary magenta accent |
+| `nf-divider-tertiary` | Tertiary purple accent |
+| `nf-divider-vertical` | Inline vertical rule — 1em tall |
+
+## Drawer (component)
+
+Docs: https://netframe.cybeartech.com/components/drawer/
+
+| Class | Description |
+| --- | --- |
+| `nf-drawer` | Fixed panel — slides in when `.nf-open` is added |
+| `nf-drawer-body` | Scrollable content area |
+| `nf-drawer-footer` | Bottom action area |
+| `nf-drawer-header` | Top section with title and close button |
+| `nf-drawer-left` | Left edge, primary right border |
+| `nf-drawer-lg` | 28rem width |
+| `nf-drawer-overlay` | Fixed backdrop — hide with `nf-hidden` or `aria-hidden="true"` |
+| `nf-drawer-right` | Right edge, primary left border |
+| `nf-drawer-sm` | 14rem width |
+| `nf-drawer-title` | Title text inside the header |
+| `nf-drawer-xl` | 36rem width |
+| `nf-open` | Reveals the drawer — `transform: translateX(0)` |
+
+## Dropdown (component)
+
+Docs: https://netframe.cybeartech.com/components/dropdown/
+
+| Class | Description |
+| --- | --- |
+| `nf-dropdown` | `position: relative` wrapper |
+| `nf-dropdown-divider` | `<li>` separator between item groups |
+| `nf-dropdown-item` | Menu row — button or anchor |
+| `nf-dropdown-item-danger` | Error color variant |
+| `nf-dropdown-label` | `<li>` group header — non-interactive |
+| `nf-dropdown-menu` | Absolute menu panel — hide with `aria-hidden="true"` or `nf-hidden` |
+| `nf-dropdown-menu-right` | Right-aligns the menu |
+| `nf-dropdown-trigger` | Button with caret indicator |
+
+## Input (component)
+
+Docs: https://netframe.cybeartech.com/components/input/
+
+| Class | Description |
+| --- | --- |
+| `nf-checkbox` | Styled checkbox |
+| `nf-field` | Wrapper for label, control and helper text |
+| `nf-helper` | Helper text; link it with `aria-describedby` |
+| `nf-helper-error` | Error helper text |
+| `nf-input` | Text input |
+| `nf-input-error` | Error state for an input (same look as `aria-invalid="true"`) |
+| `nf-label` | Field label; associate it with `for`/`id` |
+| `nf-radio` | Styled radio button |
+| `nf-range` | Range slider |
+| `nf-select` | Select with a custom arrow |
+| `nf-select-error` | Error state for a select |
+| `nf-textarea` | Multi-line text input |
+| `nf-textarea-error` | Error state for a textarea |
+
+## Modal (component)
+
+Docs: https://netframe.cybeartech.com/components/modal/
+
+| Class | Description |
+| --- | --- |
+| `nf-modal` | Dialog panel — default max-width 32rem |
+| `nf-modal-body` | Scrollable content area |
+| `nf-modal-close` | Close `×` button |
+| `nf-modal-footer` | Bottom action row |
+| `nf-modal-full` | Full viewport |
+| `nf-modal-header` | Top section with title and close button |
+| `nf-modal-lg` | 48rem |
+| `nf-modal-overlay` | Fixed full-screen backdrop — hide with `nf-hidden` or `aria-hidden="true"` |
+| `nf-modal-sm` | 20rem |
+| `nf-modal-title` | Title text |
+| `nf-modal-xl` | 64rem |
+
+## Pagination (component)
+
+Docs: https://netframe.cybeartech.com/components/pagination/
+
+| Class | Description |
+| --- | --- |
+| `nf-page-ellipsis` | Non-interactive spacer item |
+| `nf-page-item` | `<li>` wrapper |
+| `nf-page-item-active` | Fills the current page control with primary colour |
+| `nf-page-item-disabled` | Dims controls; also set `disabled` on buttons or `aria-disabled` on links |
+| `nf-page-link` | Anchor, button or span inside each item |
+| `nf-page-next` | Next label styling |
+| `nf-page-prev` | Previous label styling |
+| `nf-pagination` | `<ol>` wrapper — wrapping flex row with a small gap |
+
+## Progress (component)
+
+Docs: https://netframe.cybeartech.com/components/progress/
+
+| Class | Description |
+| --- | --- |
+| `nf-progress` | Bar track — default 4px height |
+| `nf-progress-bar` | Filled portion — set `width` inline |
+| `nf-progress-error` | Error bar |
+| `nf-progress-indeterminate` | Sliding animation — no width needed |
+| `nf-progress-labeled` | Flex wrapper for bar + value text |
+| `nf-progress-lg` | 8px height |
+| `nf-progress-ring` | SVG ring container — set `--nf-ring-progress` (0–100) |
+| `nf-progress-secondary` | Secondary (Hot Pink) bar |
+| `nf-progress-sm` | 2px height |
+| `nf-progress-tertiary` | Tertiary bar |
+| `nf-progress-value` | Percentage label inside `.nf-progress-labeled` |
+| `nf-ring-fill` | SVG `<circle>` — filled arc |
+| `nf-ring-label` | Center text label |
+| `nf-ring-track` | SVG `<circle>` — background ring |
+
+## Skeleton (component)
+
+Docs: https://netframe.cybeartech.com/components/skeleton/
+
+| Class | Description |
+| --- | --- |
+| `nf-skeleton` | Base — shimmer animation, must be combined with a shape |
+| `nf-skeleton-avatar` | 2.5rem square avatar placeholder |
+| `nf-skeleton-button` | 2.5rem × 8rem button placeholder |
+| `nf-skeleton-card` | Full-width, 10rem tall card placeholder |
+| `nf-skeleton-heading` | 1.5rem tall heading placeholder |
+| `nf-skeleton-image` | Full-width 16:9 image placeholder |
+| `nf-skeleton-text` | Full-width text line, 0.875rem tall |
+| `nf-skeleton-text-short` | Shortens `.nf-skeleton-text` to 60% width |
+
+## Spinner (component)
+
+Docs: https://netframe.cybeartech.com/components/spinner/
+
+| Class | Description |
+| --- | --- |
+| `nf-spinner` | Base — 1.5rem signal-cell loader, primary colour |
+| `nf-spinner-block` | Centered flex column wrapper |
+| `nf-spinner-error` | Error-colour cells |
+| `nf-spinner-label` | Steady text label inside `.nf-spinner-block` |
+| `nf-spinner-lg` | 2.5rem |
+| `nf-spinner-secondary` | Secondary-colour cells |
+| `nf-spinner-sm` | 1rem |
+| `nf-spinner-tertiary` | Tertiary-colour cells |
+| `nf-spinner-xl` | 4rem |
+
+## Table (component)
+
+Docs: https://netframe.cybeartech.com/components/table/
+
+| Class | Description |
+| --- | --- |
+| `nf-table` | Table element — full width, collapsed borders |
+| `nf-table-row-active` | Green left border accent — selected row |
+| `nf-table-row-danger` | Error left border accent — critical row |
+| `nf-table-sort` | Header button — optional sorting controller uses `aria-sort` on its `<th>` |
+| `nf-table-striped` | Alternates even row background |
+| `nf-table-wrap` | Overflow wrapper — apply to a `<div>` around the table |
+
+## Tabs (component)
+
+Docs: https://netframe.cybeartech.com/components/tabs/
+
+| Class | Description |
+| --- | --- |
+| `nf-tab` | Individual tab button — set `aria-selected="true"` for active |
+| `nf-tab-active` | Class alternative to `aria-selected` for active state |
+| `nf-tab-list` | Horizontal row of tab buttons |
+| `nf-tab-panel` | Content panel — hide inactive panels with `hidden` |
+| `nf-tabs` | Outer wrapper |
+| `nf-tabs-secondary` | Secondary magenta active underline |
+
+## Tag (component)
+
+Docs: https://netframe.cybeartech.com/components/tag/
+
+| Class | Description |
+| --- | --- |
+| `nf-tag` | Base chip — neutral border and background |
+| `nf-tag-close` | `×` button inside the tag — renders via `::before` |
+| `nf-tag-primary` | Primary green tint + border |
+| `nf-tag-secondary` | Secondary magenta tint + border |
+| `nf-tag-tertiary` | Tertiary purple tint + border |
+
+## Toast (component)
+
+Docs: https://netframe.cybeartech.com/components/toast/
+
+| Class | Description |
+| --- | --- |
+| `nf-toast` | Individual notification |
+| `nf-toast-bottom-left` | Region position: bottom left |
+| `nf-toast-bottom-right` | Region position: bottom right |
+| `nf-toast-close` | Dismiss button |
+| `nf-toast-content` | Flex column wrapper for title + message |
+| `nf-toast-dismissing` | Triggers the slide-out exit animation |
+| `nf-toast-error` | Error red left border |
+| `nf-toast-icon` | Icon slot at the start of a toast |
+| `nf-toast-info` | Tertiary purple left border |
+| `nf-toast-message` | Body text |
+| `nf-toast-region` | Fixed container — stacks toasts vertically |
+| `nf-toast-success` | Primary green left border |
+| `nf-toast-title` | Label-font heading |
+| `nf-toast-top-left` | Region position: top left |
+| `nf-toast-top-right` | Region position: top right |
+| `nf-toast-warning` | Secondary magenta left border |
+
+## Tooltip (component)
+
+Docs: https://netframe.cybeartech.com/components/tooltip/
+
+| Class | Description |
+| --- | --- |
+| `nf-tooltip` | Tooltip bubble — appears above by default |
+| `nf-tooltip-bottom` | Positions below the target |
+| `nf-tooltip-left` | Positions left of the target |
+| `nf-tooltip-right` | Positions right of the target |
+| `nf-tooltip-wrap` | `inline-flex` wrapper — triggers tooltip on hover / focus |
+
+## Glitch (utility group)
+
+Docs: https://netframe.cybeartech.com/utilities/glitch/
+
+| Class | Description |
+| --- | --- |
+| `nf-glitch` | Continuous RGB-split glitch animation |
+| `nf-glitch-hover` | Glitch animation on hover only |
+| `nf-glitch-hover-secondary` | Glitch on hover using the secondary colour |
+| `nf-glitch-secondary` | Glitch colour: secondary (Hot Pink) channels |
+| `nf-glitch-strong` | High-intensity glitch |
+| `nf-glitch-subtle` | Low-intensity glitch |
+| `nf-glitch-tertiary` | Glitch color: Electric Cyan channels |
+
+## Glow (utility group)
+
+Docs: https://netframe.cybeartech.com/utilities/glow/
+
+| Class | Description |
+| --- | --- |
+| `nf-border-glow-primary` | Border glow — primary |
+| `nf-border-glow-secondary` | Border glow — secondary |
+| `nf-border-glow-tertiary` | Border glow — tertiary |
+| `nf-glow-primary` | Ambient glow — primary |
+| `nf-glow-primary-subtle` | Low-intensity ambient glow — primary |
+| `nf-glow-secondary` | Ambient glow — secondary |
+| `nf-glow-secondary-subtle` | Low-intensity ambient glow — secondary |
+| `nf-glow-tertiary` | Ambient glow — tertiary |
+| `nf-glow-tertiary-subtle` | Low-intensity ambient glow — tertiary |
+| `nf-shadow-error` | 4px offset shadow — Error color |
+| `nf-shadow-none` | Removes the box shadow |
+| `nf-shadow-primary` | 4px offset shadow — Terminal Green |
+| `nf-shadow-primary-lg` | 6px offset shadow — primary |
+| `nf-shadow-secondary` | 4px offset shadow — secondary (Hot Pink) |
+| `nf-shadow-secondary-lg` | 6px offset shadow — secondary |
+| `nf-shadow-tertiary` | 4px offset shadow — Electric Cyan |
+| `nf-shadow-tertiary-lg` | 6px offset shadow — tertiary |
+| `nf-text-glow-primary` | Text shadow — primary |
+| `nf-text-glow-secondary` | Text shadow — secondary |
+| `nf-text-glow-tertiary` | Text shadow — tertiary |
+
+## Layout (utility group)
+
+Docs: https://netframe.cybeartech.com/utilities/layout/
+
+| Class | Description |
+| --- | --- |
+| `nf-bg-surface` | Background: `--nf-color-surface` |
+| `nf-bg-surface-high` | Background: `--nf-color-surface-high` |
+| `nf-bg-surface-low` | Background: `--nf-color-surface-low` |
+| `nf-border` | Border: `--nf-color-border` |
+| `nf-border-l-primary` | 4px left border, primary |
+| `nf-border-l-secondary` | 4px left border, secondary |
+| `nf-border-primary` | Border: `--nf-color-primary` |
+| `nf-border-secondary` | Border: `--nf-color-secondary` |
+| `nf-border-t-primary` | 4px top border, primary |
+| `nf-border-tertiary` | Border: `--nf-color-tertiary` |
+| `nf-flex` | `display: flex` |
+| `nf-flex-1` | `flex: 1` |
+| `nf-flex-between` | Flex row, centred, space between |
+| `nf-flex-center` | `display: flex; align-items: center; justify-content: center` |
+| `nf-flex-col` | Flex column |
+| `nf-flex-shrink-0` | `flex-shrink: 0` |
+| `nf-flex-wrap` | `flex-wrap: wrap` |
+| `nf-font-body` | Font: JetBrains Mono |
+| `nf-font-display` | Font: Space Grotesk |
+| `nf-font-label` | Font: VT323 |
+| `nf-hidden` | `display: none !important`; also hides dropdown, modal and drawer panels |
+| `nf-line-clamp-2` | Clamp text to 2 lines |
+| `nf-line-clamp-3` | Clamp text to 3 lines |
+| `nf-sr-only` | Visually hidden but available to assistive technology |
+| `nf-text-error` | Text colour: `--nf-color-error` |
+| `nf-text-muted` | Color: `--nf-color-text-muted` |
+| `nf-text-primary` | Color: `--nf-color-primary` |
+| `nf-text-secondary` | Color: `--nf-color-secondary` |
+| `nf-text-subtle` | Color: `--nf-color-text-subtle` |
+| `nf-text-tertiary` | Color: `--nf-color-tertiary` |
+| `nf-tracking-display` | `letter-spacing: 0.05em` |
+| `nf-truncate` | Single-line truncation with ellipsis |
+| `nf-uppercase` | `text-transform: uppercase` |
+
+## Scanlines (utility group)
+
+Docs: https://netframe.cybeartech.com/utilities/scanlines/
+
+| Class | Description |
+| --- | --- |
+| `nf-crt` | Full-screen fixed CRT overlay on `::before`. Add to `<body>`. |
+| `nf-pixel-grid` | Dot-matrix pixel grid texture. |
+| `nf-pixel-grid-dense` | Dense pixel grid |
+| `nf-pixel-grid-subtle` | Faint pixel grid |
+| `nf-scanlines` | Inline scanline overlay scoped to the element. |
+| `nf-scanlines-animated` | Animated scanline sweep, primary colour |
+| `nf-scanlines-animated-secondary` | Animated scanline sweep, secondary colour |
+| `nf-scanlines-clip` | Clips an inline-scanline element's overflow |
+| `nf-scanlines-heavy` | Stronger inline scanlines |
+
+---
+
+# NetFrame tokens
+
+Default values on `:root`. Override any token with plain CSS; no rebuild.
+
+## color
+
+| Token | Default |
+| --- | --- |
+| `--nf-color-bg` | `#000000` |
+| `--nf-color-surface` | `#131313` |
+| `--nf-color-surface-lowest` | `#0e0e0e` |
+| `--nf-color-surface-low` | `#1b1b1b` |
+| `--nf-color-surface-container` | `#1f1f1f` |
+| `--nf-color-surface-high` | `#2a2a2a` |
+| `--nf-color-surface-highest` | `#353535` |
+| `--nf-color-surface-bright` | `#393939` |
+| `--nf-color-primary` | `#00ff00` |
+| `--nf-color-on-primary` | `#000000` |
+| `--nf-color-primary-dim` | `#02e600` |
+| `--nf-color-primary-fixed` | `#77ff61` |
+| `--nf-color-secondary` | `#ff69a4` |
+| `--nf-color-on-secondary` | `#000000` |
+| `--nf-color-secondary-dim` | `#cc0052` |
+| `--nf-color-tertiary` | `#bc82ff` |
+| `--nf-color-on-tertiary` | `#000000` |
+| `--nf-color-tertiary-dim` | `#5500cc` |
+| `--nf-color-error` | `#ffb4ab` |
+| `--nf-color-error-container` | `#93000a` |
+| `--nf-color-on-error` | `#690005` |
+| `--nf-color-warning` | `#fca311` |
+| `--nf-color-text` | `#e2e2e2` |
+| `--nf-color-text-muted` | `#c8d6c0` |
+| `--nf-color-text-subtle` | `#a0b098` |
+| `--nf-color-text-inverse` | `#000000` |
+| `--nf-color-border` | `#3b4b35` |
+| `--nf-color-border-strong` | `#84967c` |
+
+## font
+
+| Token | Default |
+| --- | --- |
+| `--nf-font-display` | `Space Grotesk, system-ui, sans-serif` |
+| `--nf-font-body` | `JetBrains Mono, Courier New, monospace` |
+| `--nf-font-mono` | `JetBrains Mono, Courier New, monospace` |
+| `--nf-font-label` | `VT323, Courier New, monospace` |
+| `--nf-font-weight-regular` | `400` |
+| `--nf-font-weight-medium` | `500` |
+| `--nf-font-weight-bold` | `700` |
+
+## text
+
+| Token | Default |
+| --- | --- |
+| `--nf-text-xs` | `0.75rem` |
+| `--nf-text-sm` | `0.875rem` |
+| `--nf-text-md` | `1rem` |
+| `--nf-text-base` | `1.125rem` |
+| `--nf-text-lg` | `1.25rem` |
+| `--nf-text-xl` | `1.5rem` |
+| `--nf-text-2xl` | `1.875rem` |
+| `--nf-text-3xl` | `2.25rem` |
+| `--nf-text-4xl` | `3rem` |
+| `--nf-text-5xl` | `4rem` |
+
+## leading
+
+| Token | Default |
+| --- | --- |
+| `--nf-leading-tight` | `1.25` |
+| `--nf-leading-snug` | `1.375` |
+| `--nf-leading-normal` | `1.5` |
+| `--nf-leading-relaxed` | `1.625` |
+| `--nf-leading-loose` | `2` |
+
+## tracking
+
+| Token | Default |
+| --- | --- |
+| `--nf-tracking-tight` | `-0.025em` |
+| `--nf-tracking-normal` | `0em` |
+| `--nf-tracking-wide` | `0.025em` |
+| `--nf-tracking-display` | `0.05em` |
+| `--nf-tracking-wider` | `0.1em` |
+| `--nf-tracking-widest` | `0.15em` |
+
+## space
+
+| Token | Default |
+| --- | --- |
+| `--nf-space-0` | `0` |
+| `--nf-space-1` | `0.25rem` |
+| `--nf-space-2` | `0.5rem` |
+| `--nf-space-3` | `0.75rem` |
+| `--nf-space-4` | `1rem` |
+| `--nf-space-5` | `1.25rem` |
+| `--nf-space-6` | `1.5rem` |
+| `--nf-space-8` | `2rem` |
+| `--nf-space-10` | `2.5rem` |
+| `--nf-space-12` | `3rem` |
+| `--nf-space-16` | `4rem` |
+| `--nf-space-20` | `5rem` |
+| `--nf-space-24` | `6rem` |
+| `--nf-space-32` | `8rem` |
+
+## radius
+
+| Token | Default |
+| --- | --- |
+| `--nf-radius-none` | `0` |
+| `--nf-radius-sm` | `0` |
+| `--nf-radius-md` | `0` |
+| `--nf-radius-lg` | `0` |
+| `--nf-radius-xl` | `0` |
+| `--nf-radius-full` | `0` |
+
+## border
+
+| Token | Default |
+| --- | --- |
+| `--nf-border-thin` | `1px` |
+| `--nf-border-base` | `1px` |
+| `--nf-border-medium` | `2px` |
+| `--nf-border-thick` | `4px` |
+
+## z
+
+| Token | Default |
+| --- | --- |
+| `--nf-z-below` | `-1` |
+| `--nf-z-base` | `0` |
+| `--nf-z-raised` | `10` |
+| `--nf-z-dropdown` | `100` |
+| `--nf-z-sticky` | `200` |
+| `--nf-z-overlay` | `300` |
+| `--nf-z-modal` | `400` |
+| `--nf-z-toast` | `500` |
+| `--nf-z-tooltip` | `600` |
+
+## duration
+
+| Token | Default |
+| --- | --- |
+| `--nf-duration-instant` | `0ms` |
+| `--nf-duration-fast` | `80ms` |
+| `--nf-duration-base` | `150ms` |
+| `--nf-duration-slow` | `250ms` |
+| `--nf-duration-slower` | `400ms` |
+| `--nf-duration-crawl` | `600ms` |
+
+## ease
+
+| Token | Default |
+| --- | --- |
+| `--nf-ease-default` | `cubic-bezier(0.4, 0, 0.2, 1)` |
+| `--nf-ease-in` | `cubic-bezier(0.4, 0, 1, 1)` |
+| `--nf-ease-out` | `cubic-bezier(0, 0, 0.2, 1)` |
+| `--nf-ease-sharp` | `cubic-bezier(0.4, 0, 0.6, 1)` |
+| `--nf-ease-spring` | `cubic-bezier(0.34, 1.56, 0.64, 1)` |
+| `--nf-ease-glitch` | `steps(4, end)` |
+
+## Alternate themes
+
+Apply one class to `<html>` (or any container). Each overrides the tokens listed; everything else falls back to the defaults above.
+
+### `nf-theme-night-city`
+
+| Token | Value |
+| --- | --- |
+| `--nf-color-bg` | `#000000` |
+| `--nf-color-surface` | `#0f0f0f` |
+| `--nf-color-surface-lowest` | `#0a0a0a` |
+| `--nf-color-surface-low` | `#161616` |
+| `--nf-color-surface-container` | `#1c1c1c` |
+| `--nf-color-surface-high` | `#232323` |
+| `--nf-color-surface-highest` | `#2c2c2c` |
+| `--nf-color-surface-bright` | `#333333` |
+| `--nf-color-primary` | `#fcee09` |
+| `--nf-color-on-primary` | `#000000` |
+| `--nf-color-primary-dim` | `#e0d300` |
+| `--nf-color-primary-fixed` | `#fff176` |
+| `--nf-color-secondary` | `#00f0ff` |
+| `--nf-color-on-secondary` | `#000000` |
+| `--nf-color-secondary-dim` | `#00c8d4` |
+| `--nf-color-tertiary` | `#ff547c` |
+| `--nf-color-on-tertiary` | `#000000` |
+| `--nf-color-tertiary-dim` | `#cc0030` |
+| `--nf-color-error` | `#ff547c` |
+| `--nf-color-error-container` | `#7a0018` |
+| `--nf-color-on-error` | `#ffd0da` |
+| `--nf-color-text` | `#f0f0f0` |
+| `--nf-color-text-muted` | `#c0c0c0` |
+| `--nf-color-text-subtle` | `#888888` |
+| `--nf-color-text-inverse` | `#000000` |
+| `--nf-color-border` | `#2a2a2a` |
+| `--nf-color-border-strong` | `#4a4a4a` |
+
+### `nf-theme-chiba-city`
+
+| Token | Value |
+| --- | --- |
+| `--nf-color-bg` | `#0d0d0d` |
+| `--nf-color-surface` | `#141414` |
+| `--nf-color-surface-lowest` | `#0f0f0f` |
+| `--nf-color-surface-low` | `#1c1c1c` |
+| `--nf-color-surface-container` | `#222222` |
+| `--nf-color-surface-high` | `#2a2a2a` |
+| `--nf-color-surface-highest` | `#333333` |
+| `--nf-color-surface-bright` | `#3d3d3d` |
+| `--nf-color-primary` | `#3affe5` |
+| `--nf-color-on-primary` | `#000000` |
+| `--nf-color-primary-dim` | `#00e0c8` |
+| `--nf-color-primary-fixed` | `#aafff5` |
+| `--nf-color-secondary` | `#ff8c00` |
+| `--nf-color-on-secondary` | `#000000` |
+| `--nf-color-secondary-dim` | `#d47200` |
+| `--nf-color-tertiary` | `#9b9b9b` |
+| `--nf-color-on-tertiary` | `#000000` |
+| `--nf-color-tertiary-dim` | `#787878` |
+| `--nf-color-error` | `#ff6b64` |
+| `--nf-color-error-container` | `#6e1a14` |
+| `--nf-color-on-error` | `#ffd0cc` |
+| `--nf-color-text` | `#e8e8e8` |
+| `--nf-color-text-muted` | `#b8c4b8` |
+| `--nf-color-text-subtle` | `#7a8a7a` |
+| `--nf-color-text-inverse` | `#000000` |
+| `--nf-color-border` | `#282828` |
+| `--nf-color-border-strong` | `#5c5c5c` |
+
+### `nf-theme-neon-80s`
+
+| Token | Value |
+| --- | --- |
+| `--nf-color-bg` | `#1a0b2e` |
+| `--nf-color-surface` | `#221340` |
+| `--nf-color-surface-lowest` | `#160930` |
+| `--nf-color-surface-low` | `#2c1a50` |
+| `--nf-color-surface-container` | `#332060` |
+| `--nf-color-surface-high` | `#3e2870` |
+| `--nf-color-surface-highest` | `#4a3080` |
+| `--nf-color-surface-bright` | `#563890` |
+| `--nf-color-primary` | `#ff73ff` |
+| `--nf-color-on-primary` | `#000000` |
+| `--nf-color-primary-dim` | `#dd00dd` |
+| `--nf-color-primary-fixed` | `#ffaaff` |
+| `--nf-color-secondary` | `#00d9ff` |
+| `--nf-color-on-secondary` | `#000000` |
+| `--nf-color-secondary-dim` | `#00b8d4` |
+| `--nf-color-tertiary` | `#c497ff` |
+| `--nf-color-on-tertiary` | `#000000` |
+| `--nf-color-tertiary-dim` | `#5500cc` |
+| `--nf-color-error` | `#ff8982` |
+| `--nf-color-error-container` | `#6e0a28` |
+| `--nf-color-on-error` | `#ffd0da` |
+| `--nf-color-text` | `#f5e8ff` |
+| `--nf-color-text-muted` | `#c8a8f0` |
+| `--nf-color-text-subtle` | `#9070c0` |
+| `--nf-color-text-inverse` | `#000000` |
+| `--nf-color-border` | `#3a2258` |
+| `--nf-color-border-strong` | `#6a3a90` |
+| `--nf-crt-scan` | `rgba(0, 0, 0, 0.15)` |
+| `--nf-crt-rgb-r` | `rgba(255, 0, 255, 0.04)` |
+| `--nf-crt-rgb-g` | `rgba(0, 220, 255, 0.02)` |
+| `--nf-crt-rgb-b` | `rgba(112, 0, 255, 0.04)` |
+
+### `nf-theme-renaissance`
+
+| Token | Value |
+| --- | --- |
+| `--nf-color-bg` | `#050505` |
+| `--nf-color-surface` | `#0e0e0c` |
+| `--nf-color-surface-lowest` | `#090908` |
+| `--nf-color-surface-low` | `#171610` |
+| `--nf-color-surface-container` | `#1e1d14` |
+| `--nf-color-surface-high` | `#282618` |
+| `--nf-color-surface-highest` | `#332f1e` |
+| `--nf-color-surface-bright` | `#3e3928` |
+| `--nf-color-primary` | `#e5b100` |
+| `--nf-color-on-primary` | `#000000` |
+| `--nf-color-primary-dim` | `#c89800` |
+| `--nf-color-primary-fixed` | `#ffe082` |
+| `--nf-color-secondary` | `#e17676` |
+| `--nf-color-on-secondary` | `#000000` |
+| `--nf-color-secondary-dim` | `#7a1a1a` |
+| `--nf-color-tertiary` | `#e0d8b8` |
+| `--nf-color-on-tertiary` | `#000000` |
+| `--nf-color-tertiary-dim` | `#c8c098` |
+| `--nf-color-error` | `#ff6417` |
+| `--nf-color-error-container` | `#5a1400` |
+| `--nf-color-on-error` | `#000000` |
+| `--nf-color-text` | `#e8e0cc` |
+| `--nf-color-text-muted` | `#c0b080` |
+| `--nf-color-text-subtle` | `#907040` |
+| `--nf-color-text-inverse` | `#000000` |
+| `--nf-color-border` | `#2c2618` |
+| `--nf-color-border-strong` | `#5a4820` |
+| `--nf-font-display` | `'Didot', 'Palatino Linotype', 'Book Antiqua', 'Palatino', Georgia, serif` |
+
+### `nf-theme-code-rain`
+
+| Token | Value |
+| --- | --- |
+| `--nf-color-bg` | `#000b00` |
+| `--nf-color-surface` | `#001200` |
+| `--nf-color-surface-lowest` | `#000a00` |
+| `--nf-color-surface-low` | `#001a00` |
+| `--nf-color-surface-container` | `#002200` |
+| `--nf-color-surface-high` | `#002c00` |
+| `--nf-color-surface-highest` | `#003400` |
+| `--nf-color-surface-bright` | `#003e00` |
+| `--nf-color-primary` | `#00ff41` |
+| `--nf-color-on-primary` | `#000000` |
+| `--nf-color-primary-dim` | `#00dd38` |
+| `--nf-color-primary-fixed` | `#aaffbb` |
+| `--nf-color-secondary` | `#00aa2b` |
+| `--nf-color-on-secondary` | `#000000` |
+| `--nf-color-secondary-dim` | `#008820` |
+| `--nf-color-tertiary` | `#00cc33` |
+| `--nf-color-on-tertiary` | `#000000` |
+| `--nf-color-tertiary-dim` | `#00aa28` |
+| `--nf-color-error` | `#ff584e` |
+| `--nf-color-error-container` | `#4a0a00` |
+| `--nf-color-on-error` | `#ffd0cc` |
+| `--nf-color-text` | `#c8ffc8` |
+| `--nf-color-text-muted` | `#80d080` |
+| `--nf-color-text-subtle` | `#508050` |
+| `--nf-color-text-inverse` | `#000000` |
+| `--nf-color-border` | `#003a00` |
+| `--nf-color-border-strong` | `#006600` |
+| `--nf-crt-scan` | `rgba(0, 0, 0, 0.15)` |
+| `--nf-crt-rgb-r` | `rgba(0, 255, 65, 0.00)` |
+| `--nf-crt-rgb-g` | `rgba(0, 255, 65, 0.04)` |
+| `--nf-crt-rgb-b` | `rgba(0, 255, 65, 0.00)` |
+
+### `nf-theme-iron-signal`
+
+| Token | Value |
+| --- | --- |
+| `--nf-color-bg` | `#0d0d0d` |
+| `--nf-color-surface` | `#141414` |
+| `--nf-color-surface-lowest` | `#0a0a0a` |
+| `--nf-color-surface-low` | `#1a1a1a` |
+| `--nf-color-surface-container` | `#1e1e1e` |
+| `--nf-color-surface-high` | `#242424` |
+| `--nf-color-surface-highest` | `#2e2e2e` |
+| `--nf-color-surface-bright` | `#363636` |
+| `--nf-color-primary` | `#ff5e5e` |
+| `--nf-color-on-primary` | `#000000` |
+| `--nf-color-primary-dim` | `#cc0000` |
+| `--nf-color-primary-fixed` | `#ff8888` |
+| `--nf-color-secondary` | `#ffb000` |
+| `--nf-color-on-secondary` | `#000000` |
+| `--nf-color-secondary-dim` | `#cc8c00` |
+| `--nf-color-tertiary` | `#b4b4b4` |
+| `--nf-color-on-tertiary` | `#000000` |
+| `--nf-color-tertiary-dim` | `#888888` |
+| `--nf-color-error` | `#ff5e5e` |
+| `--nf-color-error-container` | `#4d0000` |
+| `--nf-color-on-error` | `#000000` |
+| `--nf-color-text` | `#e8e8e8` |
+| `--nf-color-text-muted` | `#b0b0b0` |
+| `--nf-color-text-subtle` | `#787878` |
+| `--nf-color-text-inverse` | `#000000` |
+| `--nf-color-border` | `#333333` |
+| `--nf-color-border-strong` | `#555555` |
+| `--nf-font-display` | `'Russo One', system-ui, sans-serif` |
+| `--nf-font-body` | `'Orbitron', system-ui, sans-serif` |
+| `--nf-font-mono` | `'Orbitron', monospace` |
+| `--nf-font-label` | `'JetBrains Mono', monospace` |
+| `--nf-border-thin` | `2px` |
+| `--nf-border-base` | `2px` |
+| `--nf-border-medium` | `3px` |
+| `--nf-border-thick` | `6px` |
+| `--nf-duration-fast` | `0ms` |
+| `--nf-duration-base` | `0ms` |
+| `--nf-duration-slow` | `60ms` |
+| `--nf-duration-slower` | `100ms` |
+| `--nf-duration-crawl` | `150ms` |
+| `--nf-crt-scan` | `rgba(0, 0, 0, 0.20)` |
+| `--nf-crt-rgb-r` | `rgba(255, 0, 0, 0.04)` |
+| `--nf-crt-rgb-g` | `rgba(0, 0, 0, 0.00)` |
+| `--nf-crt-rgb-b` | `rgba(0, 0, 0, 0.00)` |
+
+---
+
+# NetFrame interactive patterns
+
+NetFrame ships CSS only. These optional controllers are copied from the docs and run in the docs test suite. State lives in ARIA attributes; use unique `id`s per instance.
+
+## Accordion
+
+Docs: https://netframe.cybeartech.com/components/accordion/
+
+Reference markup:
+
+```html
+<div class="nf-accordion">
+  <div class="nf-accordion-item">
+    <button class="nf-accordion-trigger" aria-expanded="true" aria-controls="panel-1">SYSTEM_STATUS<span class="nf-accordion-icon"></span></button>
+    <div class="nf-accordion-content" id="panel-1">
+      <div class="nf-accordion-body">All subsystems nominal. Uplink active.</div>
+    </div>
+  </div>
+  <div class="nf-accordion-item">
+    <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-2">NETWORK_LOGS<span class="nf-accordion-icon"></span></button>
+    <div class="nf-accordion-content" id="panel-2" style="height: 0;">
+      <div class="nf-accordion-body">No anomalies detected in the last 24h.</div>
+    </div>
+  </div>
+  <div class="nf-accordion-item">
+    <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-3">THREAT_ANALYSIS<span class="nf-accordion-icon"></span></button>
+    <div class="nf-accordion-content" id="panel-3" style="height: 0;">
+      <div class="nf-accordion-body">0 active threats. ICE integrity at 100%.</div>
+    </div>
+  </div>
+</div>
+```
+
+Controller:
+
+```js
+document.querySelectorAll('.nf-accordion-trigger').forEach((trigger) => {
+  const panel = document.getElementById(trigger.getAttribute('aria-controls'));
+  if (!panel) return;
+
+  function setExpanded(expanded) {
+    trigger.setAttribute('aria-expanded', String(expanded));
+    // `inert` keeps links/buttons inside a collapsed panel out of the tab order
+    // and the accessibility tree, which `height: 0` alone does not.
+    panel.inert = !expanded;
+    panel.style.height = expanded ? panel.scrollHeight + 'px' : '0';
+    if (expanded && matchMedia('(prefers-reduced-motion: reduce)').matches) panel.style.height = 'auto';
+  }
+
+  // Release the fixed height after expanding so content can reflow/resize.
+  panel.addEventListener('transitionend', () => {
+    if (trigger.getAttribute('aria-expanded') === 'true') panel.style.height = 'auto';
+  });
+
+  const initiallyOpen = trigger.getAttribute('aria-expanded') === 'true';
+  setExpanded(initiallyOpen);
+  if (initiallyOpen) panel.style.height = 'auto'; // no transition runs on load
+
+  trigger.addEventListener('click', () => {
+    const expanded = trigger.getAttribute('aria-expanded') === 'true';
+    if (expanded) {
+      // Pin the current height first so the collapse can animate from it.
+      panel.style.height = panel.scrollHeight + 'px';
+      panel.offsetHeight; // force reflow
+    }
+    setExpanded(!expanded);
+  });
+});
+```
+
+## Dropdown
+
+Docs: https://netframe.cybeartech.com/components/dropdown/
+
+Reference markup:
+
+```html
+<div class="nf-dropdown">
+  <button class="nf-button nf-button-ghost nf-dropdown-trigger" aria-expanded="true" aria-haspopup="menu">OPTIONS</button>
+  <ul class="nf-dropdown-menu" role="menu">
+    <li role="none"><button class="nf-dropdown-item" role="menuitem">SCAN_NODE</button></li>
+    <li role="none"><button class="nf-dropdown-item" role="menuitem">PURGE_CACHE</button></li>
+    <li role="none"><button class="nf-dropdown-item" role="menuitem" aria-disabled="true">SYNC_DATA</button></li>
+  </ul>
+</div>
+```
+
+Controller:
+
+```js
+document.querySelectorAll('.nf-dropdown').forEach((dropdown) => {
+  const trigger = dropdown.querySelector('.nf-dropdown-trigger');
+  const menu    = dropdown.querySelector('.nf-dropdown-menu');
+  const items   = () => [...menu.querySelectorAll('.nf-dropdown-item:not([aria-disabled="true"]):not(:disabled)')];
+
+  // The CSS hides the menu only for aria-hidden="true" (or .nf-hidden),
+  // so always write the literal string rather than toggling the attribute.
+  function setOpen(open, { focusTrigger = false, focusItem = open } = {}) {
+    trigger.setAttribute('aria-expanded', String(open));
+    menu.setAttribute('aria-hidden', String(!open));
+    if (open && focusItem) items()[0]?.focus();
+    else if (focusTrigger) trigger.focus();
+  }
+
+  // Synchronize initial ARIA state without moving focus on page load.
+  setOpen(trigger.getAttribute('aria-expanded') === 'true', { focusItem: false });
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setOpen(trigger.getAttribute('aria-expanded') !== 'true');
+  });
+
+  // Arrow keys move between items; Escape closes and returns focus.
+  menu.addEventListener('keydown', (e) => {
+    const list = items();
+    const i = list.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); list[(i + 1) % list.length]?.focus(); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); list[(i - 1 + list.length) % list.length]?.focus(); }
+    if (e.key === 'Escape')    { setOpen(false, { focusTrigger: true }); }
+  });
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target)) setOpen(false);
+  });
+});
+```
+
+## Tabs
+
+Docs: https://netframe.cybeartech.com/components/tabs/
+
+Reference markup:
+
+```html
+<div class="nf-tabs">
+  <div class="nf-tab-list" role="tablist" aria-label="System modules">
+    <button class="nf-tab" role="tab" aria-selected="true" aria-controls="tab-panel-1" id="tab-1">OVERVIEW</button>
+    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-2" id="tab-2">NETWORK</button>
+    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-3" id="tab-3">SECURITY</button>
+    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-4" id="tab-4" aria-disabled="true">ARCHIVE</button>
+  </div>
+  <div class="nf-tab-panel" role="tabpanel" id="tab-panel-1" aria-labelledby="tab-1">
+    System overview data goes here.
+  </div>
+  <div class="nf-tab-panel" role="tabpanel" id="tab-panel-2" aria-labelledby="tab-2" hidden>
+    Network topology data goes here.
+  </div>
+  <div class="nf-tab-panel" role="tabpanel" id="tab-panel-3" aria-labelledby="tab-3" hidden>
+    Security logs go here.
+  </div>
+  <div class="nf-tab-panel" role="tabpanel" id="tab-panel-4" aria-labelledby="tab-4" hidden>
+    Archive data goes here.
+  </div>
+</div>
+```
+
+Controller:
+
+```js
+document.querySelectorAll('.nf-tab-list').forEach((list) => {
+  const tabs = [...list.querySelectorAll('.nf-tab')];
+  const enabled = () => tabs.filter((t) => t.getAttribute('aria-disabled') !== 'true' && !t.disabled);
+
+  function select(tab, { focus = false } = {}) {
+    if (!tab || tab.getAttribute('aria-disabled') === 'true' || tab.disabled) return;
+    tabs.forEach((t) => {
+      const active = t === tab;
+      t.setAttribute('aria-selected', String(active));
+      t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
+      document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
+    });
+    if (focus) tab.focus();
+  }
+
+  select(enabled().find((t) => t.getAttribute('aria-selected') === 'true') ?? enabled()[0]);
+
+  list.addEventListener('click', (e) => {
+    const tab = e.target.closest('.nf-tab');
+    if (tab) select(tab);
+  });
+
+  // Arrow keys / Home / End move between enabled tabs (automatic activation).
+  list.addEventListener('keydown', (e) => {
+    const order = enabled();
+    const i = order.indexOf(document.activeElement);
+    const next = {
+      ArrowRight: order[(i + 1) % order.length],
+      ArrowLeft: order[(i - 1 + order.length) % order.length],
+      Home: order[0],
+      End: order[order.length - 1],
+    }[e.key];
+    if (next) { e.preventDefault(); select(next, { focus: true }); }
+  });
+});
+```
+
+## Modal
+
+Docs: https://netframe.cybeartech.com/components/modal/
+
+Reference markup:
+
+```html
+<!-- Overlay -->
+<div class="nf-modal-overlay" id="modal-overlay" role="presentation">
+
+  <!-- Dialog -->
+  <div class="nf-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+    <div class="nf-modal-header">
+      <h2 class="nf-modal-title" id="modal-title">CONFIRM_ACTION</h2>
+      <button class="nf-modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="nf-modal-body">
+      <p>This action will purge all cached node data. Proceed?</p>
+    </div>
+    <div class="nf-modal-footer">
+      <button class="nf-button nf-button-ghost">CANCEL</button>
+      <button class="nf-button nf-button-danger">PURGE</button>
+    </div>
+  </div>
+
+</div>
+```
+
+Controller:
+
+```js
+const overlay = document.getElementById('modal-overlay');
+const modal   = overlay.querySelector('.nf-modal');
+const trigger = document.getElementById('open-modal');
+const close   = modal.querySelector('.nf-modal-close');
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+let isOpen = false;
+
+function openModal() {
+  isOpen = true;
+  overlay.classList.remove('nf-hidden');
+  overlay.removeAttribute('aria-hidden');
+  // Keep keyboard and screen-reader focus out of the page behind the dialog.
+  overlay.parentElement.querySelectorAll(':scope > :not(#modal-overlay)').forEach((el) => (el.inert = true));
+  modal.focus();
+}
+
+function closeModal() {
+  if (!isOpen) return; // Escape on a closed modal must not steal focus.
+  isOpen = false;
+  overlay.classList.add('nf-hidden');
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.parentElement.querySelectorAll(':scope > [inert]').forEach((el) => (el.inert = false));
+  trigger.focus();
+}
+
+trigger.addEventListener('click', openModal);
+close.addEventListener('click', closeModal);
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (!isOpen) return;
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Tab') {
+    // Wrap focus inside the dialog.
+    const items = [...modal.querySelectorAll(FOCUSABLE)];
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
+```
+
+## Drawer
+
+Docs: https://netframe.cybeartech.com/components/drawer/
+
+Reference markup:
+
+```html
+<button class="nf-button" id="open-drawer">OPEN DRAWER</button>
+
+<!-- Overlay and drawer: direct children of <body>, closed by default -->
+<div class="nf-drawer-overlay nf-hidden" id="drawer-overlay"></div>
+
+<!-- Left drawer -->
+<div class="nf-drawer nf-drawer-left" id="my-drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="drawer-title">
+  <div class="nf-drawer-header">
+    <h2 class="nf-drawer-title" id="drawer-title">SYSTEM_NAV</h2>
+    <button class="nf-button nf-button-ghost nf-button-icon" aria-label="Close drawer">✕</button>
+  </div>
+  <div class="nf-drawer-body">
+    <p>Drawer content goes here.</p>
+  </div>
+  <div class="nf-drawer-footer">
+    <button class="nf-button nf-button-ghost nf-button-sm">CLOSE</button>
+  </div>
+</div>
+```
+
+Controller:
+
+```js
+const overlay = document.getElementById('drawer-overlay');
+const drawer  = document.getElementById('my-drawer');
+const trigger = document.getElementById('open-drawer');
+const close   = drawer.querySelector('[aria-label="Close drawer"]');
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+let isOpen = false;
+
+// Everything else under <body> becomes inert while the drawer is open.
+const page = () => overlay.parentElement.querySelectorAll(':scope > :not(#drawer-overlay):not(#my-drawer)');
+
+function setOpen(open, { moveFocus = true } = {}) {
+  if (open === isOpen && moveFocus) return;
+  isOpen = open;
+  drawer.classList.toggle('nf-open', open);
+  overlay.classList.toggle('nf-hidden', !open);
+  drawer.setAttribute('aria-hidden', String(!open));
+  // The closed panel sits off-screen but is still focusable unless inert.
+  drawer.inert = !open;
+  page().forEach((el) => (el.inert = open));
+  if (!moveFocus) return;
+  if (open) (drawer.querySelector(FOCUSABLE) ?? drawer).focus();
+  else trigger.focus();
+}
+
+setOpen(drawer.classList.contains('nf-open'), { moveFocus: false });
+
+trigger.addEventListener('click', () => setOpen(true));
+close.addEventListener('click', () => setOpen(false));
+drawer.querySelectorAll('.nf-drawer-footer button').forEach((b) => b.addEventListener('click', () => setOpen(false)));
+overlay.addEventListener('click', () => setOpen(false));
+document.addEventListener('keydown', (e) => {
+  if (!isOpen) return;
+  if (e.key === 'Escape') setOpen(false);
+  if (e.key === 'Tab') {
+    // Wrap focus inside the drawer.
+    const items = [...drawer.querySelectorAll(FOCUSABLE)];
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
+```
+
+## Toast
+
+Docs: https://netframe.cybeartech.com/components/toast/
+
+Reference markup:
+
+```html
+<div class="nf-toast nf-toast-success">
+  <div class="nf-toast-content">
+    <div class="nf-toast-title">UPLINK_RESTORED</div>
+    <div class="nf-toast-message">Connection re-established. Latency: 12ms.</div>
+  </div>
+  <button class="nf-toast-close" aria-label="Dismiss">✕</button>
+</div>
+
+<div class="nf-toast nf-toast-error">
+  <div class="nf-toast-content">
+    <div class="nf-toast-title">CONNECTION_LOST</div>
+    <div class="nf-toast-message">Node 047 unreachable. Retrying in 5s.</div>
+  </div>
+  <button class="nf-toast-close" aria-label="Dismiss">✕</button>
+</div>
+
+<div class="nf-toast nf-toast-warning">
+  <div class="nf-toast-content">
+    <div class="nf-toast-title">HIGH_LATENCY</div>
+    <div class="nf-toast-message">Uplink degraded. Current latency: 420ms.</div>
+  </div>
+  <button class="nf-toast-close" aria-label="Dismiss">✕</button>
+</div>
+
+<div class="nf-toast nf-toast-info">
+  <div class="nf-toast-content">
+    <div class="nf-toast-title">SYNC_COMPLETE</div>
+    <div class="nf-toast-message">48 records synchronized with remote node.</div>
+  </div>
+  <button class="nf-toast-close" aria-label="Dismiss">✕</button>
+</div>
+```
+
+Controller:
+
+```js
+function showToast({ title, message, type = 'info', duration = 4000 }) {
+  const region = document.getElementById('toast-region');
+  const toast = document.createElement('div');
+  toast.className = `nf-toast nf-toast-${type}`;
+  // Errors interrupt; everything else waits for the polite region.
+  if (type === 'error') toast.setAttribute('role', 'alert');
+
+  // Build with textContent, never innerHTML: titles and messages often
+  // contain user or server data.
+  const content = document.createElement('div');
+  content.className = 'nf-toast-content';
+  const heading = document.createElement('div');
+  heading.className = 'nf-toast-title';
+  heading.textContent = title;
+  const body = document.createElement('div');
+  body.className = 'nf-toast-message';
+  body.textContent = message;
+  content.append(heading, body);
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'nf-toast-close';
+  close.setAttribute('aria-label', 'Dismiss');
+  close.textContent = '✕';
+  toast.append(content, close);
+
+  let timer;
+  let removed = false;
+  const remove = () => {
+    if (removed) return;
+    removed = true;
+    toast.remove();
+  };
+  const dismiss = () => {
+    clearTimeout(timer);
+    toast.classList.add('nf-toast-dismissing');
+    toast.addEventListener('animationend', remove, { once: true });
+    setTimeout(remove, 1000); // fallback if animations are disabled
+  };
+  const start = () => { clearTimeout(timer); timer = setTimeout(dismiss, duration); };
+  const pause = () => clearTimeout(timer);
+
+  // Let people stop the timer while reading or interacting (WCAG 2.2.1).
+  toast.addEventListener('mouseenter', pause);
+  toast.addEventListener('mouseleave', start);
+  toast.addEventListener('focusin', pause);
+  toast.addEventListener('focusout', start);
+  close.addEventListener('click', dismiss);
+
+  region.appendChild(toast);
+  start();
+  return toast;
+}
+```
+
+## Table sorting
+
+Docs: https://netframe.cybeartech.com/components/table/
+
+Controller:
+
+```js
+document.querySelectorAll('.nf-table').forEach((table) => {
+  const headers = [...table.querySelectorAll('thead th')];
+  const body = table.querySelector('tbody');
+  if (!body) return;
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  const value = (row, column) => row.cells[column].textContent.trim();
+  const missing = (text) => text === '' || text === '—';
+  const numeric = (text) => /^-?\d+(?:\.\d+)?(?:ms|%|MB)?$/i.test(text);
+  headers.forEach((header, column) => {
+    const button = header.querySelector('.nf-table-sort');
+    if (!button) return;
+    button.addEventListener('click', () => {
+      const direction = header.getAttribute('aria-sort') === 'ascending' ? -1 : 1;
+      const rows = [...body.rows].sort((a, b) => {
+        const x = value(a, column);
+        const y = value(b, column);
+        if (missing(x) || missing(y)) return Number(missing(x)) - Number(missing(y));
+        const order = numeric(x) && numeric(y)
+          ? parseFloat(x) - parseFloat(y)
+          : collator.compare(x, y);
+        return order * direction;
+      });
+      headers.forEach((other) => other.removeAttribute('aria-sort'));
+      header.setAttribute('aria-sort', direction === 1 ? 'ascending' : 'descending');
+      body.append(...rows);
+    });
+  });
+});
+```
+
+## Pagination
+
+Docs: https://netframe.cybeartech.com/components/pagination/
+
+Required container markup (see the docs page for the full example): `<div data-pagination data-pages="N" data-page="1"><nav aria-label="Pagination"><ol class="nf-pagination"></ol></nav><p data-page-status role="status"></p><ul data-page-results></ul></div>`. The controller rebuilds the list items.
+
+Controller:
+
+```js
+document.querySelectorAll('[data-pagination]').forEach((demo) => {
+  const pages = Number(demo.dataset.pages);
+  let current = Number(demo.dataset.page);
+  const list = demo.querySelector('.nf-pagination');
+  const status = demo.querySelector('[data-page-status]');
+  const results = demo.querySelector('[data-page-results]');
+  const records = Array.from({ length: pages * 3 }, (_, i) => 'NODE_' + String(i + 1).padStart(3, '0'));
+
+  function render(focusAction) {
+    const numbers = pages <= 7
+      ? Array.from({ length: pages }, (_, i) => i + 1)
+      : [1, ...[current - 1, current, current + 1].filter((p) => p > 1 && p < pages), pages];
+    list.replaceChildren();
+    function control(label, page, action) {
+      const item = document.createElement('li');
+      item.className = 'nf-page-item';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'nf-page-link' + (action === 'page' ? '' : ' nf-page-' + action);
+      button.textContent = label;
+      button.dataset.page = String(page);
+      button.dataset.action = action;
+      if (action === 'page' && page === current) {
+        item.classList.add('nf-page-item-active');
+        button.setAttribute('aria-current', 'page');
+      }
+      if (page < 1 || page > pages) {
+        item.classList.add('nf-page-item-disabled');
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+      }
+      item.append(button);
+      list.append(item);
+    }
+    control('PREV', current - 1, 'prev');
+    numbers.forEach((page, i) => {
+      if (i && page - numbers[i - 1] > 1) {
+        const item = document.createElement('li');
+        item.className = 'nf-page-item nf-page-ellipsis';
+        const dots = document.createElement('span');
+        dots.className = 'nf-page-link';
+        dots.textContent = '…';
+        dots.setAttribute('aria-hidden', 'true');
+        item.append(dots);
+        list.append(item);
+      }
+      control(String(page), page, 'page');
+    });
+    control('NEXT', current + 1, 'next');
+    demo.dataset.page = String(current);
+    status.textContent = 'Page ' + current + ' of ' + pages;
+    results.replaceChildren(...records.slice((current - 1) * 3, current * 3).map((record) => {
+      const item = document.createElement('li');
+      item.textContent = record;
+      return item;
+    }));
+    if (focusAction) {
+      const candidate = list.querySelector('[data-action="' + focusAction + '"]:not(:disabled)');
+      (focusAction === 'page' ? list.querySelector('[aria-current="page"]') : candidate || list.querySelector('[aria-current="page"]')).focus();
+    }
+  }
+
+  demo.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-page]');
+    if (!button || button.disabled) return;
+    const page = Number(button.dataset.page);
+    if (page < 1 || page > pages || page === current) return;
+    current = page;
+    render(button.dataset.action);
+  });
+  render();
+});
+```
+
+## Notification disclosure (badge dot)
+
+Docs: https://netframe.cybeartech.com/components/badge/
+
+Needs the container with `data-notifications`, a trigger with `data-notification-trigger`, a hidden `.notification-panel`, and `data-notification-count`, `data-notification-label`, `data-notification-status`, `data-mark-read` hooks. Copy the full HTML and demo-only CSS from the docs page.
+
+Controller:
+
+```js
+document.querySelectorAll('[data-notifications]').forEach((root) => {
+  const trigger = root.querySelector('[data-notification-trigger]');
+  const panel = root.querySelector('.notification-panel');
+  const status = root.querySelector('[data-notification-status]');
+  const count = root.querySelector('[data-notification-count]');
+  const label = root.querySelector('[data-notification-label]');
+  const markRead = root.querySelector('[data-mark-read]');
+
+  function setOpen(open) {
+    trigger.setAttribute('aria-expanded', String(open));
+    panel.hidden = !open;
+  }
+
+  trigger.addEventListener('click', () => {
+    setOpen(trigger.getAttribute('aria-expanded') !== 'true');
+  });
+
+  markRead.addEventListener('click', () => {
+    if (markRead.getAttribute('aria-disabled') === 'true') return;
+    root.querySelectorAll('[data-unread]').forEach((item) => {
+      item.removeAttribute('data-unread');
+      const state = item.querySelector('.notification-item-state');
+      state.textContent = state.textContent.replace('UNREAD', 'READ');
+    });
+    trigger.classList.remove('nf-badge-dot');
+    count.textContent = '0';
+    label.textContent = ' — no unread notifications';
+    status.textContent = 'All notifications read';
+    markRead.textContent = 'ALL READ';
+    markRead.setAttribute('aria-disabled', 'true');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || trigger.getAttribute('aria-expanded') !== 'true') return;
+    event.preventDefault();
+    setOpen(false);
+    trigger.focus();
+  });
+  root.addEventListener('focusout', (event) => {
+    if (!root.contains(event.relatedTarget)) setOpen(false);
+  });
+});
+```

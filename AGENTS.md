@@ -16,7 +16,9 @@ packages/netframe/          the published package ("netframe")
   src/netframe.scss         main entry (forward order matters: tokens → base → mixins → components → utilities)
   src/themes/themes.scss    separate themes entry → dist/themes.css
   scripts/build.ts          Sass → PostCSS (autoprefixer, cssnano) → dist/ (staged directory swap)
-  test/*.test.mjs           node:test package + CSS contract tests
+  skills/                   agent skills shipped in the npm package (SKILL.md hand-written; references/ generated)
+  test/*.test.mjs           node:test package, CSS contract and skill tests
+scripts/build-skills.mjs    generates skill references and apps/docs/public/llms*.txt
 apps/docs/                  Astro docs (private, not published)
   scripts/sync-netframe.mjs copies built netframe dist into public/ (runs automatically on dev/build)
   tests/*.spec.ts           Playwright: every page (errors, external requests, axe WCAG 2.1 AA), docs JS snippets
@@ -43,6 +45,7 @@ Generated, never edit by hand: `packages/netframe/dist/`, `apps/docs/dist/`, `ap
 | Build library / docs | `pnpm --filter netframe run build` / `pnpm --filter @netframe/docs run build` |
 | Browser tests (needs both builds) | `pnpm run test:browser` |
 | Watch library + docs | `pnpm dev` (docs re-copy the library on each rebuild) |
+| Regenerate skill references and llms.txt | `pnpm run skills:build` (check only: `pnpm run skills:check`) |
 | Security audit | `pnpm audit --audit-level high` |
 
 Notes:
@@ -70,8 +73,20 @@ In MDX, keep inline element content on one line (`<button …>LABEL</button>`). 
 
 Form examples: associate labels (`for`/`id`), link helper text with `aria-describedby`, and mark errors with `aria-invalid="true"` (styled the same as `.nf-input-error`). Progress examples: `role="progressbar"` with value attributes and a label. Snippets that render dynamic text use `textContent`, never `innerHTML`.
 
+## Agent skills
+
+`packages/netframe/skills/` ships three skills to consumers' agents (Claude Code, GitHub Copilot, Codex): `netframe-usage`, `netframe-theming`, `netframe-interactive`.
+
+- `SKILL.md` files are hand-written: keep them short, name only classes and tokens that exist, no version numbers (the Changesets version PR cannot regenerate files). Detail goes in `references/`.
+- Everything under `references/` and `apps/docs/public/llms.txt`/`llms-full.txt` is **generated** by `scripts/build-skills.mjs` from compiled SCSS, the docs class-reference tables and the docs `## JavaScript` snippets. Never edit them by hand.
+- After changing a class, token, theme, docs class table, docs controller snippet or a `SKILL.md`, run `pnpm run build` then `pnpm run skills:build` and commit the output. `test/skills.test.mjs` fails on stale files, unknown classes or tokens in skills, docs class-table entries that do not exist in the CSS, and install-command drift between the package README, root README and `apps/docs/src/pages/agents.mdx`.
+- Adding a docs controller worth shipping to agents: add it to `PATTERNS` in the script.
+- `packages/netframe/bin/netframe.mjs` is the consumer install command (`npx netframe skills <claude|copilot|codex|all>`): dependency-free, offline, writes only `netframe-*` folders, refuses symlinks. `test/cli.test.mjs` covers it and `test/package.test.mjs` runs it from a packed tarball. Changing the supported agents or paths means updating the CLI, both READMEs, `agents.mdx` and the install-command test together.
+- `CLAUDE.md` imports this file so Claude Code reads the same rules.
+
 ## Package contract
 
+- The package ships `bin/`, `dist/`, `skills/`, `README.md` and `LICENSE` (`files`), and exposes one binary, `netframe`. `test/package.test.mjs` checks the tarball.
 - Supported imports: `netframe/dist/netframe.css`, `netframe/dist/themes.css`, `netframe`, `netframe/min`, `netframe/themes`, `netframe/themes/min`, `netframe/fonts/*`. Sass: `@use 'pkg:netframe/scss/netframe'` (optionally `with ($nf-font-path: '…')`).
 - Compiled CSS loads fonts from `./fonts/` next to it. Raw SCSS uses `$nf-font-path` (default `../fonts`).
 - Keep `style` before `sass` in each `exports` entry. Additive changes only; `test/package.test.mjs` guards this.
