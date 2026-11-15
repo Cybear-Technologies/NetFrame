@@ -20,7 +20,8 @@
 1. Add a Changeset for any user-facing change (`pnpm changeset`) and merge it to `main`.
 2. The workflow opens a "chore: version packages" PR. Merge it and approve the `release` environment.
 3. The publish step runs `pnpm release`, publishes with provenance and tags the version.
-4. With no pending Changeset, a merge to `main` publishes nothing.
+4. With no pending Changesets, the action runs `pnpm release` and attempts to publish checked-in package versions that are not yet on npm; already-published versions are skipped. A manually prepared version such as `0.2.4` therefore does not need another version PR.
+   - **Do not leave only empty/docs-only Changesets pending.** The pinned Changesets action v2.1.2 returns early when all Changesets have empty `releases` lists, skipping both PR creation and publishing. Fold documentation-only notes into the release documentation/changelog instead of leaving an empty Changeset as the sole pending entry.
 5. TypeScript stays on 6.x: `astro check` rejects 7 (Dependabot ignores >=7).
 
 NetFrame is authored by Cybear Technologies; Jackson Chandler is the developer.
