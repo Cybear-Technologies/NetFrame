@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers static assets: serves the built Astro site.
+  // Build: pnpm install --frozen-lockfile && pnpm --filter netframe run build && pnpm --filter @netframe/docs run build
+  // Deploy: npx wrangler deploy   (Root directory: apps/docs)
+  "name": "netframe-docs",
+  "compatibility_date": "2026-11-15",
+  "assets": {
+    "directory": "./dist",
+    // Unknown routes return the custom dist/404.html with HTTP 404.
+    "not_found_handling": "404-page"
+  }
+}

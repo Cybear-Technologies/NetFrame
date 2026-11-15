@@ -85,5 +85,5 @@ Form examples: associate labels (`for`/`id`), link helper text with `aria-descri
 
 - `CONTRIBUTING.md`: contributor workflow.
 - `README.md` and `apps/docs`: consumer-facing usage.
-- `MODERNIZATION-HANDOFF.md` (if present): historical audit and current remaining-work checklist. Its latest checklist supersedes older status entries; release procedures live in `RELEASING.md`.
+- `RELEASING.md`: release setup, current status and open items.
 - `AGENT.md` (local, ignored, if present): an older feature roadmap. It is not approved scope, and parts of it are stale (Astro 4, manual `cp` sync, helper-mixin locations, "missing tokens fail the build").
