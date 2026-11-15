@@ -48,7 +48,8 @@
   top: calc(100% + var(--nf-space-1));
   left: 0;
   z-index: var(--nf-z-dropdown);
-  min-width: 12rem;
+  min-width: min(12rem, calc(100vw - 2 * var(--nf-space-4)));
+  max-width: calc(100vw - 2 * var(--nf-space-4));
 
   background-color: var(--nf-color-surface-low);
   border: var(--nf-border-medium) solid var(--nf-color-primary);
@@ -87,6 +88,8 @@
   text-decoration: none;
   cursor: crosshair;
   width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
   background: none;
   border: none;
   text-align: left;
@@ -144,4 +147,10 @@
   text-transform: uppercase;
   color: var(--nf-color-text-subtle);
   pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .nf-dropdown-item {
+    min-height: 2.75rem;
+  }
 }

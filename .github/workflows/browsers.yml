@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   browsers:
-    name: Firefox & WebKit
+    name: Firefox, WebKit & mobile emulation
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -37,10 +37,10 @@ jobs:
         run: pnpm run build
 
       - name: Install browsers
-        run: pnpm --filter @netframe/docs exec playwright install --with-deps firefox webkit
+        run: pnpm --filter @netframe/docs exec playwright install --with-deps chromium firefox webkit
 
-      - name: Test Firefox and WebKit
-        run: pnpm --filter @netframe/docs exec playwright test --project=firefox --project=webkit
+      - name: Test Firefox, WebKit and mobile emulation
+        run: pnpm --filter @netframe/docs exec playwright test --project=firefox --project=webkit --project=mobile-chromium --project=mobile-webkit
 
       - name: Upload failure report
         if: failure()

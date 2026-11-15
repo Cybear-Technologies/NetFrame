@@ -120,6 +120,13 @@
   }
 }
 
+// Short status labels inside cells keep their intrinsic width: a table that is too
+// narrow scrolls inside .nf-table-wrap instead of breaking "ONLINE" into "ONLIN/E".
+.nf-table :is(.nf-badge, .nf-tag, .nf-button) {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
 // ---------------------------------------------------------------------------
 // Footer
 // ---------------------------------------------------------------------------

@@ -13,24 +13,24 @@ Fixed dialog with backdrop overlay. Focus should be trapped inside while open.
 ## Structure
 
 <ComponentDemo stacked title="Modal panel" code={`<!-- Overlay -->
-<div class="nf-modal-overlay" id="modal-overlay" role="presentation">
+  <div class="nf-modal-overlay" id="modal-overlay" role="presentation">
 
-  <!-- Dialog -->
-  <div class="nf-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
-    <div class="nf-modal-header">
-      <h2 class="nf-modal-title" id="modal-title">CONFIRM_ACTION</h2>
-      <button class="nf-modal-close" aria-label="Close">✕</button>
+    <!-- Dialog -->
+    <div class="nf-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
+      <div class="nf-modal-header">
+        <h2 class="nf-modal-title" id="modal-title">CONFIRM_ACTION</h2>
+        <button class="nf-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="nf-modal-body">
+        <p>This action will purge all cached node data. Proceed?</p>
+      </div>
+      <div class="nf-modal-footer">
+        <button class="nf-button nf-button-ghost">CANCEL</button>
+        <button class="nf-button nf-button-danger">PURGE</button>
+      </div>
     </div>
-    <div class="nf-modal-body">
-      <p>This action will purge all cached node data. Proceed?</p>
-    </div>
-    <div class="nf-modal-footer">
-      <button class="nf-button nf-button-ghost">CANCEL</button>
-      <button class="nf-button nf-button-danger">PURGE</button>
-    </div>
-  </div>
 
-</div>`}>
+  </div>`}>
   <div class="nf-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-demo" style="position: relative; max-width: 28rem; width: 100%;">
     <div class="nf-modal-header">
       <h2 class="nf-modal-title" id="modal-title-demo">CONFIRM_ACTION</h2>
@@ -49,10 +49,10 @@ Fixed dialog with backdrop overlay. Focus should be trapped inside while open.
 ## Sizes
 
 <ComponentDemo stacked title="Size variants" code={`<div class="nf-modal nf-modal-sm">...</div>  <!-- 20rem -->
-<div class="nf-modal">...</div>              <!-- default 32rem -->
-<div class="nf-modal nf-modal-lg">...</div>  <!-- 48rem -->
-<div class="nf-modal nf-modal-xl">...</div>  <!-- 64rem -->
-<div class="nf-modal nf-modal-full">...</div> <!-- 100vw × 100svh -->`}>
+  <div class="nf-modal">...</div>              <!-- default 32rem -->
+  <div class="nf-modal nf-modal-lg">...</div>  <!-- 48rem -->
+  <div class="nf-modal nf-modal-xl">...</div>  <!-- 64rem -->
+  <div class="nf-modal nf-modal-full">...</div> <!-- 100vw × 100svh -->`}>
   <div style="display: flex; flex-direction: column; gap: var(--nf-space-2); font-size: var(--nf-text-sm); color: var(--nf-color-text-muted);">
     <div style="display: flex; align-items: center; gap: var(--nf-space-3);"><span class="nf-badge nf-badge-ghost">nf-modal-sm</span> 20rem</div>
     <div style="display: flex; align-items: center; gap: var(--nf-space-3);"><span class="nf-badge nf-badge-ghost">default</span> 32rem</div>
@@ -61,6 +61,10 @@ Fixed dialog with backdrop overlay. Focus should be trapped inside while open.
     <div style="display: flex; align-items: center; gap: var(--nf-space-3);"><span class="nf-badge nf-badge-ghost">nf-modal-full</span> 100vw × 100svh</div>
   </div>
 </ComponentDemo>
+
+## Small screens
+
+The dialog never exceeds the viewport height. With the documented structure the body scrolls while the header and its close button stay in place; footer buttons wrap onto extra rows. On touch devices the close button is 44px square. The overlay keeps clear of notches and rounded corners via `env(safe-area-inset-*)`, which needs `viewport-fit=cover` in your viewport meta to take effect.
 
 ## JavaScript
 

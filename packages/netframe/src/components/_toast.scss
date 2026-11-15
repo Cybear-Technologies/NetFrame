@@ -13,12 +13,14 @@
   flex-direction: column;
   gap: var(--nf-space-2);
   pointer-events: none;
+  // Never wider than the screen, whatever the toast contents.
+  max-width: calc(100vw - 2 * var(--nf-space-4));
 
   // Position variants
-  &.nf-toast-top-right    { top: var(--nf-space-4); right: var(--nf-space-4); }
-  &.nf-toast-top-left     { top: var(--nf-space-4); left: var(--nf-space-4); }
-  &.nf-toast-bottom-right { bottom: var(--nf-space-4); right: var(--nf-space-4); }
-  &.nf-toast-bottom-left  { bottom: var(--nf-space-4); left: var(--nf-space-4); }
+  &.nf-toast-top-right    { top: max(var(--nf-space-4), env(safe-area-inset-top)); right: max(var(--nf-space-4), env(safe-area-inset-right)); }
+  &.nf-toast-top-left     { top: max(var(--nf-space-4), env(safe-area-inset-top)); left: max(var(--nf-space-4), env(safe-area-inset-left)); }
+  &.nf-toast-bottom-right { bottom: max(var(--nf-space-4), env(safe-area-inset-bottom)); right: max(var(--nf-space-4), env(safe-area-inset-right)); }
+  &.nf-toast-bottom-left  { bottom: max(var(--nf-space-4), env(safe-area-inset-bottom)); left: max(var(--nf-space-4), env(safe-area-inset-left)); }
 }
 
 // ---------------------------------------------------------------------------
@@ -31,8 +33,9 @@
   gap: var(--nf-space-3);
   pointer-events: auto;
 
-  min-width: 18rem;
-  max-width: 24rem;
+  min-width: min(18rem, 100%);
+  max-width: min(24rem, 100%);
+  overflow-wrap: anywhere;
   padding: var(--nf-space-3) var(--nf-space-4);
 
   background-color: var(--nf-color-surface-high);
@@ -100,6 +103,14 @@
   padding: 0;
 
   &:hover { color: var(--nf-color-text); }
+}
+
+@media (pointer: coarse) {
+  .nf-toast-close {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    margin: calc(-1 * var(--nf-space-3)) calc(-1 * var(--nf-space-4)) 0 0;
+  }
 }
 
 // ---------------------------------------------------------------------------

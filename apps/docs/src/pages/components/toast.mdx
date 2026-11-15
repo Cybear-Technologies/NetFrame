@@ -13,36 +13,36 @@ Non-blocking notifications stacked in a fixed region. The left border accent com
 ## Variants
 
 <ComponentDemo stacked title="Success / Error / Warning / Info" code={`<div class="nf-toast nf-toast-success">
-  <div class="nf-toast-content">
-    <div class="nf-toast-title">UPLINK_RESTORED</div>
-    <div class="nf-toast-message">Connection re-established. Latency: 12ms.</div>
+    <div class="nf-toast-content">
+      <div class="nf-toast-title">UPLINK_RESTORED</div>
+      <div class="nf-toast-message">Connection re-established. Latency: 12ms.</div>
+    </div>
+    <button class="nf-toast-close" aria-label="Dismiss">✕</button>
   </div>
-  <button class="nf-toast-close" aria-label="Dismiss">✕</button>
-</div>
 
-<div class="nf-toast nf-toast-error">
-  <div class="nf-toast-content">
-    <div class="nf-toast-title">CONNECTION_LOST</div>
-    <div class="nf-toast-message">Node 047 unreachable. Retrying in 5s.</div>
+  <div class="nf-toast nf-toast-error">
+    <div class="nf-toast-content">
+      <div class="nf-toast-title">CONNECTION_LOST</div>
+      <div class="nf-toast-message">Node 047 unreachable. Retrying in 5s.</div>
+    </div>
+    <button class="nf-toast-close" aria-label="Dismiss">✕</button>
   </div>
-  <button class="nf-toast-close" aria-label="Dismiss">✕</button>
-</div>
 
-<div class="nf-toast nf-toast-warning">
-  <div class="nf-toast-content">
-    <div class="nf-toast-title">HIGH_LATENCY</div>
-    <div class="nf-toast-message">Uplink degraded. Current latency: 420ms.</div>
+  <div class="nf-toast nf-toast-warning">
+    <div class="nf-toast-content">
+      <div class="nf-toast-title">HIGH_LATENCY</div>
+      <div class="nf-toast-message">Uplink degraded. Current latency: 420ms.</div>
+    </div>
+    <button class="nf-toast-close" aria-label="Dismiss">✕</button>
   </div>
-  <button class="nf-toast-close" aria-label="Dismiss">✕</button>
-</div>
 
-<div class="nf-toast nf-toast-info">
-  <div class="nf-toast-content">
-    <div class="nf-toast-title">SYNC_COMPLETE</div>
-    <div class="nf-toast-message">48 records synchronized with remote node.</div>
-  </div>
-  <button class="nf-toast-close" aria-label="Dismiss">✕</button>
-</div>`}>
+  <div class="nf-toast nf-toast-info">
+    <div class="nf-toast-content">
+      <div class="nf-toast-title">SYNC_COMPLETE</div>
+      <div class="nf-toast-message">48 records synchronized with remote node.</div>
+    </div>
+    <button class="nf-toast-close" aria-label="Dismiss">✕</button>
+  </div>`}>
   <div style="display: flex; flex-direction: column; gap: var(--nf-space-3); width: 100%; max-width: 24rem;">
     <div class="nf-toast nf-toast-success" style="position: static; min-width: 0; max-width: none; animation: none;">
       <div class="nf-toast-content">
@@ -138,6 +138,10 @@ function showToast({ title, message, type = 'info', duration = 4000 }) {
   return toast;
 }
 ```
+
+## Small screens
+
+A toast is never wider than the screen minus its margins, and long words break instead of widening it. Regions respect `env(safe-area-inset-*)` (add `viewport-fit=cover` to your viewport meta). The dismiss button is a 44px target on touch devices.
 
 ## Region positions
 

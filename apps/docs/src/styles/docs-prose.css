@@ -1,0 +1,99 @@
+/* NetFrame Docs — readable rhythm for MDX content on every screen size.
+   Docs-only; the library's own base typography is untouched. */
+
+.docs-content h1 {
+  margin: 0 0 var(--nf-space-4);
+  font-size: clamp(var(--nf-text-3xl), 9vw, var(--nf-text-4xl));
+  overflow-wrap: anywhere;
+}
+
+.docs-content h2 {
+  margin: var(--nf-space-10) 0 var(--nf-space-4);
+  font-size: clamp(var(--nf-text-2xl), 7vw, var(--nf-text-3xl));
+  overflow-wrap: anywhere;
+}
+
+.docs-content h3 {
+  margin: var(--nf-space-8) 0 var(--nf-space-3);
+  font-size: clamp(var(--nf-text-xl), 6vw, var(--nf-text-2xl));
+  overflow-wrap: anywhere;
+}
+
+.docs-content h1 + p,
+.docs-content h2 + p,
+.docs-content h3 + p {
+  margin-top: 0;
+}
+
+.docs-content p,
+.docs-content ul,
+.docs-content ol {
+  margin: 0 0 var(--nf-space-4);
+  overflow-wrap: break-word;
+}
+
+.docs-content ul,
+.docs-content ol {
+  padding-left: var(--nf-space-6);
+  list-style: revert;
+}
+
+.docs-content a { overflow-wrap: anywhere; }
+
+/* Inline code is a unit: keep a short token (a class name, an attribute) on one line
+   and move it whole to the next line instead of splitting its box mid-word. A token
+   longer than the line (a URL, a long class list) still breaks rather than widening
+   the page. */
+.docs-content :not(pre) > code {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  vertical-align: baseline;
+}
+
+.docs-content pre {
+  max-width: 100%;
+}
+
+.docs-content hr {
+  margin: var(--nf-space-8) 0;
+}
+
+/* Markdown tables are wrapped at load (src/scripts/docs-tables.ts) so a wide table
+   scrolls inside its own keyboard-focusable region, never the whole page. */
+.docs-table-scroll {
+  max-width: 100%;
+  margin: 0 0 var(--nf-space-6);
+  overflow-x: auto;
+  border: 1px solid var(--nf-color-border);
+}
+
+.docs-table-scroll:focus-visible {
+  outline: 2px solid var(--nf-color-primary);
+  outline-offset: 2px;
+}
+
+.docs-table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--nf-text-sm);
+}
+
+.docs-table-scroll th,
+.docs-table-scroll td {
+  padding: var(--nf-space-2) var(--nf-space-3);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--nf-color-border);
+}
+
+.docs-table-scroll th {
+  color: var(--nf-color-primary);
+  white-space: nowrap;
+}
+
+.docs-table-scroll td code {
+  /* Class and token names stay whole; the table scrolls instead of splitting them. */
+  overflow-wrap: normal;
+  white-space: nowrap;
+}

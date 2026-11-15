@@ -13,9 +13,9 @@ CSS-only tooltips triggered on hover or `:focus-visible`. Wrap the target in `.n
 ## Default (top)
 
 <ComponentDemo title="Top tooltip" code={`<span class="nf-tooltip-wrap">
-  <button class="nf-button nf-button-ghost">HOVER_ME</button>
-  <span class="nf-tooltip">NODE_DETAILS</span>
-</span>`}>
+    <button class="nf-button nf-button-ghost">HOVER_ME</button>
+    <span class="nf-tooltip">NODE_DETAILS</span>
+  </span>`}>
   <span class="nf-tooltip-wrap">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip">NODE_DETAILS</span>
@@ -25,9 +25,9 @@ CSS-only tooltips triggered on hover or `:focus-visible`. Wrap the target in `.n
 ## Positions
 
 <ComponentDemo title="Bottom" code={`<span class="nf-tooltip-wrap">
-  <button class="nf-button nf-button-ghost">HOVER_ME</button>
-  <span class="nf-tooltip nf-tooltip-bottom">BELOW</span>
-</span>`}>
+    <button class="nf-button nf-button-ghost">HOVER_ME</button>
+    <span class="nf-tooltip nf-tooltip-bottom">BELOW</span>
+  </span>`}>
   <span class="nf-tooltip-wrap" style="margin-top: var(--nf-space-8);">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip nf-tooltip-bottom">BELOW</span>
@@ -35,9 +35,9 @@ CSS-only tooltips triggered on hover or `:focus-visible`. Wrap the target in `.n
 </ComponentDemo>
 
 <ComponentDemo title="Left" code={`<span class="nf-tooltip-wrap">
-  <button class="nf-button nf-button-ghost">HOVER_ME</button>
-  <span class="nf-tooltip nf-tooltip-left">LEFT</span>
-</span>`}>
+    <button class="nf-button nf-button-ghost">HOVER_ME</button>
+    <span class="nf-tooltip nf-tooltip-left">LEFT</span>
+  </span>`}>
   <span class="nf-tooltip-wrap" style="margin-left: 6rem;">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip nf-tooltip-left">LEFT</span>
@@ -45,9 +45,9 @@ CSS-only tooltips triggered on hover or `:focus-visible`. Wrap the target in `.n
 </ComponentDemo>
 
 <ComponentDemo title="Right" code={`<span class="nf-tooltip-wrap">
-  <button class="nf-button nf-button-ghost">HOVER_ME</button>
-  <span class="nf-tooltip nf-tooltip-right">RIGHT</span>
-</span>`}>
+    <button class="nf-button nf-button-ghost">HOVER_ME</button>
+    <span class="nf-tooltip nf-tooltip-right">RIGHT</span>
+  </span>`}>
   <span class="nf-tooltip-wrap">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip nf-tooltip-right">RIGHT</span>
@@ -64,6 +64,12 @@ The wrapper is `display: inline-flex` so it works on any inline element — butt
   <span class="nf-tooltip">AUTHENTICATION_FAILED</span>
 </span>
 ```
+
+## Touch and keyboard
+
+Tooltips are CSS-only: they show on hover and on `:focus-within`, so the trigger **must be focusable** (a button, a link, or an element with `tabindex="0"`). Plain text never shows one, and a tap on a non-focusable element does nothing. Keep essential information out of tooltips: on touch devices they appear only after a tap focuses the trigger.
+
+Long text wraps at about 18rem and is never wider than the screen. CSS cannot detect viewport edges, so a tooltip on a control hugging the left or right edge of a narrow screen can still be partly off-screen: use `nf-tooltip-right` or `nf-tooltip-left` for edge controls, or place the tooltip with your own script if you need collision handling.
 
 ## Class reference
 

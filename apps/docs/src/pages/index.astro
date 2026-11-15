@@ -4,10 +4,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SkipLink from '../components/SkipLink.astro';
 import { version } from 'netframe/package.json';
 ---
 
 <BaseLayout title="Home">
+  <SkipLink />
   <div class="landing">
 
     <!-- Theme switcher -->
@@ -29,7 +31,7 @@ import { version } from 'netframe/package.json';
     </aside>
 
     <!-- Hero -->
-    <main class="landing-main nf-pixel-grid">
+    <main class="landing-main nf-pixel-grid" id="main-content" tabindex="-1">
 
       <section class="hero">
         <div class="hero-tag nf-tracking-display">
@@ -183,7 +185,7 @@ import { version } from 'netframe/package.json';
             <p class="nf-font-label nf-text-muted nf-tracking-display" style="font-size: var(--nf-text-base); margin-bottom: var(--nf-space-3);">
               INSTALL_DIRECTIVE
             </p>
-            <pre style="margin: 0;"><code>npm install netframe</code></pre>
+            <pre class="install-code" tabindex="0" aria-label="Install command"><code>npm install netframe</code></pre>
           </div>
           <div class="nf-card-footer">
             <a href="/getting-started" class="nf-button nf-button-primary">
@@ -201,19 +203,29 @@ import { version } from 'netframe/package.json';
 </BaseLayout>
 
 <style>
+  /* Mobile first: no side rail, content uses the full width (minus safe areas). */
   .landing {
     display: flex;
+    flex-direction: column;
     min-height: 100svh;
+
+    @media (min-width: 48rem) {
+      flex-direction: row;
+    }
   }
 
   .landing-sidebar {
+    display: none;
     width: 3rem;
     flex-shrink: 0;
     background-color: var(--nf-color-bg);
     border-right: 2px solid var(--nf-color-primary);
-    display: flex;
     align-items: center;
     justify-content: center;
+
+    @media (min-width: 48rem) {
+      display: flex;
+    }
   }
 
   .landing-sidebar-label {
@@ -229,10 +241,22 @@ import { version } from 'netframe/package.json';
 
   .landing-main {
     flex: 1;
-    padding: var(--nf-space-12) var(--nf-space-16);
+    min-width: 0;
+    padding-block: var(--nf-space-6) var(--nf-space-10);
+    padding-inline: max(var(--nf-space-4), env(safe-area-inset-left)) max(var(--nf-space-4), env(safe-area-inset-right));
     display: flex;
     flex-direction: column;
-    gap: var(--nf-space-20);
+    gap: var(--nf-space-12);
+
+    @media (min-width: 48rem) {
+      padding: var(--nf-space-12) var(--nf-space-10);
+      gap: var(--nf-space-16);
+    }
+
+    @media (min-width: 64rem) {
+      padding: var(--nf-space-12) var(--nf-space-16);
+      gap: var(--nf-space-20);
+    }
   }
 
   .section-label {
@@ -242,7 +266,7 @@ import { version } from 'netframe/package.json';
 
   /* Hero */
   .hero {
-    max-width: 48rem;
+    max-width: min(100%, 64rem);
     display: flex;
     flex-direction: column;
     gap: var(--nf-space-6);
@@ -250,15 +274,20 @@ import { version } from 'netframe/package.json';
 
   .hero-tag {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: var(--nf-space-3);
+    gap: var(--nf-space-1) var(--nf-space-3);
+    overflow-wrap: anywhere;
     font-size: var(--nf-text-sm);
     letter-spacing: var(--nf-tracking-display);
   }
 
+  /* One line, always: NETFRAME is a single word. Sized from the viewport so the
+     longest line (8 glyphs plus tracking) fits the content box at every width
+     (about 6em wide; 12vw leaves room for the rail and padding). */
   .hero-title {
     font-family: var(--nf-font-display);
-    font-size: clamp(2.5rem, 10vw, 8rem);
+    font-size: clamp(2.25rem, 12vw, 7.5rem);
     font-weight: var(--nf-font-weight-bold);
     letter-spacing: var(--nf-tracking-display);
     line-height: 1;
@@ -268,26 +297,46 @@ import { version } from 'netframe/package.json';
   }
 
   .hero-sub {
-    font-size: var(--nf-text-lg);
+    font-size: var(--nf-text-md);
     letter-spacing: var(--nf-tracking-display);
     color: var(--nf-color-text-muted);
     margin: 0;
     line-height: var(--nf-leading-relaxed);
+    overflow-wrap: anywhere;
+
+    @media (min-width: 40rem) {
+      font-size: var(--nf-text-lg);
+    }
   }
 
   .hero-actions {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: var(--nf-space-4);
     flex-wrap: wrap;
+  }
+
+  /* Phones: full-width stacked actions that never overflow. */
+  .hero-actions :global(.nf-button) {
+    flex: 1 1 12rem;
+    justify-content: center;
+    text-align: center;
+  }
+
+  @media (min-width: 40rem) {
+    .hero-actions :global(.nf-button) { flex: 0 1 auto; }
   }
 
   /* Palette */
   .palette-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
     border: 2px solid var(--nf-color-border);
+
+    @media (min-width: 40rem) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 
   .swatch {
@@ -296,8 +345,14 @@ import { version } from 'netframe/package.json';
     flex-direction: column;
     justify-content: flex-end;
     gap: var(--nf-space-1);
-    min-height: 8rem;
+    min-height: 6rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
     border-right: 1px solid rgba(255,255,255,0.05);
+
+    @media (min-width: 40rem) {
+      min-height: 8rem;
+    }
 
     &:last-child { border-right: none; }
   }
@@ -339,19 +394,45 @@ import { version } from 'netframe/package.json';
   /* Component grid — auto-fill */
   .component-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
     gap: var(--nf-space-4);
   }
 
   /* Install */
-  .install-section { padding-bottom: var(--nf-space-16); }
+  .install-section { padding-bottom: var(--nf-space-8); }
+
+  .install-code {
+    margin: 0;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .install-section :global(.nf-card-footer) {
+    flex-wrap: wrap;
+    gap: var(--nf-space-3);
+  }
+
+  .install-section :global(.nf-card-footer .nf-button) {
+    flex: 1 1 12rem;
+    justify-content: center;
+    text-align: center;
+  }
 
   /* Theme switcher */
+  /* In flow on phones (no collision with the hero); pinned top-right on wider screens. */
   .landing-theme-bar {
-    position: fixed;
-    top: var(--nf-space-4);
-    right: var(--nf-space-6);
-    z-index: var(--nf-z-sticky);
+    display: flex;
+    justify-content: flex-end;
+    padding-block: var(--nf-space-3) 0;
+    padding-inline: max(var(--nf-space-4), env(safe-area-inset-left)) max(var(--nf-space-4), env(safe-area-inset-right));
+
+    @media (min-width: 48rem) {
+      position: fixed;
+      top: max(var(--nf-space-4), env(safe-area-inset-top));
+      right: max(var(--nf-space-6), env(safe-area-inset-right));
+      z-index: var(--nf-z-sticky);
+      padding: 0;
+    }
   }
 
   .theme-select {
@@ -360,7 +441,9 @@ import { version } from 'netframe/package.json';
     color: var(--nf-color-text);
     border: 2px solid var(--nf-color-border);
     padding: var(--nf-space-1) var(--nf-space-3);
+    min-height: 2.75rem;
     min-width: 10rem;
+    max-width: 100%;
     font-family: var(--nf-font-body);
     font-weight: var(--nf-font-weight-medium);
     font-size: var(--nf-text-xs);

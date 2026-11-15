@@ -19,7 +19,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--nf-space-4);
+  // Keep the dialog clear of notches and rounded screen corners.
+  padding: max(var(--nf-space-4), env(safe-area-inset-top)) max(var(--nf-space-4), env(safe-area-inset-right)) max(var(--nf-space-4), env(safe-area-inset-bottom)) max(var(--nf-space-4), env(safe-area-inset-left));
 
   &[aria-hidden='true'],
   &.nf-hidden {
@@ -36,6 +37,8 @@
   width: 100%;
   max-width: 32rem;
   max-height: calc(100svh - var(--nf-space-8));
+  // Fallback for a dialog without .nf-modal-body: the dialog itself scrolls.
+  // With the documented structure the body scrolls and header/footer stay pinned.
   overflow-y: auto;
 
   background-color: var(--nf-color-surface-low);
@@ -65,14 +68,22 @@
 
 .nf-modal-header {
   display: flex;
-  align-items: center;
+  // A long title must not push the close button out of reach.
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--nf-space-4);
   padding: var(--nf-space-4) var(--nf-space-6);
   border-bottom: var(--nf-border-medium) solid var(--nf-color-primary);
   flex-shrink: 0;
+  // If the dialog itself scrolls (no .nf-modal-body), the close button stays in view.
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--nf-color-surface-low);
 
   .nf-modal-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-family: var(--nf-font-display);
     font-size: var(--nf-text-xl);
     font-weight: var(--nf-font-weight-bold);
@@ -108,15 +119,28 @@
 .nf-modal-body {
   padding: var(--nf-space-6);
   flex: 1;
+  // Allows the body to shrink below its content height so it scrolls
+  // while the header (and its close button) and footer stay reachable.
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
 }
 
 .nf-modal-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: var(--nf-space-3);
   padding: var(--nf-space-4) var(--nf-space-6);
   border-top: var(--nf-border-medium) solid var(--nf-color-border);
   flex-shrink: 0;
+}
+
+@media (pointer: coarse) {
+  .nf-modal-close {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 }

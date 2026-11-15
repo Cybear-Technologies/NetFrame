@@ -257,12 +257,15 @@ Docs: https://netframe.cybeartech.com/components/table/
 
 | Class | Description |
 | --- | --- |
+| `nf-badge` | Base — required on all badges |
+| `nf-button` | Base — required on all buttons |
 | `nf-table` | Table element — full width, collapsed borders |
 | `nf-table-row-active` | Green left border accent — selected row |
 | `nf-table-row-danger` | Error left border accent — critical row |
 | `nf-table-sort` | Header button — optional sorting controller uses `aria-sort` on its `<th>` |
 | `nf-table-striped` | Alternates even row background |
 | `nf-table-wrap` | Overflow wrapper — apply to a `<div>` around the table |
+| `nf-tag` | Base chip — neutral border and background |
 
 ## Tabs (component)
 

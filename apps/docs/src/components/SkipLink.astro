@@ -1,0 +1,38 @@
+---
+// NetFrame Docs — skip to main content (first tab stop on every page)
+interface Props {
+  target?: string;
+}
+const { target = 'main-content' } = Astro.props;
+---
+
+<a class="skip-link" href={`#${target}`} data-skip-link data-nav-behind>SKIP TO MAIN CONTENT</a>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: max(var(--nf-space-2), env(safe-area-inset-top));
+    left: max(var(--nf-space-2), env(safe-area-inset-left));
+    z-index: calc(var(--nf-z-tooltip) + 1);
+    padding: var(--nf-space-3) var(--nf-space-4);
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--nf-color-primary);
+    color: var(--nf-color-on-primary);
+    border: 2px solid var(--nf-color-bg);
+    font-family: var(--nf-font-body);
+    font-size: var(--nf-text-sm);
+    font-weight: var(--nf-font-weight-bold);
+    letter-spacing: var(--nf-tracking-display);
+    text-decoration: none;
+    transform: translateY(-200%);
+    transition: transform var(--nf-duration-fast) var(--nf-ease-sharp);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+    outline: 2px solid var(--nf-color-bg);
+    outline-offset: 2px;
+  }
+</style>

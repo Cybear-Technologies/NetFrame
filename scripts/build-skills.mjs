@@ -66,9 +66,14 @@ function jsSnippet(mdx, heading) {
   return re.exec(mdx)?.[1]?.trimEnd() ?? null;
 }
 
+// MDX strips two spaces of indentation from every line after the first inside a
+// ComponentDemo `code` attribute, so the docs source indents those lines two spaces
+// deeper than the snippet readers see. Undo that offset to match what is rendered.
 function firstDemoMarkup(mdx) {
   const m = /<ComponentDemo[^>]*code=\{`([\s\S]*?)`\}>/.exec(mdx);
-  return m ? m[1].trimEnd() : null;
+  if (!m) return null;
+  const [first, ...rest] = m[1].split('\n');
+  return [first, ...rest.map((l) => (l.startsWith('  ') ? l.slice(2) : l))].join('\n').trimEnd();
 }
 
 // ---------------------------------------------------------------------------

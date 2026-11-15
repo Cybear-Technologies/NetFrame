@@ -36,10 +36,15 @@ test('page titles include the canonical product and company name', async ({ page
   await expect(page).toHaveTitle('Button // NETFRAME by Cybear Technologies');
 });
 
-test('docs build contains the expected pages', () => {
-  expect(routes).toContain('/');
-  expect(routes).toContain('/components/button/');
-  expect(routes.filter((r) => r.startsWith('/components/'))).toHaveLength(20);
+// A deliberate inventory: adding or removing a page must update this list, and a
+// page that silently fails to build is caught by name rather than by a count.
+const EXPECTED_COMPONENTS = ['accordion', 'avatar', 'badge', 'breadcrumb', 'button', 'card', 'divider', 'drawer', 'dropdown', 'input', 'modal', 'pagination', 'progress', 'skeleton', 'spinner', 'table', 'tabs', 'tag', 'toast', 'tooltip'];
+const EXPECTED_UTILITIES = ['glitch', 'glow', 'layout', 'scanlines'];
+const EXPECTED_GUIDES = ['agents', 'getting-started', 'theming'];
+
+test('docs build contains exactly the expected pages', () => {
+  const expected = ['/', ...EXPECTED_GUIDES.map((g) => `/${g}/`), ...EXPECTED_COMPONENTS.map((c) => `/components/${c}/`), ...EXPECTED_UTILITIES.map((u) => `/utilities/${u}/`)];
+  expect([...routes].sort()).toEqual([...expected].sort());
 });
 
 for (const route of routes) {

@@ -3,10 +3,12 @@
 // Copyright (C) 2026 Cybear Technologies
 // SPDX-License-Identifier: GPL-3.0-only
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SkipLink from '../components/SkipLink.astro';
 ---
 
 <BaseLayout title="404 — Route not found" description="This NetFrame documentation route does not exist. Return to the docs or component reference.">
-  <main class="route-error nf-pixel-grid">
+  <SkipLink />
+  <main class="route-error nf-pixel-grid" id="main-content" tabindex="-1">
     <section class="error-console" aria-labelledby="error-title">
       <p class="error-channel">NETFRAME // ROUTE_DIAGNOSTICS</p>
       <div class="error-body">

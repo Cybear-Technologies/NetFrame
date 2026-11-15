@@ -19,6 +19,7 @@
   gap: 0;
   border-bottom: var(--nf-border-medium) solid var(--nf-color-border);
   overflow-x: auto;
+  overscroll-behavior-x: contain;
 
   // Hide scrollbar but keep functionality
   scrollbar-width: none;
@@ -90,9 +91,16 @@
 
 .nf-tab-panel {
   padding: var(--nf-space-6) 0;
+  overflow-wrap: anywhere;
 
   &[hidden],
   &[aria-hidden='true'] {
     display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .nf-tab {
+    min-height: 2.75rem;
   }
 }

@@ -14,25 +14,25 @@ Horizontal tab navigation with associated content panels. Manage active state vi
 ## Basic
 
 <ComponentDemo stacked title="Tabs" code={`<div class="nf-tabs">
-  <div class="nf-tab-list" role="tablist" aria-label="System modules">
-    <button class="nf-tab" role="tab" aria-selected="true" aria-controls="tab-panel-1" id="tab-1">OVERVIEW</button>
-    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-2" id="tab-2">NETWORK</button>
-    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-3" id="tab-3">SECURITY</button>
-    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-4" id="tab-4" aria-disabled="true">ARCHIVE</button>
-  </div>
-  <div class="nf-tab-panel" role="tabpanel" id="tab-panel-1" aria-labelledby="tab-1">
-    System overview data goes here.
-  </div>
-  <div class="nf-tab-panel" role="tabpanel" id="tab-panel-2" aria-labelledby="tab-2" hidden>
-    Network topology data goes here.
-  </div>
-  <div class="nf-tab-panel" role="tabpanel" id="tab-panel-3" aria-labelledby="tab-3" hidden>
-    Security logs go here.
-  </div>
-  <div class="nf-tab-panel" role="tabpanel" id="tab-panel-4" aria-labelledby="tab-4" hidden>
-    Archive data goes here.
-  </div>
-</div>`}>
+    <div class="nf-tab-list" role="tablist" aria-label="System modules">
+      <button class="nf-tab" role="tab" aria-selected="true" aria-controls="tab-panel-1" id="tab-1">OVERVIEW</button>
+      <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-2" id="tab-2">NETWORK</button>
+      <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-3" id="tab-3">SECURITY</button>
+      <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-4" id="tab-4" aria-disabled="true">ARCHIVE</button>
+    </div>
+    <div class="nf-tab-panel" role="tabpanel" id="tab-panel-1" aria-labelledby="tab-1">
+      System overview data goes here.
+    </div>
+    <div class="nf-tab-panel" role="tabpanel" id="tab-panel-2" aria-labelledby="tab-2" hidden>
+      Network topology data goes here.
+    </div>
+    <div class="nf-tab-panel" role="tabpanel" id="tab-panel-3" aria-labelledby="tab-3" hidden>
+      Security logs go here.
+    </div>
+    <div class="nf-tab-panel" role="tabpanel" id="tab-panel-4" aria-labelledby="tab-4" hidden>
+      Archive data goes here.
+    </div>
+  </div>`}>
   <div class="nf-tabs" style="width: 100%;">
     <div class="nf-tab-list" role="tablist" aria-label="System modules">
       <button class="nf-tab" role="tab" aria-selected="true" aria-controls="tab-panel-1" id="tab-1">OVERVIEW</button>
@@ -47,18 +47,22 @@ Horizontal tab navigation with associated content panels. Manage active state vi
   </div>
 </ComponentDemo>
 
+## Many tabs on narrow screens
+
+The tab list scrolls horizontally inside itself (the page never does). The JavaScript example keeps the selected tab in view, including a tab that starts off-screen. The scrollbar is hidden by design, so avoid more tabs than a reader can discover by swiping; consider an accordion or a select for long lists.
+
 ## Secondary color
 
 <ComponentDemo stacked title="Secondary variant" code={`<div class="nf-tabs nf-tabs-secondary">
-  <div class="nf-tab-list" role="tablist" aria-label="Link channels">
-    <button class="nf-tab" role="tab" aria-selected="true" aria-controls="link-panel-1" id="link-tab-1">UPLINK</button>
-    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="link-panel-2" id="link-tab-2">DOWNLINK</button>
-    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="link-panel-3" id="link-tab-3">BYPASS</button>
-  </div>
-  <div class="nf-tab-panel" role="tabpanel" id="link-panel-1" aria-labelledby="link-tab-1">Uplink active. Outbound packets are queued for transmission.</div>
-  <div class="nf-tab-panel" role="tabpanel" id="link-panel-2" aria-labelledby="link-tab-2" hidden>Downlink connected. Incoming telemetry is synchronized.</div>
-  <div class="nf-tab-panel" role="tabpanel" id="link-panel-3" aria-labelledby="link-tab-3" hidden>Bypass channel ready. Traffic follows the direct route.</div>
-</div>`}>
+    <div class="nf-tab-list" role="tablist" aria-label="Link channels">
+      <button class="nf-tab" role="tab" aria-selected="true" aria-controls="link-panel-1" id="link-tab-1">UPLINK</button>
+      <button class="nf-tab" role="tab" aria-selected="false" aria-controls="link-panel-2" id="link-tab-2">DOWNLINK</button>
+      <button class="nf-tab" role="tab" aria-selected="false" aria-controls="link-panel-3" id="link-tab-3">BYPASS</button>
+    </div>
+    <div class="nf-tab-panel" role="tabpanel" id="link-panel-1" aria-labelledby="link-tab-1">Uplink active. Outbound packets are queued for transmission.</div>
+    <div class="nf-tab-panel" role="tabpanel" id="link-panel-2" aria-labelledby="link-tab-2" hidden>Downlink connected. Incoming telemetry is synchronized.</div>
+    <div class="nf-tab-panel" role="tabpanel" id="link-panel-3" aria-labelledby="link-tab-3" hidden>Bypass channel ready. Traffic follows the direct route.</div>
+  </div>`}>
 <div class="nf-tabs nf-tabs-secondary" style="width: 100%;">
   <div class="nf-tab-list" role="tablist" aria-label="Link channels">
     <button class="nf-tab" role="tab" aria-selected="true" aria-controls="link-panel-1" id="link-tab-1">UPLINK</button>
@@ -88,6 +92,10 @@ document.querySelectorAll('.nf-tab-list').forEach((list) => {
       t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
       document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
     });
+    // Keep the selected tab visible when the tab list scrolls (many or long labels).
+    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
+    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
+    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
     if (focus) tab.focus();
   }
 

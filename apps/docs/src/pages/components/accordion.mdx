@@ -14,25 +14,25 @@ Expandable sections driven by `aria-expanded` on the trigger. Height animation r
 ## Basic
 
 <ComponentDemo stacked title="Accordion" code={`<div class="nf-accordion">
-  <div class="nf-accordion-item">
-    <button class="nf-accordion-trigger" aria-expanded="true" aria-controls="panel-1">SYSTEM_STATUS<span class="nf-accordion-icon"></span></button>
-    <div class="nf-accordion-content" id="panel-1">
-      <div class="nf-accordion-body">All subsystems nominal. Uplink active.</div>
+    <div class="nf-accordion-item">
+      <button class="nf-accordion-trigger" aria-expanded="true" aria-controls="panel-1">SYSTEM_STATUS<span class="nf-accordion-icon"></span></button>
+      <div class="nf-accordion-content" id="panel-1">
+        <div class="nf-accordion-body">All subsystems nominal. Uplink active.</div>
+      </div>
     </div>
-  </div>
-  <div class="nf-accordion-item">
-    <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-2">NETWORK_LOGS<span class="nf-accordion-icon"></span></button>
-    <div class="nf-accordion-content" id="panel-2" style="height: 0;">
-      <div class="nf-accordion-body">No anomalies detected in the last 24h.</div>
+    <div class="nf-accordion-item">
+      <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-2">NETWORK_LOGS<span class="nf-accordion-icon"></span></button>
+      <div class="nf-accordion-content" id="panel-2" style="height: 0;">
+        <div class="nf-accordion-body">No anomalies detected in the last 24h.</div>
+      </div>
     </div>
-  </div>
-  <div class="nf-accordion-item">
-    <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-3">THREAT_ANALYSIS<span class="nf-accordion-icon"></span></button>
-    <div class="nf-accordion-content" id="panel-3" style="height: 0;">
-      <div class="nf-accordion-body">0 active threats. ICE integrity at 100%.</div>
+    <div class="nf-accordion-item">
+      <button class="nf-accordion-trigger" aria-expanded="false" aria-controls="panel-3">THREAT_ANALYSIS<span class="nf-accordion-icon"></span></button>
+      <div class="nf-accordion-content" id="panel-3" style="height: 0;">
+        <div class="nf-accordion-body">0 active threats. ICE integrity at 100%.</div>
+      </div>
     </div>
-  </div>
-</div>`}>
+  </div>`}>
   <div class="nf-accordion" style="width: 100%; max-width: 28rem;">
     <div class="nf-accordion-item">
       <button class="nf-accordion-trigger" aria-expanded="true" aria-controls="panel-1">SYSTEM_STATUS<span class="nf-accordion-icon"></span></button>

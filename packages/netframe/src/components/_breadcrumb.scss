@@ -33,6 +33,7 @@
 .nf-breadcrumb-link {
   color: var(--nf-color-text-muted);
   text-decoration: none;
+  overflow-wrap: anywhere;
   transition: color var(--nf-duration-fast) var(--nf-ease-sharp);
 
   &:hover {
@@ -50,4 +51,12 @@
 .nf-breadcrumb-current {
   color: var(--nf-color-primary);
   pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  a.nf-breadcrumb-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
 }

@@ -58,6 +58,12 @@ Fonts are referenced as `../fonts/*.woff2` relative to the output CSS. Serve the
 
 ---
 
+## Phones and touch devices
+
+NetFrame works inside any container, including a narrow card on a wide screen: long labels and identifiers wrap, button groups wrap, and nothing relies on a minimum width. Add `viewport-fit=cover` to your viewport meta (`<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`) so the library's `env(safe-area-inset-*)` padding works around notches.
+
+On touch devices (`pointer: coarse`) buttons, tabs, page links, menu items, accordion headers, checkbox and radio rows, the range slider and the modal and toast close buttons grow to about 44 by 44 CSS pixels. Mouse layouts are unchanged. Behaviour such as menus and drawers still needs your JavaScript; see the component pages for tested examples.
+
 ## CRT Overlay
 
 The scanline effect is a core identity element. Add `.nf-crt` to `<body>` to apply it globally:
@@ -98,8 +104,8 @@ npm install @phosphor-icons/web
 <ComponentDemo
   title="Primary button"
   code={`<button class="nf-button nf-button-primary">
-  INITIALIZE
-</button>`}
+    INITIALIZE
+  </button>`}
 >
   <button class="nf-button nf-button-primary">INITIALIZE</button>
 </ComponentDemo>

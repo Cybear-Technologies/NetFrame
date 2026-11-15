@@ -5,6 +5,8 @@
 
 import BaseLayout from './BaseLayout.astro';
 import Sidebar from '../components/Sidebar.astro';
+import SkipLink from '../components/SkipLink.astro';
+import '../styles/docs-prose.css';
 import { version } from 'netframe/package.json';
 
 interface Props {
@@ -20,22 +22,21 @@ const currentPath = Astro.url.pathname;
 ---
 
 <BaseLayout title={title} description={description}>
+  <SkipLink />
   <div class="docs-shell">
-    <!-- Mobile sidebar toggle -->
-    <button class="sidebar-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="docs-sidebar">
-      <i class="ph-thin ph-list"></i>
-      NAV
-    </button>
-
-    <!-- Sidebar nav -->
     <Sidebar currentPath={currentPath} />
+    <!-- Dismiss layer behind the open mobile drawer -->
+    <div class="nav-scrim" id="nav-scrim" hidden aria-hidden="true"></div>
 
-    <!-- Main content -->
-    <div class="docs-main">
-      <!-- Top bar -->
+    <!-- Everything here becomes inert while the mobile drawer is open -->
+    <div class="docs-main" data-nav-behind>
       <header class="docs-topbar">
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="docs-sidebar" aria-label="Open navigation menu">
+          <i class="ph-thin ph-list" aria-hidden="true"></i>
+          <span>MENU</span>
+        </button>
         <span class="docs-topbar-path nf-tracking-display nf-uppercase nf-text-muted">
-          NETFRAME_DOCS // {title?.toUpperCase() ?? ''}
+          <span class="docs-topbar-prefix">NETFRAME_DOCS // </span>{title?.toUpperCase() ?? ''}
         </span>
         <div class="topbar-right">
           <select id="theme-switcher" class="theme-select nf-tracking-display nf-uppercase" aria-label="Select theme">
@@ -52,19 +53,18 @@ const currentPath = Astro.url.pathname;
             href="https://github.com/Cybear-Technologies/NetFrame"
             target="_blank"
             rel="noopener"
+            aria-label="NetFrame on GitHub (opens in a new tab)"
           >
-            <i class="ph-thin ph-github-logo"></i>
-            GITHUB
+            <i class="ph-thin ph-github-logo" aria-hidden="true"></i>
+            <span class="docs-topbar-link-text">GITHUB</span>
           </a>
         </div>
       </header>
 
-      <!-- Page content -->
-      <main class="docs-content">
+      <main class="docs-content" id="main-content" tabindex="-1">
         <slot />
       </main>
 
-      <!-- Status footer -->
       <footer class="docs-footer nf-tracking-display nf-uppercase">
         <span class="nf-text-muted">NETFRAME v{version} // CYBEAR_TECHNOLOGIES</span>
         <span class="nf-text-subtle">GPL-3.0</span>
@@ -79,49 +79,28 @@ const currentPath = Astro.url.pathname;
     min-height: 100svh;
   }
 
-  .sidebar-toggle {
-    display: none;
-    position: fixed;
-    bottom: var(--nf-space-6);
-    right: var(--nf-space-6);
-    z-index: calc(var(--nf-z-sticky) + 1);
-    align-items: center;
-    gap: var(--nf-space-2);
-    padding: var(--nf-space-3) var(--nf-space-4);
-    background-color: var(--nf-color-primary);
-    color: var(--nf-color-on-primary);
-    border: 2px solid var(--nf-color-primary);
-    font-size: var(--nf-text-sm);
-    letter-spacing: var(--nf-tracking-display);
-    cursor: crosshair;
-    box-shadow: 3px 3px 0px 0px var(--nf-color-secondary);
-
-    @media (max-width: 48rem) {
-      display: inline-flex;
-    }
-  }
-
   .docs-main {
     flex: 1;
     display: flex;
     flex-direction: column;
     min-width: 0;
-    margin-left: 16rem;
-
-    @media (max-width: 48rem) {
-      margin-left: 0;
-    }
   }
 
+  @media (min-width: 64rem) {
+    .docs-main { margin-left: 16rem; }
+  }
+
+  /* ---- Top bar ------------------------------------------------------- */
   .docs-topbar {
     position: sticky;
     top: 0;
     z-index: var(--nf-z-sticky);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 var(--nf-space-8);
-    height: 4rem;
+    gap: var(--nf-space-2);
+    min-height: 3.5rem;
+    padding-block: var(--nf-space-2);
+    padding-inline: max(var(--nf-space-3), env(safe-area-inset-left)) max(var(--nf-space-3), env(safe-area-inset-right));
     background-color: color-mix(in srgb, var(--nf-color-bg) 80%, transparent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -129,12 +108,86 @@ const currentPath = Astro.url.pathname;
     font-family: var(--nf-font-body);
     font-weight: var(--nf-font-weight-medium);
     font-size: var(--nf-text-xs);
+
+    @media (min-width: 40rem) {
+      gap: var(--nf-space-4);
+      padding-inline: max(var(--nf-space-6), env(safe-area-inset-left)) max(var(--nf-space-6), env(safe-area-inset-right));
+    }
+
+    @media (min-width: 64rem) {
+      height: 4rem;
+      padding-inline: var(--nf-space-8);
+    }
+
+    /* Short landscape phones: do not spend a quarter of the screen on a sticky bar. */
+    @media (max-height: 30rem) {
+      position: static;
+    }
+  }
+
+  /* Phones: the page heading is already the first thing on screen, and a bare page
+     name next to the MENU button read like a second button label. Show the
+     "NETFRAME_DOCS // PAGE" trail only where there is room for it. */
+  .docs-topbar-path {
+    display: none;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @media (min-width: 40rem) {
+      display: block;
+    }
+  }
+
+  /* Without the trail, the controls sit to the right of the menu button. */
+  .topbar-right {
+    margin-left: auto;
   }
 
   .topbar-right {
     display: flex;
     align-items: center;
-    gap: var(--nf-space-6);
+    gap: var(--nf-space-2);
+    flex-shrink: 0;
+
+    @media (min-width: 40rem) {
+      gap: var(--nf-space-6);
+    }
+  }
+
+  .nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--nf-space-2);
+    flex-shrink: 0;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0 var(--nf-space-3);
+    background-color: var(--nf-color-primary);
+    color: var(--nf-color-on-primary);
+    border: 2px solid var(--nf-color-primary);
+    font-size: var(--nf-text-xs);
+    letter-spacing: var(--nf-tracking-display);
+    cursor: crosshair;
+    box-shadow: 3px 3px 0 0 var(--nf-color-secondary);
+  }
+
+  .nav-toggle i,
+  .docs-topbar-link i {
+    font-size: 1.375rem;
+    line-height: 1;
+    /* The base stylesheet tints <i> with the primary colour, which made this icon
+       green on the green menu button. */
+    color: inherit;
+  }
+
+  :global(html.js) .nav-toggle { display: inline-flex; }
+
+  @media (min-width: 64rem) {
+    :global(html.js) .nav-toggle { display: none; }
   }
 
   .theme-select {
@@ -143,7 +196,9 @@ const currentPath = Astro.url.pathname;
     color: var(--nf-color-text);
     border: 2px solid var(--nf-color-border);
     padding: var(--nf-space-1) var(--nf-space-3);
-    min-width: 10rem;
+    min-height: 2.75rem;
+    inline-size: 7.5rem;
+    max-inline-size: 100%;
     font-family: var(--nf-font-body);
     font-weight: var(--nf-font-weight-medium);
     font-size: var(--nf-text-xs);
@@ -153,58 +208,108 @@ const currentPath = Astro.url.pathname;
 
     &:hover  { border-color: var(--nf-color-primary); }
     &:focus  { border-color: var(--nf-color-primary); }
+    &:focus-visible { outline: 2px solid var(--nf-color-primary); outline-offset: 2px; }
 
     option {
       background-color: var(--nf-color-surface-low);
       color: var(--nf-color-text);
+    }
+
+    @media (min-width: 40rem) {
+      inline-size: 10rem;
+      min-height: 2.25rem;
     }
   }
 
   .docs-topbar-link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: var(--nf-space-2);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     text-decoration: none;
     transition: color var(--nf-duration-base) var(--nf-ease-sharp);
 
     &:hover { color: var(--nf-color-primary); }
   }
 
+  .docs-topbar-link-text {
+    display: none;
+
+    @media (min-width: 40rem) {
+      display: inline;
+    }
+  }
+
+  /* ---- Mobile drawer scrim ------------------------------------------- */
+  .nav-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: var(--nf-z-overlay);
+    background-color: color-mix(in srgb, var(--nf-color-bg) 78%, transparent);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  .nav-scrim[hidden] { display: none; }
+
+  @media (min-width: 64rem) {
+    .nav-scrim { display: none; }
+  }
+
+  /* While the drawer is open the page behind it must not scroll. */
+  :global(html.nav-open) { overflow: hidden; }
+
+  /* ---- Content + footer ---------------------------------------------- */
   .docs-content {
     flex: 1;
-    padding: var(--nf-space-10) var(--nf-space-12);
+    min-width: 0;
     max-width: 56rem;
+    padding-block: var(--nf-space-6);
+    padding-inline: max(var(--nf-space-4), env(safe-area-inset-left)) max(var(--nf-space-4), env(safe-area-inset-right));
+    scroll-margin-top: 4rem;
+
+    @media (min-width: 40rem) {
+      padding-block: var(--nf-space-8);
+      padding-inline: var(--nf-space-8);
+    }
+
+    @media (min-width: 64rem) {
+      padding: var(--nf-space-10) var(--nf-space-12);
+    }
   }
+
+  .docs-content:focus { outline: none; }
 
   .docs-footer {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    padding: var(--nf-space-4) var(--nf-space-8);
+    gap: var(--nf-space-2) var(--nf-space-6);
+    padding-block: var(--nf-space-4);
+    padding-bottom: max(var(--nf-space-4), env(safe-area-inset-bottom));
+    padding-inline: max(var(--nf-space-4), env(safe-area-inset-left)) max(var(--nf-space-4), env(safe-area-inset-right));
     border-top: 1px solid var(--nf-color-border);
     font-family: var(--nf-font-body);
     font-weight: var(--nf-font-weight-medium);
     font-size: var(--nf-text-xs);
+    overflow-wrap: anywhere;
+
+    @media (min-width: 64rem) {
+      padding-inline: var(--nf-space-8);
+    }
   }
 </style>
 
 <script>
   import { applyTheme, readTheme } from '../scripts/theme';
+  import { initDocsNav } from '../scripts/docs-nav';
+  import { wrapMarkdownTables } from '../scripts/docs-tables';
 
-  // Mobile sidebar toggle
-  const toggle = document.querySelector<HTMLButtonElement>('.sidebar-toggle');
-  const sidebar = document.getElementById('docs-sidebar');
-  toggle?.addEventListener('click', () => {
-    const open = sidebar?.classList.toggle('sidebar-open');
-    toggle.setAttribute('aria-expanded', String(open));
-  });
-  // Close sidebar when a nav link is clicked on mobile
-  sidebar?.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      sidebar.classList.remove('sidebar-open');
-      toggle?.setAttribute('aria-expanded', 'false');
-    });
-  });
+  initDocsNav();
+  wrapMarkdownTables();
 
   const select = document.getElementById('theme-switcher') as HTMLSelectElement;
 

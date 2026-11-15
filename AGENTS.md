@@ -31,7 +31,7 @@ Generated, never edit by hand: `packages/netframe/dist/`, `apps/docs/dist/`, `ap
 - Node **22.23.4+** (`.nvmrc`), pnpm **9.15.9** (root `packageManager`; Corepack or a recent pnpm will select it). Running another pnpm major can rewrite `node_modules` (store mismatch) and change the lockfile format.
 - Keep TypeScript on **6.x**, aligned across root/library/docs. `astro check` currently rejects TypeScript 7. Dependabot ignores TypeScript >=7 until a supported Astro typechecking migration is validated. Do not drop Astro checks or adopt experimental `@astrojs/ts-content-mapper` just to merge a compiler bump.
 - Always change manifests and `pnpm-lock.yaml` together (`pnpm add` / `pnpm update`), then run `pnpm install --frozen-lockfile` to confirm.
-- One-time setup for browser tests: `pnpm --filter @netframe/docs exec playwright install chromium`.
+- One-time setup for browser tests: `pnpm --filter @netframe/docs exec playwright install chromium webkit` (WebKit is needed for the `webkit` and `mobile-webkit` projects and the CI mobile smoke step).
 - Extra browser coverage: install `firefox webkit` the same way, then run `pnpm --filter @netframe/docs exec playwright test --project=firefox --project=webkit`. These opt-in projects also run in `.github/workflows/browsers.yml` nightly/manually. Chromium remains the default required check. Firefox/WebKit mock the clipboard success path because Chromium's permission names are not portable; Chromium tests the real clipboard.
 
 ## Commands
@@ -44,6 +44,8 @@ Generated, never edit by hand: `packages/netframe/dist/`, `apps/docs/dist/`, `ap
 | Library build + package/CSS tests | `pnpm --filter netframe run test` |
 | Build library / docs | `pnpm --filter netframe run build` / `pnpm --filter @netframe/docs run build` |
 | Browser tests (needs both builds) | `pnpm run test:browser` |
+| Focused phone smoke (Pixel 7 + iPhone 14 emulation; needs chromium + webkit installed) | `pnpm --filter @netframe/docs run test:mobile` |
+| Screenshot baselines (opt-in) | `pnpm --filter @netframe/docs run test:visual` (update only after reviewing diffs: `test:visual:update`) |
 | Watch library + docs | `pnpm dev` (docs re-copy the library on each rebuild) |
 | Regenerate skill references and llms.txt | `pnpm run skills:build` (check only: `pnpm run skills:check`) |
 | Security audit | `pnpm audit --audit-level high` |
@@ -63,11 +65,21 @@ Notes:
 - New component: add `src/components/_name.scss`, `@forward` it in `components/_index.scss` (don't reorder existing lines; cascade order matters), add a docs page in `apps/docs/src/pages/components/`, and add a link in `apps/docs/src/components/Sidebar.astro`.
 - New SCSS files start with the GPL-3.0-only header used by existing files.
 
+## Responsive and touch rules
+
+- Components must work in a narrow column on a wide screen, not just on a narrow viewport: no fixed pixel widths, long identifiers wrap (`overflow-wrap: anywhere`), button groups use `flex-wrap`. `test/` Playwright specs `narrow-components.spec.ts` and `touch-targets.spec.ts` guard this.
+- Touch sizing lives in `@media (pointer: coarse)` blocks next to each component (about 44px). Do not change mouse sizes for touch reasons.
+- Docs layout is mobile first. The docs navigation is a drawer below `64rem` and a permanent sidebar from `64rem`; the number lives in `DocsLayout.astro`, `Sidebar.astro`, `scripts/docs-nav.ts` and `tests/helpers/layout.ts` (`NAV_BREAKPOINT`), so change them together.
+- Never hide page overflow to conceal a layout bug. Content that needs sideways scrolling gets its own labelled, focusable region (`role="region"`, `tabindex="0"`, `aria-label`).
+- `apps/docs/tests/README.md` lists the test projects, the visual-baseline policy and the manual mobile checks.
+
 ## Docs examples
 
 Component pages show CSS-only markup plus optional `## JavaScript` snippets. `apps/docs/tests/examples.spec.ts` runs those snippets in a browser. Keep them working: state goes in ARIA attributes with literal values (`aria-hidden="true"`, `aria-expanded="false"`), plus keyboard support and focus management. Docs pages must not load third-party resources; `site.spec.ts` fails on external requests. `a11y.spec.ts` runs axe on every page. No accessibility exceptions are pinned. Fix violations rather than suppressing them.
 
 Live demos must run their displayed optional controllers, not just static markup. `DropdownBehavior.astro` and `ExampleBehavior.astro` extract the local MDX JavaScript at build time; real-page interaction tests complement isolated snippet tests. Sorting/pagination remain docs/consumer behaviour, never a required library runtime.
+
+`ComponentDemo` `code={`...`}` snippets: MDX strips two spaces of indentation from every line after the first, so write those lines two spaces deeper than you want readers to see (the first line starts right after the backtick). `tests/demo-code.spec.ts` fails when a nested tag renders flush-left or the displayed code differs from the copied code, and `scripts/build-skills.mjs` undoes the same offset for the generated references. Wrap long tags one attribute per line so narrow screens wrap between attributes.
 
 In MDX, keep inline element content on one line (`<button …>LABEL</button>`). Multi-line content gets wrapped in `<p>`, which picks up base paragraph styles.
 
