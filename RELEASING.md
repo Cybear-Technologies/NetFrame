@@ -1,7 +1,15 @@
 # Release setup
 
+## Status (2026-11-14)
+
+- `netframe@0.2.0` was published manually (no provenance; it predates trusted publishing).
+- npm trusted publisher is configured (maintainer-reported): `Cybear-Technologies/NetFrame`, `release.yml`, environment `release`.
+- Repository moved to the `Cybear-Technologies` org. The npm trusted publisher must name **`Cybear-Technologies` / `NetFrame`** (not `JacksonChandler`); update it on npmjs.com if it was set up with the old owner. Provenance also requires `repository.url` in package.json to match the repo.
+- **Remaining:** set the `NPM_RELEASE_ENABLED=true` Actions variable, then verify the first automated release (next version PR → approve → publish). Confirm provenance appears on the npm package page.
+- No release happens on merge until a Changeset exists: with none pending, `pnpm release` finds `0.2.0` already on npm and publishes nothing. The manual 0.2.0 publish created no git tag or GitHub release; add them by hand if wanted.
+
 NetFrame is authored by Cybear Technologies; Jackson Chandler is the developer.
-The source repository is https://github.com/JacksonChandler/NetFrame.
+The source repository is https://github.com/Cybear-Technologies/NetFrame.
 
 ## Maintainer setup (required before enabling automation)
 
@@ -10,12 +18,12 @@ The source repository is https://github.com/JacksonChandler/NetFrame.
 3. In GitHub, protect `main` and require CI's **Build & verify** check. Run CI once so GitHub can discover the check. Enable the repository setting allowing GitHub Actions to create pull requests for Changesets version PRs.
 4. Create a GitHub environment named **release**. Restrict it to `main`, require reviewer approval, and prevent self-review where supported. Environment protections require GitHub configuration; a YAML reference does not create those protections. The current combined release job requires approval for version PR creation as well as publishing.
 5. In the npm package settings, configure a GitHub Actions trusted publisher:
-   - Organization/user: `JacksonChandler`
+   - Organization/user: `Cybear-Technologies`
    - Repository: `NetFrame`
    - Workflow filename: `release.yml`
    - Environment: `release`
    - Allow direct `npm publish` if npm presents that permission.
-6. Set the GitHub repository Actions variable **NPM_RELEASE_ENABLED** to `true` only after steps 1–5. Until then, the release job is skipped. No npm token is required by the workflow; remove obsolete publishing secrets only after validating OIDC.
+6. (Next step) Set the GitHub repository Actions variable **NPM_RELEASE_ENABLED** to `true` only after steps 1–5. Until then, the release job is skipped. No npm token is required by the workflow; remove obsolete publishing secrets only after validating OIDC.
 
 ## Docs hosting
 

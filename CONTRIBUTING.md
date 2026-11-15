@@ -12,7 +12,7 @@ Coding agents: see [AGENTS.md](AGENTS.md) for the command reference and reposito
 ## Setup
 
 ```sh
-git clone https://github.com/JacksonChandler/NetFrame.git
+git clone https://github.com/Cybear-Technologies/NetFrame.git
 cd NetFrame
 pnpm install
 ```

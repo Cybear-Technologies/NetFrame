@@ -119,10 +119,10 @@ User authorized deleting this document **if everything is done**. Retained it be
 
 ### Still required for release
 
-- [ ] Maintainer review/finalize source changes for **0.2.0**, including generated changelog.
-- [ ] Maintainer perform initial npm publication when ready. Account/login and apparent name availability are confirmed, but successful name ownership/publication is not.
-- [ ] Configure npm trusted publisher after bootstrap, then set `NPM_RELEASE_ENABLED=true` only when ready.
-- [ ] Verify actual protected automated publication, OIDC/provenance and version/tag consistency. Cannot be completed by local dry-run.
+- [x] 0.2.0 reviewed and **published to npm** (maintainer; verified `npm view netframe` → 0.2.0, latest).
+- [x] npm trusted publisher configured (maintainer-reported; not independently inspected).
+- [ ] Set `NPM_RELEASE_ENABLED=true` (GitHub Actions variable) when ready for automated releases.
+- [ ] After the next Changeset: verify actual protected automated publication, OIDC/provenance and version/tag consistency. Cannot be completed by local dry-run.
 - [ ] Verify DNS/hosting serves `https://netframe.cybeartech.com` (deployment is external to package publication).
 
 ### Optional / verification only

@@ -80,7 +80,7 @@ NetFrame is a **pure CSS library** — no server code, no authentication, no dat
 ## Security Updates
 
 Security patches are released as patch versions (`x.x.N`) and tagged `security` in the changelog.
-Subscribe to [GitHub releases](https://github.com/JacksonChandler/NetFrame/releases) to be notified.
+Subscribe to [GitHub releases](https://github.com/Cybear-Technologies/NetFrame/releases) to be notified.
 
 ---
 

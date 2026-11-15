@@ -165,7 +165,7 @@ test('every shipped font has its OFL licence text alongside it', () => {
 
 test('release changelog configuration supplies the canonical repository', () => {
   const config = JSON.parse(fs.readFileSync(path.join(ROOT, '..', '..', '.changeset', 'config.json'), 'utf8'));
-  assert.deepEqual(config.changelog, ['@changesets/changelog-github', { repo: 'JacksonChandler/NetFrame' }]);
+  assert.deepEqual(config.changelog, ['@changesets/changelog-github', { repo: 'Cybear-Technologies/NetFrame' }]);
 });
 
 test('a real packed installation resolves CSS, fonts and Sass without workspace links', (t) => {
