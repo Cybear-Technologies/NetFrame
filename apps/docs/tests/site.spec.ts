@@ -29,6 +29,13 @@ function track(page: Page) {
 
 const routes = builtRoutes();
 
+test('page titles include the canonical product and company name', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle('NETFRAME by Cybear Technologies');
+  await page.goto('/components/button/');
+  await expect(page).toHaveTitle('Button // NETFRAME by Cybear Technologies');
+});
+
 test('docs build contains the expected pages', () => {
   expect(routes).toContain('/');
   expect(routes).toContain('/components/button/');

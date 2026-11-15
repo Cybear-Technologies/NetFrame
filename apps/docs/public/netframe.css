@@ -1103,6 +1103,37 @@ hr {
   white-space: nowrap;
 }
 
+.nf-table-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nf-space-2);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: inherit;
+  color: inherit;
+  cursor: crosshair;
+  padding-block: var(--nf-space-1);
+}
+.nf-table-sort::after {
+  content: "↕";
+}
+.nf-table-sort:focus {
+  outline: none;
+}
+.nf-table-sort:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--nf-color-primary), inset 0 0 0 4px color-mix(in srgb, var(--nf-color-primary) 15%, transparent);
+}
+
+.nf-table th[aria-sort=ascending] .nf-table-sort::after {
+  content: "↑";
+}
+
+.nf-table th[aria-sort=descending] .nf-table-sort::after {
+  content: "↓";
+}
+
 .nf-table td {
   padding: var(--nf-space-3) var(--nf-space-4);
   border-bottom: 1px solid var(--nf-color-surface-highest);
@@ -1201,6 +1232,8 @@ hr {
 }
 
 .nf-badge-dot {
+  --nf-badge-dot-size: 0.75rem;
+  --nf-badge-dot-color: var(--nf-color-error);
   position: relative;
 }
 .nf-badge-dot::after {
@@ -1208,11 +1241,13 @@ hr {
   position: absolute;
   top: 0;
   right: 0;
-  transform: translate(40%, -40%);
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: var(--nf-color-error);
+  transform: translate(35%, -35%);
+  width: var(--nf-badge-dot-size);
+  height: var(--nf-badge-dot-size);
+  background-color: var(--nf-badge-dot-color);
   border: 2px solid var(--nf-color-bg);
+  box-shadow: 0 0 0 1px var(--nf-badge-dot-color);
+  pointer-events: none;
 }
 
 .nf-tag {
@@ -1732,7 +1767,7 @@ hr {
   --nf-ring-size: 3rem;
   --nf-ring-stroke: 3px;
   --nf-ring-progress: 0;
-  --nf-ring-circumference: 94.25;
+  --nf-ring-circumference: 94.2478;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -1746,6 +1781,7 @@ hr {
   width: 100%;
   height: 100%;
   transform: rotate(-90deg);
+  overflow: visible;
 }
 .nf-progress-ring .nf-ring-track {
   fill: none;
@@ -1756,10 +1792,14 @@ hr {
   fill: none;
   stroke: var(--nf-color-primary);
   stroke-width: var(--nf-ring-stroke);
-  stroke-linecap: square;
+  stroke-linecap: butt;
+  opacity: clamp(0, var(--nf-ring-progress), 1);
   stroke-dasharray: var(--nf-ring-circumference);
-  stroke-dashoffset: calc(var(--nf-ring-circumference) - var(--nf-ring-circumference) * var(--nf-ring-progress) / 100);
+  stroke-dashoffset: calc(var(--nf-ring-circumference) * (1 - clamp(0, var(--nf-ring-progress), 100) / 100) * 1px);
   transition: stroke-dashoffset var(--nf-duration-slow) var(--nf-ease-default);
+}
+.nf-progress-ring .nf-ring-fill[pathLength="100"] {
+  --nf-ring-circumference: 100;
 }
 .nf-progress-ring .nf-ring-label {
   position: relative;
@@ -1770,42 +1810,61 @@ hr {
 }
 
 .nf-spinner {
+  --nf-spinner-size: 1.5rem;
+  --nf-spinner-inset: 3px;
+  --nf-spinner-speed: 2.4s;
+  position: relative;
   display: inline-block;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2px solid var(--nf-color-surface-highest);
-  border-top-color: var(--nf-color-primary);
-  animation: nf-spin var(--nf-duration-crawl) linear infinite;
+  flex-shrink: 0;
+  width: var(--nf-spinner-size);
+  height: var(--nf-spinner-size);
+  border: 1px solid var(--nf-color-border-strong);
+  color: var(--nf-color-primary);
+  vertical-align: middle;
+}
+.nf-spinner::before, .nf-spinner::after {
+  content: "";
+  position: absolute;
+  inset: var(--nf-spinner-inset);
+  background-repeat: no-repeat;
+  background-size: 42% 42%;
+  animation: nf-spin var(--nf-spinner-speed) ease-in-out infinite;
+}
+.nf-spinner::before {
+  background-image: linear-gradient(currentColor, currentColor), linear-gradient(currentColor, currentColor);
+  background-position: left top, right bottom;
+}
+.nf-spinner::after {
+  background-image: linear-gradient(currentColor, currentColor), linear-gradient(currentColor, currentColor);
+  background-position: right top, left bottom;
+  animation-delay: calc(var(--nf-spinner-speed) / -2);
 }
 
 .nf-spinner-sm {
-  width: 1rem;
-  height: 1rem;
-  border-width: 2px;
+  --nf-spinner-size: 1rem;
+  --nf-spinner-inset: 2px;
 }
 
 .nf-spinner-lg {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-width: 3px;
+  --nf-spinner-size: 2.5rem;
+  --nf-spinner-inset: 5px;
 }
 
 .nf-spinner-xl {
-  width: 4rem;
-  height: 4rem;
-  border-width: 4px;
+  --nf-spinner-size: 4rem;
+  --nf-spinner-inset: 8px;
 }
 
 .nf-spinner-secondary {
-  border-top-color: var(--nf-color-secondary);
+  color: var(--nf-color-secondary);
 }
 
 .nf-spinner-tertiary {
-  border-top-color: var(--nf-color-tertiary);
+  color: var(--nf-color-tertiary);
 }
 
 .nf-spinner-error {
-  border-top-color: var(--nf-color-error);
+  color: var(--nf-color-error);
 }
 
 .nf-spinner-block {
@@ -1823,12 +1882,14 @@ hr {
   letter-spacing: var(--nf-tracking-display);
   text-transform: uppercase;
   color: var(--nf-color-primary);
-  animation: nf-blink 1s step-end infinite;
 }
 
 @keyframes nf-spin {
-  to {
-    transform: rotate(360deg);
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
   }
 }
 @keyframes nf-blink {
@@ -1837,6 +1898,13 @@ hr {
   }
   50% {
     opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nf-spinner::before,
+  .nf-spinner::after {
+    animation: none;
+    opacity: 1;
   }
 }
 .nf-tabs {
@@ -2030,7 +2098,8 @@ hr {
 .nf-pagination {
   display: flex;
   align-items: center;
-  gap: 0;
+  flex-wrap: wrap;
+  gap: var(--nf-space-1);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -2038,9 +2107,6 @@ hr {
 
 .nf-page-item {
   display: inline-flex;
-}
-.nf-page-item:not(:last-child) .nf-page-link {
-  border-right: none;
 }
 
 .nf-page-link {

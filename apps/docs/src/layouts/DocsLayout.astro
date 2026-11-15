@@ -8,11 +8,14 @@ import Sidebar from '../components/Sidebar.astro';
 import { version } from 'netframe/package.json';
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
+  frontmatter?: { title?: string; description?: string };
 }
 
-const { title, description } = Astro.props;
+// MDX layouts receive metadata under frontmatter; direct Astro usage passes props.
+const title = Astro.props.title ?? Astro.props.frontmatter?.title ?? 'Documentation';
+const description = Astro.props.description ?? Astro.props.frontmatter?.description;
 const currentPath = Astro.url.pathname;
 ---
 

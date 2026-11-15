@@ -17,6 +17,10 @@ The source repository is https://github.com/JacksonChandler/NetFrame.
    - Allow direct `npm publish` if npm presents that permission.
 6. Set the GitHub repository Actions variable **NPM_RELEASE_ENABLED** to `true` only after steps 1–5. Until then, the release job is skipped. No npm token is required by the workflow; remove obsolete publishing secrets only after validating OIDC.
 
+## Docs hosting
+
+The docs build emits `apps/docs/dist/404.html`. Configure your static host to serve it with HTTP **404** for unknown routes (not a redirect to `/` or an SPA fallback). Astro preview tests verify the local behaviour; the deployed host must preserve it. The canonical docs origin is `https://netframe.cybeartech.com`, served at the domain root.
+
 ## Workflow
 
 `.github/workflows/release.yml` runs on pushes to `main`. It uses SHA-pinned actions and npm 11.21.1 (OIDC requires npm >=11.5.1). Changesets action v2 creates version PRs or runs `pnpm release`. pnpm 9 delegates the package upload to the installed npm CLI. `id-token: write` enables OIDC; `NPM_CONFIG_PROVENANCE=true` requests provenance. No token authentication fallback is configured.

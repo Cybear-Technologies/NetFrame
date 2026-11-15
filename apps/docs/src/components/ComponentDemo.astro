@@ -88,10 +88,10 @@ const { title, code, stacked = false } = Astro.props;
 
   .demo-inner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 
-    @media (max-width: 48rem) {
-      grid-template-columns: 1fr;
+    @media (max-width: 72rem) {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 
@@ -100,6 +100,7 @@ const { title, code, stacked = false } = Astro.props;
   }
 
   .demo-preview {
+    min-width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -109,7 +110,7 @@ const { title, code, stacked = false } = Astro.props;
     border-right: 1px solid var(--nf-color-border);
     min-height: 8rem;
 
-    @media (max-width: 48rem) {
+    @media (max-width: 72rem) {
       border-right: none;
       border-bottom: 1px solid var(--nf-color-border);
     }
@@ -121,8 +122,8 @@ const { title, code, stacked = false } = Astro.props;
   }
 
   .demo-code-wrap {
+    min-width: 0;
     background-color: var(--nf-color-surface-lowest);
-    overflow: auto;
     display: flex;
     flex-direction: column;
   }
@@ -164,7 +165,8 @@ const { title, code, stacked = false } = Astro.props;
     font-size: var(--nf-text-sm);
     color: var(--nf-color-text-muted);
     overflow-x: auto;
-    white-space: pre;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
     background: none;
     border: none;
   }

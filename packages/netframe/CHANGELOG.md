@@ -4,7 +4,14 @@
 
 ### Minor Changes
 
-- Fix package consumption and state colours without changing class or token names.
+- Fix package consumption, state colours and component behaviour while preserving public class and token names.
+
+  - Rework `.nf-badge-dot` into a larger framed unread-notification marker, preserving the existing class. Add size/colour custom properties and clear, accessible unread/all-read documentation examples. The notification-control demo includes a styled disclosure panel, repeated-click/outside/Escape dismissal, keyboard focus handling and a working mark-all-read action.
+  - Redesign spinners as stationary signal-cell loaders with a slow 2.4-second pulse, steady labels and reduced-motion support. Existing sizes and colour variants remain available.
+  - Fix progress-ring calculations in Firefox by returning a length from `stroke-dashoffset`. Support normalized `pathLength="100"` circles, clamp percentages, remove arc overshoot and prevent clipped strokes.
+  - Add accessible `.nf-table-sort` header-button styles with `aria-sort` indicators. Sorting remains an optional consumer-owned JavaScript controller, demonstrated in the docs.
+  - Pagination wraps cleanly with individually bordered controls rather than overflowing narrow containers.
+  - Docs: run the displayed dropdown/accordion/table/pagination/tabs controllers in live demos; provide linked panels for both tab variants; update pagination records and status; use working breadcrumb destinations; provide a themed 404 page and readable, wrapping example code.
 
   - The documented imports `netframe/dist/netframe.css` and `netframe/dist/themes.css` now resolve through the `exports` map. Every export also gains a `default` condition, so `netframe`, `netframe/themes`, `netframe/min` and `netframe/themes/min` resolve in tools that do not use the `style` condition. Existing `style`/`sass` targets are unchanged. Added `netframe/fonts/*` and `netframe/package.json`.
   - Compiled CSS (`dist/*.css`) now loads fonts from `./fonts/`, where they are shipped. Previously the URLs pointed outside `dist/` and 404'd (including from CDNs such as unpkg).

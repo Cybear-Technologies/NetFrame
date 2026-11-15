@@ -63,6 +63,8 @@ Notes:
 
 Component pages show CSS-only markup plus optional `## JavaScript` snippets. `apps/docs/tests/examples.spec.ts` runs those snippets in a browser. Keep them working: state goes in ARIA attributes with literal values (`aria-hidden="true"`, `aria-expanded="false"`), plus keyboard support and focus management. Docs pages must not load third-party resources; `site.spec.ts` fails on external requests. `a11y.spec.ts` runs axe on every page. No accessibility exceptions are pinned. Fix violations rather than suppressing them.
 
+Live demos must run their displayed optional controllers, not just static markup. `DropdownBehavior.astro` and `ExampleBehavior.astro` extract the local MDX JavaScript at build time; real-page interaction tests complement isolated snippet tests. Sorting/pagination remain docs/consumer behaviour, never a required library runtime.
+
 In MDX, keep inline element content on one line (`<button …>LABEL</button>`). Multi-line content gets wrapped in `<p>`, which picks up base paragraph styles.
 
 Form examples: associate labels (`for`/`id`), link helper text with `aria-describedby`, and mark errors with `aria-invalid="true"` (styled the same as `.nf-input-error`). Progress examples: `role="progressbar"` with value attributes and a label. Snippets that render dynamic text use `textContent`, never `innerHTML`.

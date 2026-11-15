@@ -68,6 +68,30 @@ Before finishing, verify that the existing plan is the only file you changed and
 
 This section is current; sections 1–9 below are the audit that drove it. Where they disagree, this section wins. Nothing was staged, committed, pushed, published or deployed. No PRs were modified. This file remains untracked.
 
+## Latest notification-control repair — preparing 0.2.0
+
+Replaced the bare details/summary demo with NotificationExample.astro and explicitly copied demo-only CSS. It now renders a framed list with row separators, timestamps/read labels, unread count, stable-width/reserved-space layout, and native buttons. The exact optional MDX controller runs via ExampleBehavior: repeated click, outside click, Escape (restores focus), focus leaving the control, and explicit mark-all-read (clears dot, zeroes count, announces read state, preserves panel/focus and read state across reopening). No library runtime added. Copied HTML/CSS + JavaScript are self-contained; IDs must be unique for multiple instances.
+
+Tests expanded beyond visibility: real dismissal, keyboard/focus, read state and geometry at 320/390/1000/1440px. All 30 targeted badge tests pass across Chromium/Firefox/WebKit; full check exits 0 (17 library tests, 28 pages, 127 Chromium tests); Firefox/WebKit full suite 253 passed/1 unsupported-touch skip; whitespace check exit 0. Logs: `/tmp/nf-notification-tests2.log`, `/tmp/nf-notification-full-check.log`, `/tmp/nf-notification-full-cross.log`. Desktop and fresh-mobile screenshots reviewed (`/tmp/nf-notification-open.png`, `/tmp/nf-notification-phone-final.png`). No publishing, commits or deployment. This supersedes the prior bare native-disclosure implementation below.
+
+## Latest dot-badge redesign — preparing 0.2.0
+
+Reworked `.nf-badge-dot` from an 8px box with only a 4px colour centre into a 12px framed square with an 8px colour centre, dark separation keyline and thin outer accent. Preserved the existing class/pseudo-element; added `--nf-badge-dot-size` and `--nf-badge-dot-color`; no pulse/blink or pointer interception. Docs now explicitly describe unread notifications, compare UNREAD ALERTS vs ALL READ, and include a native disclosure with a real sample list, visible unread count and accessible summary text. No fake button or required JS. Changelog remains under unpublished 0.2.0.
+
+Validation: all 24 targeted badge tests pass across three engines, including all seven themes; full check exits 0 (17 library tests, 28-page build, 125 Chromium tests). Visual screenshots reviewed at `/tmp/nf-badge-unread-redesign.png` and `/tmp/nf-badge-notifications-redesign.png`. Logs: `/tmp/nf-badge-targeted.log`, `/tmp/nf-badge-full-check.log`. No publishing, commits or deployment.
+
+## Latest tabs regression fix — preparing 0.2.0
+
+User found tabs were static. Both live variants now have unique tab/panel IDs, matching `aria-controls`/`aria-labelledby`, meaningful content for each tab, and execute the displayed controller via ExampleBehavior. Added real-page selection/panel/roving-tabindex, keyboard wrap/Home/End and disabled-activation tests. Controller guards native disabled tabs and an empty enabled list. Targeted snippet + real tabs tests passed 45/45 across Chromium, Firefox and WebKit; Astro check/build pass. No library runtime or public CSS API changes. Changelog included in unpublished 0.2.0.
+
+## Latest docs/component regression fixes — preparing 0.2.0
+
+User walkthrough exposed gaps that earlier isolated-snippet/default-page scans missed. Fixed live dropdown/accordion controllers (including missing accordion `aria-controls`/panel IDs), all three table demos with accessible sortable headers and numeric/missing-value handling, working pagination with local records/status/bounds/focus plus responsive wrapping, real breadcrumb destinations, and a themed static `404.html` with recovery links. Live controllers execute the exact trusted local MDX snippets; no library runtime JavaScript was added.
+
+Redesigned spinners as stationary, slow (2.4s) signal-cell pulses, steady labels and reduced-motion cells, preserving existing classes/sizes/colour variants. Visually reviewed all seven themes. Progress-ring root cause confirmed in Firefox: a number-only `stroke-dashoffset` calc was rejected and rendered a full ring. Fixed it to return a length; added normalized path support, percentage clamps, butt caps, zero-progress seam suppression and stroke clearance. Reviewed 0/25/50/75/100% screenshots. Existing circumference-based markup remains supported. Changelog updated under the still-unpublished **0.2.0** version.
+
+Final validation: `pnpm run check` exit 0 (lint/typecheck, 17 library tests, 28 built pages, **114 Chromium tests**); Firefox/WebKit **227 passed, 1 skipped** (unsupported Firefox touch emulation); audit and whitespace check exit 0. Logs: `/tmp/nf-component-fixes-check.log`, `/tmp/nf-component-fixes-cross.log`, `/tmp/nf-component-fixes-audit.log`. Astro 7-specific Context7 documentation was unavailable; standard custom-404 guidance was verified with the installed build and all three browsers. Static hosting must serve `404.html` with HTTP 404; noted in RELEASING.md. No commits, publishing, deployment or release enablement. External release tasks below remain pending.
+
 ## Current remaining checklist — release 0.2.0
 
 **This checklist supersedes the historical status entries below.** User selected **0.2.0** and confirmed CodeQL runs in CI. CodeQL setup is no longer an outstanding task (maintainer-reported, not independently inspected).

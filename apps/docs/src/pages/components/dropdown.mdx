@@ -5,6 +5,7 @@ description: 'Contextual menus anchored to a trigger element.'
 ---
 
 import ComponentDemo from '../../components/ComponentDemo.astro';
+import DropdownBehavior from '../../components/DropdownBehavior.astro';
 
 # Dropdown
 
@@ -64,6 +65,8 @@ Add `.nf-dropdown-menu-right` to align the menu to the right edge of the trigger
 </ul>
 ```
 
+<DropdownBehavior />
+
 ## JavaScript
 
 ```js
@@ -74,14 +77,15 @@ document.querySelectorAll('.nf-dropdown').forEach((dropdown) => {
 
   // The CSS hides the menu only for aria-hidden="true" (or .nf-hidden),
   // so always write the literal string rather than toggling the attribute.
-  function setOpen(open, { focusTrigger = false } = {}) {
+  function setOpen(open, { focusTrigger = false, focusItem = open } = {}) {
     trigger.setAttribute('aria-expanded', String(open));
     menu.setAttribute('aria-hidden', String(!open));
-    if (open) items()[0]?.focus();
+    if (open && focusItem) items()[0]?.focus();
     else if (focusTrigger) trigger.focus();
   }
 
-  setOpen(trigger.getAttribute('aria-expanded') === 'true');
+  // Synchronize initial ARIA state without moving focus on page load.
+  setOpen(trigger.getAttribute('aria-expanded') === 'true', { focusItem: false });
 
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();

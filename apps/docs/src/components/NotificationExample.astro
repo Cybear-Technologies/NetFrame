@@ -1,0 +1,25 @@
+---
+import ComponentDemo from './ComponentDemo.astro';
+import '../styles/notification-demo.css';
+import styles from '../styles/notification-demo.css?raw';
+
+const markup = `<div class="notification-demo" data-notifications>
+  <button type="button" class="nf-button nf-button-outline nf-badge-dot" data-notification-trigger aria-expanded="false" aria-controls="notification-panel">
+    ALERTS <span class="notification-trigger-count" data-notification-count aria-hidden="true">3</span><span class="nf-sr-only" data-notification-label> — 3 unread notifications</span>
+  </button>
+  <p class="notification-status" data-notification-status role="status">3 unread notifications</p>
+  <section class="notification-panel" id="notification-panel" aria-labelledby="notification-heading" hidden>
+    <h3 class="notification-heading" id="notification-heading">NOTIFICATIONS</h3>
+    <ul class="notification-list" aria-label="Notifications">
+      <li data-unread><strong>Deployment complete.</strong><span class="notification-item-state">UNREAD · JUST NOW</span></li>
+      <li data-unread><strong>New access request.</strong><span class="notification-item-state">UNREAD · 2 MIN AGO</span></li>
+      <li data-unread><strong>Backup ready for review.</strong><span class="notification-item-state">UNREAD · 5 MIN AGO</span></li>
+    </ul>
+    <div class="notification-footer"><button type="button" class="nf-button nf-button-ghost" data-mark-read>MARK ALL READ</button></div>
+  </section>
+</div>`;
+---
+
+<ComponentDemo stacked title="Notification control" code={`${markup}\n\n<style>\n${styles}\n</style>`}>
+  <Fragment set:html={markup} />
+</ComponentDemo>

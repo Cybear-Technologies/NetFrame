@@ -67,6 +67,9 @@
 // ---------------------------------------------------------------------------
 
 .nf-badge-dot {
+  --nf-badge-dot-size: 0.75rem;
+  --nf-badge-dot-color: var(--nf-color-error);
+
   position: relative;
 
   &::after {
@@ -74,10 +77,12 @@
     position: absolute;
     top: 0;
     right: 0;
-    transform: translate(40%, -40%);
-    width: 0.5rem;
-    height: 0.5rem;
-    background-color: var(--nf-color-error);
+    transform: translate(35%, -35%);
+    width: var(--nf-badge-dot-size);
+    height: var(--nf-badge-dot-size);
+    background-color: var(--nf-badge-dot-color);
     border: 2px solid var(--nf-color-bg);
+    box-shadow: 0 0 0 1px var(--nf-badge-dot-color);
+    pointer-events: none;
   }
 }

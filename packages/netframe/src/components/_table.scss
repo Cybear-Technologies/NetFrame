@@ -2,6 +2,8 @@
 // Copyright (C) 2026 Cybear Technologies
 // SPDX-License-Identifier: GPL-3.0-only
 
+@use '../mixins/focus-ring' as *;
+
 // ---------------------------------------------------------------------------
 // Wrapper — handles overflow on small screens
 // ---------------------------------------------------------------------------
@@ -45,6 +47,27 @@
   color: var(--nf-color-primary);
   white-space: nowrap;
 }
+
+// Optional sortable headers: real buttons preserve keyboard activation.
+.nf-table-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nf-space-2);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: inherit;
+  color: inherit;
+  cursor: crosshair;
+  padding-block: var(--nf-space-1);
+
+  &::after { content: '↕'; }
+
+  @include nf-focus-ring-inset(var(--nf-color-primary));
+}
+
+.nf-table th[aria-sort='ascending'] .nf-table-sort::after { content: '↑'; }
+.nf-table th[aria-sort='descending'] .nf-table-sort::after { content: '↓'; }
 
 // ---------------------------------------------------------------------------
 // Body
