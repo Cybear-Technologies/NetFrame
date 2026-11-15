@@ -1,5 +1,11 @@
 # netframe
 
+## 0.2.1
+
+### Patch Changes
+
+- [#97](https://github.com/Cybear-Technologies/NetFrame/pull/97) [`fd7fb72`](https://github.com/Cybear-Technologies/NetFrame/commit/fd7fb72ff82ca0dabcef1f8013bb2a03ee333f32) Thanks [@JacksonChandler](https://github.com/JacksonChandler)! - Point package metadata (`repository`, `homepage`, `bugs`) at the canonical `Cybear-Technologies/NetFrame` repository. First release published through GitHub Actions trusted publishing with npm provenance.
+
 ## 0.2.0
 
 ### Minor Changes
