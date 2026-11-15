@@ -13,39 +13,39 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
 
 ## Basic
 
-<ComponentDemo stacked title="Default table" code={`<div class="nf-table-wrap">
-  <table class="nf-table">
-    <thead>
-      <tr>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="NODE_ID">NODE_ID</button></th>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="STATUS">STATUS</button></th>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="LATENCY">LATENCY</button></th>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="UPTIME">UPTIME</button></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>NODE_001</td>
-        <td><span class="nf-badge nf-badge-primary">ONLINE</span></td>
-        <td>12ms</td>
-        <td>99.9%</td>
-      </tr>
-      <tr>
-        <td>NODE_002</td>
-        <td><span class="nf-badge nf-badge-ghost">IDLE</span></td>
-        <td>8ms</td>
-        <td>100%</td>
-      </tr>
-      <tr>
-        <td>NODE_003</td>
-        <td><span class="nf-badge nf-badge-error">OFFLINE</span></td>
-        <td>—</td>
-        <td>0%</td>
-      </tr>
-    </tbody>
-  </table>
-</div>`}>
-  <div class="nf-table-wrap" style="width: 100%;">
+<ComponentDemo stacked title="Default table" code={`<div class="nf-table-wrap" role="region" aria-label="Node status table" tabindex="0">
+    <table class="nf-table">
+      <thead>
+        <tr>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="NODE_ID">NODE_ID</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="STATUS">STATUS</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="LATENCY">LATENCY</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="UPTIME">UPTIME</button></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>NODE_001</td>
+          <td><span class="nf-badge nf-badge-primary">ONLINE</span></td>
+          <td>12ms</td>
+          <td>99.9%</td>
+        </tr>
+        <tr>
+          <td>NODE_002</td>
+          <td><span class="nf-badge nf-badge-ghost">IDLE</span></td>
+          <td>8ms</td>
+          <td>100%</td>
+        </tr>
+        <tr>
+          <td>NODE_003</td>
+          <td><span class="nf-badge nf-badge-error">OFFLINE</span></td>
+          <td>—</td>
+          <td>0%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>`}>
+  <div class="nf-table-wrap" role="region" aria-label="Node status table" tabindex="0" style="width: 100%;">
     <table class="nf-table">
       <thead>
         <tr>
@@ -79,27 +79,29 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
   </div>
 </ComponentDemo>
 
+Give a wrapper that can scroll sideways `tabindex="0"`, `role="region"` and an accessible name, as in these examples, so keyboard users can scroll it. Keep the real `<table>`; NetFrame deliberately does not turn tables into stacked cards.
+
 ## Striped rows
 
-<ComponentDemo stacked title="Striped" code={`<div class="nf-table-wrap">
-  <table class="nf-table nf-table-striped">
-    <thead>
-      <tr>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="PROCESS">PROCESS</button></th>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="PID">PID</button></th>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="CPU">CPU</button></th>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="MEM">MEM</button></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>NETD</td><td>1042</td><td>0.1%</td><td>12MB</td></tr>
-      <tr><td>ICE_CORE</td><td>1078</td><td>2.3%</td><td>84MB</td></tr>
-      <tr><td>UPLINK</td><td>1091</td><td>0.8%</td><td>32MB</td></tr>
-      <tr><td>SCAN_SVC</td><td>1104</td><td>4.1%</td><td>128MB</td></tr>
-    </tbody>
-  </table>
-</div>`}>
-  <div class="nf-table-wrap" style="width: 100%;">
+<ComponentDemo stacked title="Striped" code={`<div class="nf-table-wrap" role="region" aria-label="Processes table" tabindex="0">
+    <table class="nf-table nf-table-striped">
+      <thead>
+        <tr>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="PROCESS">PROCESS</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="PID">PID</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="CPU">CPU</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="MEM">MEM</button></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>NETD</td><td>1042</td><td>0.1%</td><td>12MB</td></tr>
+        <tr><td>ICE_CORE</td><td>1078</td><td>2.3%</td><td>84MB</td></tr>
+        <tr><td>UPLINK</td><td>1091</td><td>0.8%</td><td>32MB</td></tr>
+        <tr><td>SCAN_SVC</td><td>1104</td><td>4.1%</td><td>128MB</td></tr>
+      </tbody>
+    </table>
+  </div>`}>
+  <div class="nf-table-wrap" role="region" aria-label="Processes table" tabindex="0" style="width: 100%;">
     <table class="nf-table nf-table-striped">
       <thead>
         <tr>
@@ -121,23 +123,23 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
 
 ## Row states
 
-<ComponentDemo stacked title="Active and danger rows" code={`<div class="nf-table-wrap">
-  <table class="nf-table">
-    <thead>
-      <tr>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="NODE_ID">NODE_ID</button></th>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="STATUS">STATUS</button></th>
-        <th scope="col"><button class="nf-table-sort" type="button" aria-label="ACTION">ACTION</button></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>NODE_001</td><td>NOMINAL</td><td>—</td></tr>
-      <tr class="nf-table-row-active"><td>NODE_002</td><td>SELECTED</td><td>PROCESSING</td></tr>
-      <tr class="nf-table-row-danger"><td>NODE_003</td><td>CRITICAL</td><td>QUARANTINE</td></tr>
-    </tbody>
-  </table>
-</div>`}>
-  <div class="nf-table-wrap" style="width: 100%;">
+<ComponentDemo stacked title="Active and danger rows" code={`<div class="nf-table-wrap" role="region" aria-label="Node actions table" tabindex="0">
+    <table class="nf-table">
+      <thead>
+        <tr>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="NODE_ID">NODE_ID</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="STATUS">STATUS</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="ACTION">ACTION</button></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>NODE_001</td><td>NOMINAL</td><td>—</td></tr>
+        <tr class="nf-table-row-active"><td>NODE_002</td><td>SELECTED</td><td>PROCESSING</td></tr>
+        <tr class="nf-table-row-danger"><td>NODE_003</td><td>CRITICAL</td><td>QUARANTINE</td></tr>
+      </tbody>
+    </table>
+  </div>`}>
+  <div class="nf-table-wrap" role="region" aria-label="Node actions table" tabindex="0" style="width: 100%;">
     <table class="nf-table">
       <thead>
         <tr>

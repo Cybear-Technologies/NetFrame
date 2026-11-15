@@ -97,9 +97,20 @@ document.querySelectorAll('.nf-dropdown').forEach((dropdown) => {
 
   // The CSS hides the menu only for aria-hidden="true" (or .nf-hidden),
   // so always write the literal string rather than toggling the attribute.
+  // CSS cannot detect viewport edges. Measure the open menu and use the right-aligned
+  // modifier when the default (left-aligned) placement would run off-screen.
+  const authoredRight = menu.classList.contains('nf-dropdown-menu-right');
+  function placeMenu() {
+    menu.classList.toggle('nf-dropdown-menu-right', authoredRight);
+    const rect = menu.getBoundingClientRect();
+    if (rect.right > window.innerWidth - 8) menu.classList.add('nf-dropdown-menu-right');
+    else if (rect.left < 8) menu.classList.remove('nf-dropdown-menu-right');
+  }
+
   function setOpen(open, { focusTrigger = false, focusItem = open } = {}) {
     trigger.setAttribute('aria-expanded', String(open));
     menu.setAttribute('aria-hidden', String(!open));
+    if (open) placeMenu();
     if (open && focusItem) items()[0]?.focus();
     else if (focusTrigger) trigger.focus();
   }
@@ -172,6 +183,10 @@ document.querySelectorAll('.nf-tab-list').forEach((list) => {
       t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
       document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
     });
+    // Keep the selected tab visible when the tab list scrolls (many or long labels).
+    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
+    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
+    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
     if (focus) tab.focus();
   }
 

@@ -143,6 +143,13 @@ NetFrame styles states; you supply the semantics.
 - Spinners and animated utilities respect `prefers-reduced-motion`; keep a visible text label for loading states.
 - The unread dot (`nf-badge-dot`) is decorative. Always pair it with text that states the count or status.
 
+## Phones and narrow containers
+
+- Components must work inside a narrow card or column: do not set fixed pixel widths on them; labels and identifiers already wrap and button groups wrap.
+- Add `viewport-fit=cover` to the viewport meta so safe-area padding works around notches.
+- On touch devices (`pointer: coarse`) primary controls are about 44px; do not shrink them with custom padding. Tooltips need a focusable trigger; essential information does not belong in them.
+- Let wide tables scroll inside a wrapper (`role="region"`, `tabindex="0"`, an accessible name); never hide page overflow to conceal a layout bug.
+
 ## Workflow
 
 1. Look up each component in `references/classes.md` and read its docs page for markup structure.
@@ -413,12 +420,15 @@ Docs: https://netframe.cybeartech.com/components/table/
 
 | Class | Description |
 | --- | --- |
+| `nf-badge` | Base — required on all badges |
+| `nf-button` | Base — required on all buttons |
 | `nf-table` | Table element — full width, collapsed borders |
 | `nf-table-row-active` | Green left border accent — selected row |
 | `nf-table-row-danger` | Error left border accent — critical row |
 | `nf-table-sort` | Header button — optional sorting controller uses `aria-sort` on its `<th>` |
 | `nf-table-striped` | Alternates even row background |
 | `nf-table-wrap` | Overflow wrapper — apply to a `<div>` around the table |
+| `nf-tag` | Base chip — neutral border and background |
 
 ## Tabs (component)
 
@@ -1060,9 +1070,20 @@ document.querySelectorAll('.nf-dropdown').forEach((dropdown) => {
 
   // The CSS hides the menu only for aria-hidden="true" (or .nf-hidden),
   // so always write the literal string rather than toggling the attribute.
+  // CSS cannot detect viewport edges. Measure the open menu and use the right-aligned
+  // modifier when the default (left-aligned) placement would run off-screen.
+  const authoredRight = menu.classList.contains('nf-dropdown-menu-right');
+  function placeMenu() {
+    menu.classList.toggle('nf-dropdown-menu-right', authoredRight);
+    const rect = menu.getBoundingClientRect();
+    if (rect.right > window.innerWidth - 8) menu.classList.add('nf-dropdown-menu-right');
+    else if (rect.left < 8) menu.classList.remove('nf-dropdown-menu-right');
+  }
+
   function setOpen(open, { focusTrigger = false, focusItem = open } = {}) {
     trigger.setAttribute('aria-expanded', String(open));
     menu.setAttribute('aria-hidden', String(!open));
+    if (open) placeMenu();
     if (open && focusItem) items()[0]?.focus();
     else if (focusTrigger) trigger.focus();
   }
@@ -1135,6 +1156,10 @@ document.querySelectorAll('.nf-tab-list').forEach((list) => {
       t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
       document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
     });
+    // Keep the selected tab visible when the tab list scrolls (many or long labels).
+    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
+    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
+    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
     if (focus) tab.focus();
   }
 

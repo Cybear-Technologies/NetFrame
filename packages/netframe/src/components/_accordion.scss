@@ -44,6 +44,7 @@
   letter-spacing: var(--nf-tracking-display);
   text-transform: uppercase;
   text-align: left;
+  overflow-wrap: anywhere;
   color: var(--nf-color-text);
 
   background: none;
@@ -92,7 +93,14 @@
 
 .nf-accordion-body {
   padding: var(--nf-space-5);
+  overflow-wrap: anywhere;
   font-size: var(--nf-text-md);
   color: var(--nf-color-text-muted);
   line-height: var(--nf-leading-relaxed);
+}
+
+@media (pointer: coarse) {
+  .nf-accordion-trigger {
+    min-height: 2.75rem;
+  }
 }

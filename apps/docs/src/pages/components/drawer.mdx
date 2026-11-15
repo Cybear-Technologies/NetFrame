@@ -16,22 +16,22 @@ The drawer is composed of an overlay and a panel. The panel contains a header, b
 
 <ComponentDemo stacked title="Drawer panel structure" code={`<button class="nf-button" id="open-drawer">OPEN DRAWER</button>
 
-<!-- Overlay and drawer: direct children of <body>, closed by default -->
-<div class="nf-drawer-overlay nf-hidden" id="drawer-overlay"></div>
+  <!-- Overlay and drawer: direct children of <body>, closed by default -->
+  <div class="nf-drawer-overlay nf-hidden" id="drawer-overlay"></div>
 
-<!-- Left drawer -->
-<div class="nf-drawer nf-drawer-left" id="my-drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="drawer-title">
-  <div class="nf-drawer-header">
-    <h2 class="nf-drawer-title" id="drawer-title">SYSTEM_NAV</h2>
-    <button class="nf-button nf-button-ghost nf-button-icon" aria-label="Close drawer">✕</button>
-  </div>
-  <div class="nf-drawer-body">
-    <p>Drawer content goes here.</p>
-  </div>
-  <div class="nf-drawer-footer">
-    <button class="nf-button nf-button-ghost nf-button-sm">CLOSE</button>
-  </div>
-</div>`}>
+  <!-- Left drawer -->
+  <div class="nf-drawer nf-drawer-left" id="my-drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="drawer-title">
+    <div class="nf-drawer-header">
+      <h2 class="nf-drawer-title" id="drawer-title">SYSTEM_NAV</h2>
+      <button class="nf-button nf-button-ghost nf-button-icon" aria-label="Close drawer">✕</button>
+    </div>
+    <div class="nf-drawer-body">
+      <p>Drawer content goes here.</p>
+    </div>
+    <div class="nf-drawer-footer">
+      <button class="nf-button nf-button-ghost nf-button-sm">CLOSE</button>
+    </div>
+  </div>`}>
   <div style="position: relative; width: 100%; max-width: 20rem; border: var(--nf-border-medium) solid var(--nf-color-primary); display: flex; flex-direction: column; min-height: 16rem;">
     <div class="nf-drawer-header">
       <h2 class="nf-drawer-title" style="margin: 0;">SYSTEM_NAV</h2>
@@ -58,9 +58,9 @@ Add `.nf-drawer-left` or `.nf-drawer-right` to control which edge the panel slid
 ## Sizes
 
 <ComponentDemo stacked title="Width variants" code={`<div class="nf-drawer nf-drawer-left nf-drawer-sm">...</div>
-<div class="nf-drawer nf-drawer-left">...</div>         <!-- default 20rem -->
-<div class="nf-drawer nf-drawer-left nf-drawer-lg">...</div>
-<div class="nf-drawer nf-drawer-left nf-drawer-xl">...</div>`}>
+  <div class="nf-drawer nf-drawer-left">...</div>         <!-- default 20rem -->
+  <div class="nf-drawer nf-drawer-left nf-drawer-lg">...</div>
+  <div class="nf-drawer nf-drawer-left nf-drawer-xl">...</div>`}>
   <div style="display: flex; flex-direction: column; gap: var(--nf-space-2); width: 100%; font-size: var(--nf-text-sm); color: var(--nf-color-text-muted);">
     <div style="display: flex; align-items: center; gap: var(--nf-space-3);"><span class="nf-badge nf-badge-ghost">nf-drawer-sm</span> 14rem</div>
     <div style="display: flex; align-items: center; gap: var(--nf-space-3);"><span class="nf-badge nf-badge-ghost">default</span> 20rem</div>

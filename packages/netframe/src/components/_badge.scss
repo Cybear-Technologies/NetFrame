@@ -16,7 +16,8 @@
   font-size: var(--nf-text-base);
   letter-spacing: var(--nf-tracking-display);
   text-transform: uppercase;
-  white-space: nowrap;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   line-height: 1.4;
 
   border: var(--nf-border-thin) solid transparent;

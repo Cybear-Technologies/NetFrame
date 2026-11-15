@@ -9,7 +9,10 @@
     "build:cloudflare": "pnpm --filter netframe run build && astro build",
     "lint": "astro check",
     "preview": "astro preview",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:mobile": "playwright test --project=mobile-chromium --project=mobile-webkit",
+    "test:visual": "playwright test --project=visual",
+    "test:visual:update": "playwright test --project=visual --update-snapshots"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.6",

@@ -55,12 +55,17 @@ const nav = [
 ];
 ---
 
-<nav class="sidebar" id="docs-sidebar">
-  <!-- Logo -->
-  <a href="/" class="sidebar-logo">
-    <span class="sidebar-logo-text">NET<span>FRAME</span></span>
-    <span class="sidebar-logo-sub">BY CYBEAR</span>
-  </a>
+<nav class="sidebar" id="docs-sidebar" aria-label="Documentation">
+  <div class="sidebar-head">
+    <a href="/" class="sidebar-logo">
+      <span class="sidebar-logo-text">NET<span>FRAME</span></span>
+      <span class="sidebar-logo-sub">BY CYBEAR TECHNOLOGIES</span>
+    </a>
+    <button type="button" class="sidebar-close" id="nav-close" aria-label="Close navigation menu">
+      <i class="ph-thin ph-x" aria-hidden="true"></i>
+      <span>CLOSE</span>
+    </button>
+  </div>
 
   <!-- Nav sections -->
   {nav.map((section) => (
@@ -71,6 +76,7 @@ const nav = [
           <li>
             <a
               href={item.href}
+              aria-current={currentPath === item.href || currentPath === item.href + '/' ? 'page' : undefined}
               class:list={[
                 'sidebar-link',
                 { 'sidebar-link-active': currentPath === item.href || currentPath === item.href + '/' }
@@ -86,40 +92,112 @@ const nav = [
 </nav>
 
 <style>
+  /* Mobile first: below 64rem the sidebar is a drawer (see scripts/docs-nav.ts).
+     Without JavaScript it stays a normal block above the content. */
   .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 16rem;
-    z-index: var(--nf-z-sticky);
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
     background-color: var(--nf-color-bg);
-    border-right: 2px solid var(--nf-color-primary);
+    border-bottom: 2px solid var(--nf-color-primary);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 
+  :global(html.js) .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--nf-z-modal);
+    width: min(20rem, calc(100vw - 3rem));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-bottom: none;
+    border-right: 2px solid var(--nf-color-primary);
+    padding-left: env(safe-area-inset-left);
     scrollbar-width: thin;
     scrollbar-color: var(--nf-color-border) transparent;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform var(--nf-duration-slow) var(--nf-ease-sharp),
+                visibility 0s linear var(--nf-duration-slow);
+  }
 
-    @media (max-width: 48rem) {
-      transform: translateX(-100%);
-      transition: transform var(--nf-duration-slow) var(--nf-ease-sharp);
+  :global(html.js) .sidebar[data-state='open'] {
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+  }
 
-      &.sidebar-open {
-        transform: translateX(0);
-      }
+  @media (min-width: 64rem) {
+    .sidebar,
+    :global(html.js) .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: var(--nf-z-sticky);
+      width: 16rem;
+      overflow-y: auto;
+      border-bottom: none;
+      border-right: 2px solid var(--nf-color-primary);
+      padding-left: 0;
+      transform: none;
+      visibility: visible;
+      transition: none;
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .sidebar { transition: none; }
+  }
+
+  .sidebar-head {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--nf-color-primary);
+    flex-shrink: 0;
   }
 
   .sidebar-logo {
     display: flex;
     flex-direction: column;
     gap: var(--nf-space-1);
-    padding: var(--nf-space-6);
-    border-bottom: 2px solid var(--nf-color-primary);
+    padding: var(--nf-space-5) var(--nf-space-6);
     text-decoration: none;
-    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  .sidebar-close {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--nf-space-2);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    margin: var(--nf-space-3);
+    padding: 0 var(--nf-space-3);
+    align-self: flex-start;
+    color: var(--nf-color-text);
+    border: 2px solid var(--nf-color-border-strong);
+    font-family: var(--nf-font-body);
+    font-size: var(--nf-text-xs);
+    letter-spacing: var(--nf-tracking-display);
+    cursor: crosshair;
+
+    &:hover { color: var(--nf-color-primary); border-color: var(--nf-color-primary); }
+  }
+
+  .sidebar-close i {
+    font-size: 1.25rem;
+    line-height: 1;
+    color: inherit;
+  }
+
+  :global(html.js) .sidebar-close { display: inline-flex; }
+
+  @media (min-width: 64rem) {
+    :global(html.js) .sidebar-close { display: none; }
   }
 
   .sidebar-logo-text {
@@ -136,7 +214,8 @@ const nav = [
   .sidebar-logo-sub {
     font-family: var(--nf-font-label);
     font-size: var(--nf-text-base);
-    letter-spacing: var(--nf-tracking-display);
+    letter-spacing: var(--nf-tracking-wide);
+    line-height: 1.2;
     color: var(--nf-color-secondary);
   }
 
@@ -163,7 +242,9 @@ const nav = [
   }
 
   .sidebar-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
     padding: var(--nf-space-2) var(--nf-space-6);
     font-family: var(--nf-font-body);
     font-size: var(--nf-text-sm);

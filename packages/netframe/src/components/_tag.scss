@@ -18,7 +18,8 @@
   color: var(--nf-color-text);
   background-color: var(--nf-color-surface-container);
   border: var(--nf-border-thin) solid var(--nf-color-border-strong);
-  white-space: nowrap;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 // ---------------------------------------------------------------------------

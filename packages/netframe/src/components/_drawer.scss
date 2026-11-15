@@ -29,6 +29,8 @@
   bottom: 0;
   width: 20rem;
   max-width: 90vw;
+  // Keep content clear of the home indicator and notch.
+  padding-bottom: env(safe-area-inset-bottom);
 
   background-color: var(--nf-color-surface-low);
   display: flex;
@@ -87,6 +89,8 @@
   flex-shrink: 0;
 
   .nf-drawer-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-family: var(--nf-font-display);
     font-size: var(--nf-text-lg);
     font-weight: var(--nf-font-weight-bold);
@@ -101,10 +105,14 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--nf-space-6);
+  overflow-wrap: anywhere;
 }
 
 .nf-drawer-footer {
   padding: var(--nf-space-4) var(--nf-space-6);
   border-top: var(--nf-border-medium) solid var(--nf-color-border);
   flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nf-space-3);
 }

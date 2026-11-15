@@ -21,12 +21,14 @@
   letter-spacing: var(--nf-tracking-display);
   text-transform: uppercase;
   color: var(--nf-color-secondary);
+  overflow-wrap: anywhere;
 }
 
 .nf-helper {
   font-family: var(--nf-font-body);
   font-size: var(--nf-text-xs);
   color: var(--nf-color-text-muted);
+  overflow-wrap: anywhere;
 }
 
 .nf-helper-error {
@@ -140,6 +142,8 @@
   }
 
   span {
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-family: var(--nf-font-body);
     font-size: var(--nf-text-md);
     color: var(--nf-color-text);
@@ -169,5 +173,23 @@
     background-color: var(--nf-color-secondary);
     border: none;
     cursor: crosshair;
+  }
+}
+
+// Touch devices: the whole label row is the tap target, and sliders get a taller hit area.
+@media (pointer: coarse) {
+  .nf-checkbox,
+  .nf-radio {
+    min-height: 2.75rem;
+  }
+
+  .nf-range {
+    height: 2.75rem;
+    background: linear-gradient(var(--nf-color-surface-highest), var(--nf-color-surface-highest)) center / 100% 2px no-repeat;
+
+    &::-webkit-slider-thumb {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
   }
 }

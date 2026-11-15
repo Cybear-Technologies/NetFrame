@@ -14,13 +14,13 @@ Absolutely-positioned menus anchored to a trigger. Toggle visibility with `aria-
 ## Basic
 
 <ComponentDemo title="Open dropdown" code={`<div class="nf-dropdown">
-  <button class="nf-button nf-button-ghost nf-dropdown-trigger" aria-expanded="true" aria-haspopup="menu">OPTIONS</button>
-  <ul class="nf-dropdown-menu" role="menu">
-    <li role="none"><button class="nf-dropdown-item" role="menuitem">SCAN_NODE</button></li>
-    <li role="none"><button class="nf-dropdown-item" role="menuitem">PURGE_CACHE</button></li>
-    <li role="none"><button class="nf-dropdown-item" role="menuitem" aria-disabled="true">SYNC_DATA</button></li>
-  </ul>
-</div>`}>
+    <button class="nf-button nf-button-ghost nf-dropdown-trigger" aria-expanded="true" aria-haspopup="menu">OPTIONS</button>
+    <ul class="nf-dropdown-menu" role="menu">
+      <li role="none"><button class="nf-dropdown-item" role="menuitem">SCAN_NODE</button></li>
+      <li role="none"><button class="nf-dropdown-item" role="menuitem">PURGE_CACHE</button></li>
+      <li role="none"><button class="nf-dropdown-item" role="menuitem" aria-disabled="true">SYNC_DATA</button></li>
+    </ul>
+  </div>`}>
   <div class="nf-dropdown" style="margin-bottom: 8rem;">
     <button class="nf-button nf-button-ghost nf-dropdown-trigger" aria-expanded="true" aria-haspopup="menu">OPTIONS</button>
     <ul class="nf-dropdown-menu" role="menu">
@@ -34,15 +34,15 @@ Absolutely-positioned menus anchored to a trigger. Toggle visibility with `aria-
 ## With dividers and labels
 
 <ComponentDemo title="Grouped menu" code={`<div class="nf-dropdown">
-  <button class="nf-button nf-button-primary nf-dropdown-trigger" aria-expanded="true">NODE_ACTIONS</button>
-  <ul class="nf-dropdown-menu" role="menu">
-    <li class="nf-dropdown-label" role="none">DIAGNOSTICS</li>
-    <li role="none"><button class="nf-dropdown-item" role="menuitem">RUN_SCAN</button></li>
-    <li role="none"><button class="nf-dropdown-item" role="menuitem">VIEW_LOGS</button></li>
-    <li class="nf-dropdown-divider" role="separator"></li>
-    <li role="none"><button class="nf-dropdown-item nf-dropdown-item-danger" role="menuitem">TERMINATE</button></li>
-  </ul>
-</div>`}>
+    <button class="nf-button nf-button-primary nf-dropdown-trigger" aria-expanded="true">NODE_ACTIONS</button>
+    <ul class="nf-dropdown-menu" role="menu">
+      <li class="nf-dropdown-label" role="none">DIAGNOSTICS</li>
+      <li role="none"><button class="nf-dropdown-item" role="menuitem">RUN_SCAN</button></li>
+      <li role="none"><button class="nf-dropdown-item" role="menuitem">VIEW_LOGS</button></li>
+      <li class="nf-dropdown-divider" role="separator"></li>
+      <li role="none"><button class="nf-dropdown-item nf-dropdown-item-danger" role="menuitem">TERMINATE</button></li>
+    </ul>
+  </div>`}>
   <div class="nf-dropdown" style="margin-bottom: 10rem;">
     <button class="nf-button nf-button-primary nf-dropdown-trigger" aria-expanded="true">NODE_ACTIONS</button>
     <ul class="nf-dropdown-menu" role="menu">
@@ -54,6 +54,10 @@ Absolutely-positioned menus anchored to a trigger. Toggle visibility with `aria-
     </ul>
   </div>
 </ComponentDemo>
+
+## Near screen edges
+
+The menu is capped to the screen width and its items wrap long labels. CSS alone cannot tell whether a left-aligned menu would run off the right edge, so the JavaScript example below measures the open menu and toggles `nf-dropdown-menu-right` when needed. Without that script, add `nf-dropdown-menu-right` yourself for triggers near the right edge.
 
 ## Right-aligned
 
@@ -77,9 +81,20 @@ document.querySelectorAll('.nf-dropdown').forEach((dropdown) => {
 
   // The CSS hides the menu only for aria-hidden="true" (or .nf-hidden),
   // so always write the literal string rather than toggling the attribute.
+  // CSS cannot detect viewport edges. Measure the open menu and use the right-aligned
+  // modifier when the default (left-aligned) placement would run off-screen.
+  const authoredRight = menu.classList.contains('nf-dropdown-menu-right');
+  function placeMenu() {
+    menu.classList.toggle('nf-dropdown-menu-right', authoredRight);
+    const rect = menu.getBoundingClientRect();
+    if (rect.right > window.innerWidth - 8) menu.classList.add('nf-dropdown-menu-right');
+    else if (rect.left < 8) menu.classList.remove('nf-dropdown-menu-right');
+  }
+
   function setOpen(open, { focusTrigger = false, focusItem = open } = {}) {
     trigger.setAttribute('aria-expanded', String(open));
     menu.setAttribute('aria-hidden', String(!open));
+    if (open) placeMenu();
     if (open && focusItem) items()[0]?.focus();
     else if (focusTrigger) trigger.focus();
   }

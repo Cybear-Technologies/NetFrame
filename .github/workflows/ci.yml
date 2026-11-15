@@ -62,12 +62,17 @@ jobs:
         run: pnpm --filter @netframe/docs run build
 
       - name: Install Playwright Chromium
-        run: pnpm --filter @netframe/docs exec playwright install --with-deps chromium
+        run: pnpm --filter @netframe/docs exec playwright install --with-deps chromium webkit
 
       # Every built route (no errors / failed / external requests), theme and
       # copy-button behaviour, and the documented component JS snippets.
       - name: Browser tests
         run: pnpm --filter @netframe/docs run test:browser
+
+      # Focused phone smoke suite: navigation drawer and touch behaviour in Pixel 7
+      # (Chromium) and iPhone 14 (WebKit) emulation. Emulation is not a physical device.
+      - name: Mobile smoke tests
+        run: pnpm --filter @netframe/docs run test:mobile
 
       - name: Upload Playwright report
         if: failure()

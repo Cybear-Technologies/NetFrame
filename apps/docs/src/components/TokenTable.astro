@@ -15,7 +15,7 @@ interface Props {
 const { tokens, showSwatch = false } = Astro.props;
 ---
 
-<div class="nf-table-wrap">
+<div class="nf-table-wrap" role="region" aria-label="Token reference table (scrollable)" tabindex="0">
   <table class="nf-table">
     <thead>
       <tr>
@@ -63,11 +63,13 @@ const { tokens, showSwatch = false } = Astro.props;
   .token-name {
     color: var(--nf-color-text);
     font-size: var(--nf-text-sm);
+    overflow-wrap: anywhere;
   }
 
   .token-value {
     color: var(--nf-color-primary);
     font-size: var(--nf-text-sm);
+    overflow-wrap: anywhere;
   }
 
   .token-desc {

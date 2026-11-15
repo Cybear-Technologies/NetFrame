@@ -1,0 +1,68 @@
+name: Visual baselines
+
+# Screenshot baselines are per platform (font rasterisation differs). The committed
+# baselines come from macOS; this manual workflow runs the suite on Linux, and with
+# `update` ticked it uploads freshly generated Linux baselines as an artifact for a
+# human to inspect and commit. Pull request CI does not run the visual project.
+
+on:
+  workflow_dispatch:
+    inputs:
+      update:
+        description: Generate Linux baselines instead of comparing (review before committing)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  visual:
+    name: Screenshots
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build library and docs
+        run: pnpm run build
+
+      - name: Install Chromium
+        run: pnpm --filter @netframe/docs exec playwright install --with-deps chromium
+
+      - name: Compare against baselines
+        if: ${{ !inputs.update }}
+        run: pnpm --filter @netframe/docs run test:visual
+
+      - name: Generate baselines
+        if: ${{ inputs.update }}
+        run: pnpm --filter @netframe/docs run test:visual:update
+
+      - name: Upload baselines
+        if: ${{ inputs.update }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: visual-baselines-linux
+          path: apps/docs/tests/visual/visual.spec.ts-snapshots/*-linux.png
+          retention-days: 14
+
+      - name: Upload failure report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: visual-report
+          path: apps/docs/test-results
+          retention-days: 7

@@ -45,6 +45,13 @@ NetFrame styles states; you supply the semantics.
 - Spinners and animated utilities respect `prefers-reduced-motion`; keep a visible text label for loading states.
 - The unread dot (`nf-badge-dot`) is decorative. Always pair it with text that states the count or status.
 
+## Phones and narrow containers
+
+- Components must work inside a narrow card or column: do not set fixed pixel widths on them; labels and identifiers already wrap and button groups wrap.
+- Add `viewport-fit=cover` to the viewport meta so safe-area padding works around notches.
+- On touch devices (`pointer: coarse`) primary controls are about 44px; do not shrink them with custom padding. Tooltips need a focusable trigger; essential information does not belong in them.
+- Let wide tables scroll inside a wrapper (`role="region"`, `tabindex="0"`, an accessible name); never hide page overflow to conceal a layout bug.
+
 ## Workflow
 
 1. Look up each component in `references/classes.md` and read its docs page for markup structure.

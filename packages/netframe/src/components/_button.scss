@@ -20,7 +20,11 @@
   font-weight: var(--nf-font-weight-bold);
   letter-spacing: var(--nf-tracking-display);
   text-transform: uppercase;
-  white-space: nowrap;
+  // Labels wrap (rather than overflow) only when the container is narrower
+  // than the label; short labels stay on one line.
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
   text-decoration: none;
 
   border: var(--nf-border-medium) solid transparent;
@@ -152,4 +156,15 @@
 .nf-button-icon {
   padding: var(--nf-space-3);
   line-height: 1;
+}
+
+// Touch devices: about 44 CSS px, the common minimum target size.
+@media (pointer: coarse) {
+  .nf-button {
+    min-height: 2.75rem;
+  }
+
+  .nf-button-icon {
+    min-width: 2.75rem;
+  }
 }

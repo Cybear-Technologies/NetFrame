@@ -86,3 +86,10 @@
   pointer-events: none;
   color: var(--nf-color-text-subtle);
 }
+
+@media (pointer: coarse) {
+  .nf-page-link {
+    min-width: 2.75rem;
+    height: 2.75rem;
+  }
+}
