@@ -4,6 +4,9 @@
   // Deploy: npx wrangler deploy   (Root directory: apps/docs)
   "name": "netframe-docs",
   "compatibility_date": "2026-11-15",
+  // Opt in to `wrangler preview` for non-production branch builds.
+  // Static assets and compatibility settings remain at the top level.
+  "previews": {},
   "assets": {
     "directory": "./dist",
     // Unknown routes return the custom dist/404.html with HTTP 404.
