@@ -2,7 +2,7 @@
 
 Thanks for your interest. NetFrame is a GPL-3.0-only project by Cybear Technologies.
 
-Coding agents: see [AGENTS.md](AGENTS.md) for the command reference and repository rules.
+Coding agents: see [AGENTS.md](AGENTS.md) for the command reference and repository rules. If you change classes, tokens or docs examples, run `pnpm run skills:build` and commit the regenerated agent skill references (CI fails on stale files).
 
 ## Prerequisites
 

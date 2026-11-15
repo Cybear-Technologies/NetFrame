@@ -1,0 +1,57 @@
+---
+layout: '../layouts/DocsLayout.astro'
+title: 'Agents'
+description: 'Agent skills and machine-readable docs for Claude, GitHub Copilot and Codex.'
+---
+
+# Agents
+
+NetFrame ships **agent skills**: short instruction packs that teach a coding agent the real class names, tokens and accessibility patterns, so it stops guessing. They are plain Markdown (`SKILL.md` with `name` and `description` frontmatter) and travel inside the npm package.
+
+| Skill | Use it when |
+|---|---|
+| `netframe-usage` | Building markup with NetFrame classes; imports, fonts, Sass, accessibility |
+| `netframe-theming` | Overriding tokens, switching palettes, checking contrast |
+| `netframe-interactive` | Adding working dropdowns, tabs, accordions, modals, drawers, toasts, sorting and pagination |
+
+## Install the skills
+
+Install the package, then run one command from your project root. It copies the three `netframe-*` skill folders into the directory your agent reads. It needs Node 18+, makes no network calls and never touches your other skills.
+
+```sh
+npx netframe skills claude    # Claude Code    -> .claude/skills
+npx netframe skills copilot   # GitHub Copilot -> .github/skills
+npx netframe skills codex     # Codex          -> .codex/skills
+npx netframe skills all       # every agent above
+```
+
+| Agent | Directory | Notes |
+|---|---|---|
+| Claude Code | `.claude/skills` | project skills |
+| GitHub Copilot | `.github/skills` | also reads `.claude/skills` and `.agents/skills` |
+| Codex | `.codex/skills` | for all projects, use `--dir ~/.agents/skills` |
+
+Add `--dry-run` to preview, `--dir <path>` to choose another directory, and `--list` to see the bundled skills. `npx netframe skills` with no agent prints help.
+
+Prefer to copy by hand? From your project root:
+
+```sh
+mkdir -p .claude/skills && cp -R node_modules/netframe/skills/* .claude/skills/
+mkdir -p .github/skills && cp -R node_modules/netframe/skills/* .github/skills/
+mkdir -p .codex/skills && cp -R node_modules/netframe/skills/* .codex/skills/
+```
+
+Commit the copied folder if you want your team's agents to share it. Skills are guidance only: they add no code to your build. Run the command again after upgrading `netframe` so the copies match the installed version. They are overwritten on update, so copy and rename a skill before customising it.
+
+Other agents can read the files directly from `node_modules/netframe/skills/<name>/SKILL.md`.
+
+## Machine-readable docs
+
+- [`/llms.txt`](/llms.txt): an index of every page.
+- [`/llms-full.txt`](/llms-full.txt): the three skills plus every class, token and tested interaction pattern in one file.
+
+## How they stay correct
+
+The class and token references are generated from the shipped source, not written by hand. The interaction patterns are the same snippets the docs run in browser tests. The test suite fails if a skill names a class or token that does not exist, if a generated file is out of date, if the skills or the install command are missing from the published package, or if the command misbehaves.
+
+Skill guidance is advisory. Review generated markup for accessibility, as you would any code.

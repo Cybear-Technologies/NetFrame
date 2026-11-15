@@ -14,11 +14,13 @@ Fixed slide-in panels. Toggle with the `.nf-open` class and a backdrop overlay.
 
 The drawer is composed of an overlay and a panel. The panel contains a header, body, and footer:
 
-<ComponentDemo stacked title="Drawer panel structure" code={`<!-- Overlay -->
-<div class="nf-drawer-overlay" id="drawer-overlay"></div>
+<ComponentDemo stacked title="Drawer panel structure" code={`<button class="nf-button" id="open-drawer">OPEN DRAWER</button>
+
+<!-- Overlay and drawer: direct children of <body>, closed by default -->
+<div class="nf-drawer-overlay nf-hidden" id="drawer-overlay"></div>
 
 <!-- Left drawer -->
-<div class="nf-drawer nf-drawer-left nf-open" id="my-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+<div class="nf-drawer nf-drawer-left" id="my-drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="drawer-title">
   <div class="nf-drawer-header">
     <h2 class="nf-drawer-title" id="drawer-title">SYSTEM_NAV</h2>
     <button class="nf-button nf-button-ghost nf-button-icon" aria-label="Close drawer">✕</button>
@@ -74,23 +76,46 @@ const overlay = document.getElementById('drawer-overlay');
 const drawer  = document.getElementById('my-drawer');
 const trigger = document.getElementById('open-drawer');
 const close   = drawer.querySelector('[aria-label="Close drawer"]');
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+let isOpen = false;
 
-function openDrawer() {
-  drawer.classList.add('nf-open');
-  overlay.classList.remove('nf-hidden');
-  drawer.removeAttribute('aria-hidden');
+// Everything else under <body> becomes inert while the drawer is open.
+const page = () => overlay.parentElement.querySelectorAll(':scope > :not(#drawer-overlay):not(#my-drawer)');
+
+function setOpen(open, { moveFocus = true } = {}) {
+  if (open === isOpen && moveFocus) return;
+  isOpen = open;
+  drawer.classList.toggle('nf-open', open);
+  overlay.classList.toggle('nf-hidden', !open);
+  drawer.setAttribute('aria-hidden', String(!open));
+  // The closed panel sits off-screen but is still focusable unless inert.
+  drawer.inert = !open;
+  page().forEach((el) => (el.inert = open));
+  if (!moveFocus) return;
+  if (open) (drawer.querySelector(FOCUSABLE) ?? drawer).focus();
+  else trigger.focus();
 }
 
-function closeDrawer() {
-  drawer.classList.remove('nf-open');
-  overlay.classList.add('nf-hidden');
-  drawer.setAttribute('aria-hidden', 'true');
-}
+setOpen(drawer.classList.contains('nf-open'), { moveFocus: false });
 
-trigger.addEventListener('click', openDrawer);
-close.addEventListener('click', closeDrawer);
-overlay.addEventListener('click', closeDrawer);
+trigger.addEventListener('click', () => setOpen(true));
+close.addEventListener('click', () => setOpen(false));
+drawer.querySelectorAll('.nf-drawer-footer button').forEach((b) => b.addEventListener('click', () => setOpen(false)));
+overlay.addEventListener('click', () => setOpen(false));
+document.addEventListener('keydown', (e) => {
+  if (!isOpen) return;
+  if (e.key === 'Escape') setOpen(false);
+  if (e.key === 'Tab') {
+    // Wrap focus inside the drawer.
+    const items = [...drawer.querySelectorAll(FOCUSABLE)];
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+});
 ```
+
+Place the overlay and drawer as direct children of `<body>` so the `inert` step covers the rest of the page. Without `inert` support in your target browsers, add your own focus containment.
 
 ## Class reference
 

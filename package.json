@@ -20,6 +20,8 @@
     "clean": "pnpm -r run clean && rm -rf node_modules",
     "changeset": "changeset",
     "version-packages": "changeset version",
+    "skills:build": "node scripts/build-skills.mjs",
+    "skills:check": "node scripts/build-skills.mjs --check",
     "release": "pnpm run typecheck && pnpm run test && changeset publish"
   },
   "devDependencies": {

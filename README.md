@@ -9,16 +9,17 @@
 ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
 ```
 
-> **CYBERPUNK CSS COMPONENT LIBRARY** 
+> **CYBERPUNK CSS COMPONENT LIBRARY** — by [Cybear Technologies](https://cybeartech.com)
 
 [![npm](https://img.shields.io/npm/v/netframe)](https://www.npmjs.com/package/netframe)
+[![CI](https://github.com/Cybear-Technologies/NetFrame/actions/workflows/ci.yml/badge.svg)](https://github.com/Cybear-Technologies/NetFrame/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-netframe.cybeartech.com-00ff00)](https://netframe.cybeartech.com)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](LICENSE)
 
 ---
 
 ## `// INITIALIZE`
 
-### COMING SOON
 ```sh
 npm install netframe
 pnpm add netframe
@@ -32,6 +33,12 @@ import 'netframe/dist/netframe.css';
 
 // Optional: alternate themes
 import 'netframe/dist/themes.css';
+```
+
+Or with no bundler:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/netframe/dist/netframe.min.css" />
 ```
 
 Drop classes anywhere in your markup:
@@ -57,6 +64,8 @@ Enable the CRT scanline overlay on `<body>`:
 <body class="nf-crt">
 ```
 
+Compiled CSS loads fonts from `./fonts/` next to it, so ship `dist/fonts/` with the stylesheet (bundlers do this for you). Sass users: `@use 'pkg:netframe/scss/netframe' with ($nf-font-path: '/assets/fonts');`. Details: [Getting started](https://netframe.cybeartech.com/getting-started/).
+
 ---
 
 ## `// PAYLOAD`
@@ -73,9 +82,34 @@ Enable the CRT scanline overlay on `<body>`:
 
 **4 utility groups** — Glow/shadows · Scanlines/CRT · Glitch animation · Layout
 
-**Fonts** — Space Grotesk · JetBrains Mono · VT323 · Orbitron · Russo One — all self-hosted woff2, zero CDN calls
+**Fonts** — Space Grotesk · JetBrains Mono · VT323 · Orbitron · Russo One — all self-hosted woff2 under the SIL OFL (licence texts ship in `dist/fonts/`), zero CDN calls
 
 **Zero dependencies** — pure CSS output, framework-agnostic, drop-in anywhere
+
+**CSS only** — interactive components (dropdown, tabs, accordion, modal, drawer, toast, table sorting, pagination) take their state from ARIA attributes. The docs include optional JavaScript for each, executed by the browser test suite
+
+**Accessible by default** — all palettes keep text at 4.5:1 contrast on every surface; docs pages are axe-scanned against WCAG 2.1 AA
+
+**Browsers** — `color-mix()` sets the floor: Chrome/Edge 111+, Firefox 113+, Safari 16.2+. Tested on current Chromium, Firefox and WebKit
+
+---
+
+## `// AGENT_PROTOCOL` — Skills for coding agents
+
+The npm package ships three agent skills: **netframe-usage**, **netframe-theming** and **netframe-interactive**. They give Claude Code, GitHub Copilot and Codex the real class names, tokens and tested interaction patterns instead of guesses.
+
+```sh
+npx netframe skills claude    # Claude Code    -> .claude/skills
+npx netframe skills copilot   # GitHub Copilot -> .github/skills
+npx netframe skills codex     # Codex          -> .codex/skills
+npx netframe skills all       # every agent above
+```
+
+Prefer to copy by hand? `mkdir -p .claude/skills && cp -R node_modules/netframe/skills/* .claude/skills/` (and the equivalent for `.github/skills` and `.codex/skills`; see the [agents page](https://netframe.cybeartech.com/agents/)).
+
+References are generated from the shipped source and verified in CI. Also published: [`/llms.txt`](https://netframe.cybeartech.com/llms.txt) and [`/llms-full.txt`](https://netframe.cybeartech.com/llms-full.txt). More: [netframe.cybeartech.com/agents](https://netframe.cybeartech.com/agents/).
+
+Working *on* this repository with an agent? Read [AGENTS.md](AGENTS.md).
 
 ---
 
@@ -180,21 +214,24 @@ packages/
     src/
       base/           reset, typography, fonts (@font-face)
       components/     20 component SCSS partials
-      mixins/         focus-ring, neon-glow, offset-shadow
+      mixins/         focus-ring, glitch, neon-glow, scanlines, truncate
       themes/         6 alternate theme class overrides
       tokens/         colors, typography, spacing, motion
       utilities/      glow, scanlines, glitch, layout
-    dist/
-      netframe.css    compiled library
-      netframe.min.css
-      themes.css      compiled themes
-      themes.min.css
+      fonts/          woff2 files and their OFL licences
+    scripts/          build pipeline (Sass -> PostCSS -> dist/)
+    skills/           agent skills shipped in the npm package
+    test/             node:test package, CSS contract and skill tests
+    dist/             built output (not committed)
+      netframe.css    compiled library (+ .min.css, source maps)
+      themes.css      compiled themes (+ .min.css)
       fonts/          self-hosted woff2 files
       scss/           raw source for Sass consumers
 apps/
-  docs/               Astro documentation site
+  docs/               Astro docs site, Playwright browser tests, wrangler.jsonc
+scripts/              repo tooling (agent skill generator)
 .changeset/           versioning config
-.github/workflows/    CI + release automation
+.github/workflows/    CI, release and cross-browser automation
 ```
 
 ---
@@ -204,14 +241,9 @@ apps/
 Requires **Node 22.23.4+** · **pnpm 9.15.9** (pinned via `packageManager`; Corepack or pnpm will pick it up)
 
 ```sh
-# Install dependencies
-pnpm install
-
-# Build all packages
-pnpm build
-
-# Start all dev servers
-pnpm dev
+pnpm install        # install dependencies
+pnpm build          # build the library, then the docs
+pnpm dev            # watch the library and serve the docs
 ```
 
 Library only:
@@ -221,28 +253,34 @@ pnpm --filter netframe run build   # single build
 pnpm --filter netframe run dev     # watch mode
 ```
 
-Docs site only:
+Docs only:
 
 ```sh
 pnpm --filter @netframe/docs dev   # http://localhost:4321
 ```
 
-The docs copy the built library into `apps/docs/public/` automatically on `dev` and `build`
-(and re-copy while `pnpm --filter netframe run dev` rebuilds). Build the library first.
+The docs copy the built library into `apps/docs/public/` on `dev` and `build`, so build the library first.
 
-Checks:
+Checks (the same ones CI runs):
 
 ```sh
-pnpm run typecheck   # build script types
-pnpm run test        # builds the library, then runs package/CSS tests
-pnpm run check       # typecheck + test + full build
+pnpm run lint             # Stylelint (SCSS) + astro check (docs, tests)
+pnpm run typecheck        # build script types
+pnpm run test             # build the library, then package, CSS and skill tests
+pnpm run test:browser     # Playwright against the built docs (Chromium)
+pnpm run check            # all of the above plus a full build
+pnpm run skills:build     # regenerate skill references and llms.txt after changing docs or CSS
 ```
+
+First time running browser tests: `pnpm --filter @netframe/docs exec playwright install chromium`. Firefox and WebKit are opt-in (`playwright install firefox webkit`, then `--project=firefox --project=webkit`) and run nightly in CI.
+
+Changing classes, tokens or docs class tables? Run `pnpm run skills:build` and commit the result; the tests fail on stale generated files.
 
 ---
 
 ## `// CONTRIBUTE`
 
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+See [CONTRIBUTING.md](CONTRIBUTING.md). Security reports: [SECURITY.md](SECURITY.md). Release process: [RELEASING.md](RELEASING.md). Version history: [CHANGELOG](packages/netframe/CHANGELOG.md).
 
 ---
 

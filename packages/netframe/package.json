@@ -47,9 +47,14 @@
     "./dist/*": "./dist/*",
     "./package.json": "./package.json"
   },
+  "bin": {
+    "netframe": "./bin/netframe.mjs"
+  },
   "main": "./dist/netframe.css",
   "files": [
+    "bin",
     "dist",
+    "skills",
     "README.md",
     "LICENSE"
   ],

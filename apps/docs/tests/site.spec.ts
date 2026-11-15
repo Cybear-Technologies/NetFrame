@@ -144,3 +144,22 @@ test('theming page token table matches the compiled default palette', async ({ r
     .map(([, name, value]) => `${name}: docs ${value}, css ${compiled.get(name!) ?? '(missing)'}`);
   expect(mismatches).toEqual([]);
 });
+
+test('llms.txt and llms-full.txt are served and describe real pages', async ({ request }) => {
+  const index = await request.get('/llms.txt');
+  expect(index.status()).toBe(200);
+  const text = await index.text();
+  expect(text).toMatch(/^# NetFrame/);
+  for (const url of text.matchAll(/\((https:\/\/netframe\.cybeartech\.com(\/[^)]*))\)/g)) {
+    const route = url[2]!;
+    if (route.endsWith('.txt')) continue; // generated files, checked below
+    const page = await request.get(route);
+    expect(page.status(), route).toBe(200);
+  }
+  const full = await request.get('/llms-full.txt');
+  expect(full.status()).toBe(200);
+  const body = await full.text();
+  for (const needle of ['nf-button-primary', '--nf-color-primary', 'netframe-interactive', 'aria-expanded']) {
+    expect(body, needle).toContain(needle);
+  }
+});

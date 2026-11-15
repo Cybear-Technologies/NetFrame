@@ -142,6 +142,13 @@ test('npm tarball contains compiled CSS, fonts and Sass sources', () => {
     'LICENSE',
     'dist/fonts/README.md',
     'dist/fonts/OFL-orbitron.txt',
+    'bin/netframe.mjs',
+    'skills/netframe-usage/SKILL.md',
+    'skills/netframe-usage/references/classes.md',
+    'skills/netframe-theming/SKILL.md',
+    'skills/netframe-theming/references/tokens.md',
+    'skills/netframe-interactive/SKILL.md',
+    'skills/netframe-interactive/references/patterns.md',
   ]) {
     assert.ok(files.has(required), `tarball missing ${required}`);
   }
@@ -196,4 +203,11 @@ test('a real packed installation resolves CSS, fonts and Sass without workspace 
   assert.match(css, /\.nf-button-primary/);
   assert.match(css, /\.nf-theme-iron-signal/);
   assert.match(css, /url\("\/assets\/fonts\/vt323-400\.woff2"\)/);
+
+  // The documented command, run exactly as a consumer would, from the installed tarball.
+  const cli = spawnSync('npx', ['--no-install', 'netframe', 'skills', 'claude'], { cwd: consumer, encoding: 'utf8' });
+  assert.equal(cli.status, 0, cli.stderr || cli.stdout);
+  for (const skill of ['netframe-usage', 'netframe-theming', 'netframe-interactive']) {
+    assert.ok(fs.existsSync(path.join(consumer, '.claude', 'skills', skill, 'SKILL.md')), `${skill} not installed by the CLI`);
+  }
 });
