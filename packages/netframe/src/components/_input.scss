@@ -87,9 +87,14 @@
 // Error state
 // ---------------------------------------------------------------------------
 
+// `aria-invalid="true"` gets the same styling, so the accessible state and the
+// visual state can come from one attribute.
 .nf-input-error,
 .nf-select-error,
-.nf-textarea-error {
+.nf-textarea-error,
+.nf-input[aria-invalid='true'],
+.nf-select[aria-invalid='true'],
+.nf-textarea[aria-invalid='true'] {
   border-color: var(--nf-color-error);
   color: var(--nf-color-error);
 

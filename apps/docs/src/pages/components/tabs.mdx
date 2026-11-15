@@ -5,6 +5,7 @@ description: 'Horizontal tab navigation.'
 ---
 
 import ComponentDemo from '../../components/ComponentDemo.astro';
+import ExampleBehavior from '../../components/ExampleBehavior.astro';
 
 # Tabs
 
@@ -33,54 +34,81 @@ Horizontal tab navigation with associated content panels. Manage active state vi
   </div>
 </div>`}>
   <div class="nf-tabs" style="width: 100%;">
-    <div class="nf-tab-list" role="tablist">
-      <button class="nf-tab" role="tab" aria-selected="true">OVERVIEW</button>
-      <button class="nf-tab" role="tab" aria-selected="false">NETWORK</button>
-      <button class="nf-tab" role="tab" aria-selected="false">SECURITY</button>
-      <button class="nf-tab" role="tab" aria-selected="false" aria-disabled="true">ARCHIVE</button>
+    <div class="nf-tab-list" role="tablist" aria-label="System modules">
+      <button class="nf-tab" role="tab" aria-selected="true" aria-controls="tab-panel-1" id="tab-1">OVERVIEW</button>
+      <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-2" id="tab-2">NETWORK</button>
+      <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-3" id="tab-3">SECURITY</button>
+      <button class="nf-tab" role="tab" aria-selected="false" aria-controls="tab-panel-4" id="tab-4" aria-disabled="true">ARCHIVE</button>
     </div>
-    <div class="nf-tab-panel" role="tabpanel">
-      System overview data goes here.
-    </div>
+    <div class="nf-tab-panel" role="tabpanel" id="tab-panel-1" aria-labelledby="tab-1">System overview data goes here.</div>
+    <div class="nf-tab-panel" role="tabpanel" id="tab-panel-2" aria-labelledby="tab-2" hidden>Network topology data goes here.</div>
+    <div class="nf-tab-panel" role="tabpanel" id="tab-panel-3" aria-labelledby="tab-3" hidden>Security logs go here.</div>
+    <div class="nf-tab-panel" role="tabpanel" id="tab-panel-4" aria-labelledby="tab-4" hidden>Archive data goes here.</div>
   </div>
 </ComponentDemo>
 
 ## Secondary color
 
 <ComponentDemo stacked title="Secondary variant" code={`<div class="nf-tabs nf-tabs-secondary">
-  <div class="nf-tab-list" role="tablist">
-    <button class="nf-tab" role="tab" aria-selected="true">UPLINK</button>
-    <button class="nf-tab" role="tab" aria-selected="false">DOWNLINK</button>
-    <button class="nf-tab" role="tab" aria-selected="false">BYPASS</button>
+  <div class="nf-tab-list" role="tablist" aria-label="Link channels">
+    <button class="nf-tab" role="tab" aria-selected="true" aria-controls="link-panel-1" id="link-tab-1">UPLINK</button>
+    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="link-panel-2" id="link-tab-2">DOWNLINK</button>
+    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="link-panel-3" id="link-tab-3">BYPASS</button>
   </div>
+  <div class="nf-tab-panel" role="tabpanel" id="link-panel-1" aria-labelledby="link-tab-1">Uplink active. Outbound packets are queued for transmission.</div>
+  <div class="nf-tab-panel" role="tabpanel" id="link-panel-2" aria-labelledby="link-tab-2" hidden>Downlink connected. Incoming telemetry is synchronized.</div>
+  <div class="nf-tab-panel" role="tabpanel" id="link-panel-3" aria-labelledby="link-tab-3" hidden>Bypass channel ready. Traffic follows the direct route.</div>
 </div>`}>
-  <div class="nf-tabs nf-tabs-secondary" style="width: 100%;">
-    <div class="nf-tab-list" role="tablist">
-      <button class="nf-tab" role="tab" aria-selected="true">UPLINK</button>
-      <button class="nf-tab" role="tab" aria-selected="false">DOWNLINK</button>
-      <button class="nf-tab" role="tab" aria-selected="false">BYPASS</button>
-    </div>
+<div class="nf-tabs nf-tabs-secondary" style="width: 100%;">
+  <div class="nf-tab-list" role="tablist" aria-label="Link channels">
+    <button class="nf-tab" role="tab" aria-selected="true" aria-controls="link-panel-1" id="link-tab-1">UPLINK</button>
+    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="link-panel-2" id="link-tab-2">DOWNLINK</button>
+    <button class="nf-tab" role="tab" aria-selected="false" aria-controls="link-panel-3" id="link-tab-3">BYPASS</button>
   </div>
+  <div class="nf-tab-panel" role="tabpanel" id="link-panel-1" aria-labelledby="link-tab-1">Uplink active. Outbound packets are queued for transmission.</div>
+  <div class="nf-tab-panel" role="tabpanel" id="link-panel-2" aria-labelledby="link-tab-2" hidden>Downlink connected. Incoming telemetry is synchronized.</div>
+  <div class="nf-tab-panel" role="tabpanel" id="link-panel-3" aria-labelledby="link-tab-3" hidden>Bypass channel ready. Traffic follows the direct route.</div>
+</div>
 </ComponentDemo>
+
+<ExampleBehavior component="tabs" />
 
 ## JavaScript
 
 ```js
-const tabLists = document.querySelectorAll('.nf-tab-list');
+document.querySelectorAll('.nf-tab-list').forEach((list) => {
+  const tabs = [...list.querySelectorAll('.nf-tab')];
+  const enabled = () => tabs.filter((t) => t.getAttribute('aria-disabled') !== 'true' && !t.disabled);
 
-tabLists.forEach((list) => {
-  const tabs   = list.querySelectorAll('.nf-tab');
-  const panels = [...tabs].map((t) =>
-    document.getElementById(t.getAttribute('aria-controls'))
-  );
-
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => {
-      tabs.forEach((t, j) => {
-        t.setAttribute('aria-selected', String(i === j));
-        panels[j]?.toggleAttribute('hidden', i !== j);
-      });
+  function select(tab, { focus = false } = {}) {
+    if (!tab || tab.getAttribute('aria-disabled') === 'true' || tab.disabled) return;
+    tabs.forEach((t) => {
+      const active = t === tab;
+      t.setAttribute('aria-selected', String(active));
+      t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
+      document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
     });
+    if (focus) tab.focus();
+  }
+
+  select(enabled().find((t) => t.getAttribute('aria-selected') === 'true') ?? enabled()[0]);
+
+  list.addEventListener('click', (e) => {
+    const tab = e.target.closest('.nf-tab');
+    if (tab) select(tab);
+  });
+
+  // Arrow keys / Home / End move between enabled tabs (automatic activation).
+  list.addEventListener('keydown', (e) => {
+    const order = enabled();
+    const i = order.indexOf(document.activeElement);
+    const next = {
+      ArrowRight: order[(i + 1) % order.length],
+      ArrowLeft: order[(i - 1 + order.length) % order.length],
+      Home: order[0],
+      End: order[order.length - 1],
+    }[e.key];
+    if (next) { e.preventDefault(); select(next, { focus: true }); }
   });
 });
 ```

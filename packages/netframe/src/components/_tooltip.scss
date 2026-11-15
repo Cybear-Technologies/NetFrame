@@ -19,8 +19,11 @@
   position: relative;
   display: inline-flex;
 
+  // :focus-within covers the documented pattern of a focusable child
+  // (e.g. a button) inside the wrapper; the wrapper itself is not focusable.
   &:hover .nf-tooltip,
-  &:focus-visible .nf-tooltip {
+  &:focus-visible .nf-tooltip,
+  &:focus-within .nf-tooltip {
     opacity: 1;
     pointer-events: auto;
     transform: translateX(-50%) translateY(0);
@@ -66,7 +69,8 @@
   transform: translateX(-50%) translateY(calc(-1 * var(--nf-space-1)));
 
   .nf-tooltip-wrap:hover &,
-  .nf-tooltip-wrap:focus-visible & {
+  .nf-tooltip-wrap:focus-visible &,
+  .nf-tooltip-wrap:focus-within & {
     transform: translateX(-50%) translateY(0);
   }
 }
@@ -79,7 +83,8 @@
   transform: translateX(var(--nf-space-1)) translateY(-50%);
 
   .nf-tooltip-wrap:hover &,
-  .nf-tooltip-wrap:focus-visible & {
+  .nf-tooltip-wrap:focus-visible &,
+  .nf-tooltip-wrap:focus-within & {
     transform: translateX(0) translateY(-50%);
   }
 }
@@ -91,7 +96,8 @@
   transform: translateX(calc(-1 * var(--nf-space-1))) translateY(-50%);
 
   .nf-tooltip-wrap:hover &,
-  .nf-tooltip-wrap:focus-visible & {
+  .nf-tooltip-wrap:focus-visible &,
+  .nf-tooltip-wrap:focus-within & {
     transform: translateX(0) translateY(-50%);
   }
 }

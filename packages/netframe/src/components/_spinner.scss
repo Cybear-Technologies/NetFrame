@@ -1,53 +1,65 @@
 // NetFrame — Spinner
 // Copyright (C) 2026 Cybear Technologies
 // SPDX-License-Identifier: GPL-3.0-only
-
-// ---------------------------------------------------------------------------
-// Base
-// ---------------------------------------------------------------------------
+//
+// Signal-cell loader: a stationary square frame with two softly phased pairs
+// of illuminated cells. No rotating edges, subpixel transforms or fast flashes.
 
 .nf-spinner {
+  --nf-spinner-size: 1.5rem;
+  --nf-spinner-inset: 3px;
+  --nf-spinner-speed: 2.4s;
+
+  position: relative;
   display: inline-block;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2px solid var(--nf-color-surface-highest);
-  border-top-color: var(--nf-color-primary);
-  animation: nf-spin var(--nf-duration-crawl) linear infinite;
+  flex-shrink: 0;
+  width: var(--nf-spinner-size);
+  height: var(--nf-spinner-size);
+  border: 1px solid var(--nf-color-border-strong);
+  color: var(--nf-color-primary);
+  vertical-align: middle;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: var(--nf-spinner-inset);
+    background-repeat: no-repeat;
+    background-size: 42% 42%;
+    animation: nf-spin var(--nf-spinner-speed) ease-in-out infinite;
+  }
+
+  &::before {
+    background-image: linear-gradient(currentColor, currentColor), linear-gradient(currentColor, currentColor);
+    background-position: left top, right bottom;
+  }
+
+  &::after {
+    background-image: linear-gradient(currentColor, currentColor), linear-gradient(currentColor, currentColor);
+    background-position: right top, left bottom;
+    animation-delay: calc(var(--nf-spinner-speed) / -2);
+  }
 }
 
-// ---------------------------------------------------------------------------
-// Sizes
-// ---------------------------------------------------------------------------
-
+// Existing size and colour classes are preserved.
 .nf-spinner-sm {
-  width: 1rem;
-  height: 1rem;
-  border-width: 2px;
+  --nf-spinner-size: 1rem;
+  --nf-spinner-inset: 2px;
 }
 
 .nf-spinner-lg {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-width: 3px;
+  --nf-spinner-size: 2.5rem;
+  --nf-spinner-inset: 5px;
 }
 
 .nf-spinner-xl {
-  width: 4rem;
-  height: 4rem;
-  border-width: 4px;
+  --nf-spinner-size: 4rem;
+  --nf-spinner-inset: 8px;
 }
 
-// ---------------------------------------------------------------------------
-// Color variants
-// ---------------------------------------------------------------------------
-
-.nf-spinner-secondary { border-top-color: var(--nf-color-secondary); }
-.nf-spinner-tertiary  { border-top-color: var(--nf-color-tertiary); }
-.nf-spinner-error     { border-top-color: var(--nf-color-error); }
-
-// ---------------------------------------------------------------------------
-// Block spinner — centered in its container with optional label
-// ---------------------------------------------------------------------------
+.nf-spinner-secondary { color: var(--nf-color-secondary); }
+.nf-spinner-tertiary  { color: var(--nf-color-tertiary); }
+.nf-spinner-error     { color: var(--nf-color-error); }
 
 .nf-spinner-block {
   display: flex;
@@ -64,19 +76,24 @@
     letter-spacing: var(--nf-tracking-display);
     text-transform: uppercase;
     color: var(--nf-color-primary);
-    animation: nf-blink 1s step-end infinite;
   }
 }
 
-// ---------------------------------------------------------------------------
-// Keyframes
-// ---------------------------------------------------------------------------
-
 @keyframes nf-spin {
-  to { transform: rotate(360deg); }
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 1; }
 }
 
+// Retain the existing keyframe name for consumers who reference it explicitly.
 @keyframes nf-blink {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
+  50%      { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nf-spinner::before,
+  .nf-spinner::after {
+    animation: none;
+    opacity: 1;
+  }
 }

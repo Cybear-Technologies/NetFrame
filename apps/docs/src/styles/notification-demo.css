@@ -1,0 +1,71 @@
+/* Docs-only layout for the notification example; not a library component. */
+.notification-demo {
+  width: 100%;
+  max-width: 26rem;
+  min-width: 0;
+  min-height: 28rem;
+  text-align: left;
+}
+
+.notification-demo .notification-trigger-count {
+  padding: 0 var(--nf-space-2);
+  border-left: 1px solid currentColor;
+  font-size: var(--nf-text-sm);
+}
+
+.notification-demo .notification-status {
+  margin-top: var(--nf-space-3);
+  color: var(--nf-color-text-muted);
+  font-family: var(--nf-font-mono);
+  font-size: var(--nf-text-sm);
+}
+
+.notification-demo .notification-panel {
+  margin-top: var(--nf-space-4);
+  border: 2px solid var(--nf-color-primary);
+  background: var(--nf-color-bg);
+  box-shadow: 4px 4px 0 var(--nf-color-primary);
+}
+
+.notification-demo .notification-panel[hidden] { display: none; }
+
+.notification-demo .notification-heading {
+  margin: 0;
+  padding: var(--nf-space-4);
+  border-bottom: 1px solid var(--nf-color-border);
+  font-size: var(--nf-text-sm);
+  letter-spacing: var(--nf-tracking-display);
+  color: var(--nf-color-primary);
+}
+
+.notification-demo .notification-list { margin: 0; padding: 0; list-style: none; }
+
+.notification-demo .notification-list li {
+  display: grid;
+  gap: var(--nf-space-1);
+  padding: var(--nf-space-3) var(--nf-space-4);
+  border-bottom: 1px solid var(--nf-color-border);
+}
+
+.notification-demo .notification-list strong {
+  font-size: var(--nf-text-sm);
+  font-weight: var(--nf-font-weight-medium);
+  color: var(--nf-color-text);
+}
+
+.notification-demo .notification-item-state {
+  color: var(--nf-color-text-subtle);
+  font-family: var(--nf-font-mono);
+  font-size: var(--nf-text-xs);
+  letter-spacing: var(--nf-tracking-wide);
+}
+
+.notification-demo [data-unread] .notification-item-state { color: var(--nf-color-secondary); }
+
+.notification-demo .notification-footer { padding: var(--nf-space-4); }
+
+.notification-demo .notification-footer button {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}

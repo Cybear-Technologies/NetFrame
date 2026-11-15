@@ -1,0 +1,66 @@
+---
+import ComponentDemo from './ComponentDemo.astro';
+
+interface Props {
+  pages: number;
+  initialPage?: number;
+  title: string;
+}
+
+const { pages, initialPage = 1, title } = Astro.props;
+if (!Number.isSafeInteger(pages) || pages < 1 || initialPage < 1 || initialPage > pages) {
+  throw new Error('Invalid pagination example bounds');
+}
+const numbers = pages <= 7
+  ? Array.from({ length: pages }, (_, i) => i + 1)
+  : [1, ...Array.from({ length: 3 }, (_, i) => initialPage + i - 1).filter((p) => p > 1 && p < pages), pages];
+const range: (number | null)[] = [];
+for (const page of numbers) {
+  const previous = range.at(-1);
+  if (typeof previous === 'number' && page - previous > 1) range.push(null);
+  range.push(page);
+}
+const control = (label: string, page: number, action: string) => {
+  const disabled = page < 1 || page > pages;
+  const active = action === 'page' && page === initialPage;
+  const kind = action === 'page' ? '' : ` nf-page-${action}`;
+  return `    <li class="nf-page-item${active ? ' nf-page-item-active' : ''}${disabled ? ' nf-page-item-disabled' : ''}"><button type="button" class="nf-page-link${kind}" data-page="${page}" data-action="${action}"${active ? ' aria-current="page"' : ''}${disabled ? ' disabled aria-disabled="true"' : ''}>${label}</button></li>`;
+};
+const controls = [
+  control('PREV', initialPage - 1, 'prev'),
+  ...range.map((page) => page === null
+    ? '    <li class="nf-page-item nf-page-ellipsis"><span class="nf-page-link" aria-hidden="true">…</span></li>'
+    : control(String(page), page, 'page')),
+  control('NEXT', initialPage + 1, 'next'),
+].join('\n');
+const records = Array.from({ length: 3 }, (_, i) => `NODE_${String((initialPage - 1) * 3 + i + 1).padStart(3, '0')}`);
+const markup = `<div data-pagination data-pages="${pages}" data-page="${initialPage}">
+  <nav aria-label="${title}">
+    <ol class="nf-pagination">
+${controls}
+    </ol>
+  </nav>
+  <p data-page-status role="status">Page ${initialPage} of ${pages}</p>
+  <ul data-page-results aria-label="Records on this page">
+${records.map((record) => `    <li>${record}</li>`).join('\n')}
+  </ul>
+</div>`;
+---
+
+<ComponentDemo stacked title={title} code={markup}>
+  <Fragment set:html={markup} />
+</ComponentDemo>
+
+<style is:global>
+  .demo-preview [data-pagination] { width: 100%; min-width: 0; }
+  .demo-preview [data-page-status] { margin-top: var(--nf-space-5); color: var(--nf-color-text); }
+  .demo-preview [data-page-results] {
+    display: grid;
+    gap: var(--nf-space-2);
+    padding: var(--nf-space-4);
+    margin-top: var(--nf-space-3);
+    border: 1px solid var(--nf-color-border);
+    font-family: var(--nf-font-mono);
+    color: var(--nf-color-text-muted);
+  }
+</style>

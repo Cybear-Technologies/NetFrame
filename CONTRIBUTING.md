@@ -2,15 +2,17 @@
 
 Thanks for your interest. NetFrame is a GPL-3.0-only project by Cybear Technologies.
 
+Coding agents: see [AGENTS.md](AGENTS.md) for the command reference and repository rules.
+
 ## Prerequisites
 
-- Node 20 LTS
-- pnpm 9+
+- Node 22.23.4+ (see `.nvmrc`)
+- pnpm 9.15.9 (pinned in `package.json` → `packageManager`)
 
 ## Setup
 
 ```sh
-git clone https://github.com/KumaCommunity/NetFrame.git
+git clone https://github.com/JacksonChandler/NetFrame.git
 cd NetFrame
 pnpm install
 ```
@@ -49,6 +51,7 @@ packages/netframe/
     netframe.scss  Root barrel — @forward everything
   scripts/
     build.ts       Dart Sass → PostCSS (autoprefixer + cssnano)
+  test/            node:test package/CSS contract tests (`pnpm --filter netframe test`)
   dist/            Build output (not committed)
 ```
 
@@ -65,7 +68,7 @@ packages/netframe/
 
 - `border-radius: 0` everywhere
 - Shadows are hard pixel offsets (`4px 4px 0px 0px color`) — no soft `box-shadow`
-- Primary = Terminal Green (`#00ff00`), Secondary = Cyber Magenta (`#fe00fe`), Tertiary = Cyan (`#00f4f4`)
+- Colours come from tokens only (`packages/netframe/src/tokens/_colors.scss`): primary Terminal Green, secondary Hot Pink, tertiary UV Violet. Every brand colour must reach 4.5:1 as text on all surfaces and against its `on-*` colour; `packages/netframe/test/css.test.mjs` enforces this for all seven palettes
 - Headings: `text-transform: uppercase`, `letter-spacing: 0.05em`, Space Grotesk Bold
 - Body/UI text: JetBrains Mono
 - Status/badge/label text: VT323
@@ -74,14 +77,14 @@ packages/netframe/
 ## Submitting changes
 
 1. Create a branch: `git checkout -b feat/your-thing`
-2. Make changes and verify the build passes: `pnpm build`
+2. Make changes and verify checks pass: `pnpm run check` (typecheck, library tests, full build, browser tests; run `pnpm --filter @netframe/docs exec playwright install chromium` once first)
 3. Add a changeset: `pnpm changeset`  
    Select `netframe`, choose `patch`/`minor`/`major`, write a summary
 4. Open a pull request against `main`
 
 ## Versioning
 
-NetFrame uses [Changesets](https://github.com/changesets/changesets). Every user-facing change needs a changeset file. The release workflow creates a version PR automatically when changesets are merged.
+NetFrame uses [Changesets](https://github.com/changesets/changesets). Every user-facing change needs a changeset file. Once maintainer setup is complete, the release workflow creates version PRs when changesets are merged. See [RELEASING.md](./RELEASING.md) for npm ownership, trusted publishing and required GitHub protections; automation is disabled until explicitly enabled.
 
 ## License
 

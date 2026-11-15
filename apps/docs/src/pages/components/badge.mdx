@@ -5,6 +5,8 @@ description: 'Compact status labels and notification indicators.'
 ---
 
 import ComponentDemo from '../../components/ComponentDemo.astro';
+import NotificationExample from '../../components/NotificationExample.astro';
+import ExampleBehavior from '../../components/ExampleBehavior.astro';
 
 # Badge
 
@@ -28,15 +30,77 @@ Compact status labels rendered in the label font. All variants share `.nf-badge`
 
 ## Dot badge
 
-Add `.nf-badge-dot` to any element to attach a notification indicator dot in the top-right corner:
+The square marker means **new or unread notifications are waiting**. It is not a severity label or a count. The larger colour centre, dark keyline and outer frame keep it distinct from the element underneath—without flashing or pulsing.
 
-<ComponentDemo title="Dot badge on a button" code={`<button class="nf-button nf-button-ghost nf-badge-dot">
-  ALERTS
-</button>`}>
-  <button class="nf-button nf-button-ghost nf-badge-dot">
-    ALERTS
-  </button>
+Pair it with text that explains the state. Remove `.nf-badge-dot` when everything is read; don't just change its colour.
+
+<ComponentDemo title="Unread versus all read" code={`<span class="nf-badge nf-badge-outline nf-badge-dot">UNREAD ALERTS</span>
+<span class="nf-badge nf-badge-ghost">ALL READ</span>`}>
+  <span class="nf-badge nf-badge-outline nf-badge-dot">UNREAD ALERTS</span>
+  <span class="nf-badge nf-badge-ghost">ALL READ</span>
 </ComponentDemo>
+
+### On a notification control
+
+Open **ALERTS** to review three sample notifications. Click it again, click outside, press Escape, or tab out to close the panel. Opening does not mark items as read: **MARK ALL READ** clears the dot, updates the count and announces the new state. The preview reserves space so opening the panel does not recenter the control or push it over the code.
+
+<NotificationExample />
+
+## JavaScript
+
+The HTML and demo-only CSS above plus this optional controller make the example work. NetFrame itself remains CSS-only. Use unique panel and heading IDs if you render more than one notification control.
+
+<ExampleBehavior component="badge" />
+
+```js
+document.querySelectorAll('[data-notifications]').forEach((root) => {
+  const trigger = root.querySelector('[data-notification-trigger]');
+  const panel = root.querySelector('.notification-panel');
+  const status = root.querySelector('[data-notification-status]');
+  const count = root.querySelector('[data-notification-count]');
+  const label = root.querySelector('[data-notification-label]');
+  const markRead = root.querySelector('[data-mark-read]');
+
+  function setOpen(open) {
+    trigger.setAttribute('aria-expanded', String(open));
+    panel.hidden = !open;
+  }
+
+  trigger.addEventListener('click', () => {
+    setOpen(trigger.getAttribute('aria-expanded') !== 'true');
+  });
+
+  markRead.addEventListener('click', () => {
+    if (markRead.getAttribute('aria-disabled') === 'true') return;
+    root.querySelectorAll('[data-unread]').forEach((item) => {
+      item.removeAttribute('data-unread');
+      const state = item.querySelector('.notification-item-state');
+      state.textContent = state.textContent.replace('UNREAD', 'READ');
+    });
+    trigger.classList.remove('nf-badge-dot');
+    count.textContent = '0';
+    label.textContent = ' — no unread notifications';
+    status.textContent = 'All notifications read';
+    markRead.textContent = 'ALL READ';
+    markRead.setAttribute('aria-disabled', 'true');
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!root.contains(event.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || trigger.getAttribute('aria-expanded') !== 'true') return;
+    event.preventDefault();
+    setOpen(false);
+    trigger.focus();
+  });
+  root.addEventListener('focusout', (event) => {
+    if (!root.contains(event.relatedTarget)) setOpen(false);
+  });
+});
+```
+
+The pseudo-element is decorative and cannot provide an accessible notification message on its own. For changing unread counts, update the visible and accessible text together; use a live region only when an announcement is needed. Keep overflow visible around the marker. Optional custom properties: `--nf-badge-dot-size` (default `0.75rem`) and `--nf-badge-dot-color` (default error token).
 
 ## Class reference
 
@@ -49,4 +113,4 @@ Add `.nf-badge-dot` to any element to attach a notification indicator dot in the
 | `nf-badge-error` | Error red fill |
 | `nf-badge-outline` | Transparent with primary border |
 | `nf-badge-ghost` | Low-opacity primary tint, no border |
-| `nf-badge-dot` | Adds a red notification dot — applies to the parent element |
+| `nf-badge-dot` | Framed square unread-notification marker — add to its parent, pair with state text |

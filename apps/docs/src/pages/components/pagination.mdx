@@ -4,89 +4,113 @@ title: 'Pagination'
 description: 'Page navigation for large datasets.'
 ---
 
-import ComponentDemo from '../../components/ComponentDemo.astro';
+import PaginationExample from '../../components/PaginationExample.astro';
+import ExampleBehavior from '../../components/ExampleBehavior.astro';
 
 # Pagination
 
-Page navigation rendered as a `<nav>` + `<ol>`. All items share `.nf-page-item` and `.nf-page-link`.
+Page navigation rendered as a `<nav>` + `<ol>`. Controls wrap onto another line when space is tight, without shrinking the touch targets.
+
+These working examples paginate a local sample dataset: selecting a page changes the current-page state, record list and announced status. Previous/Next are disabled at the boundaries. For server navigation, use anchors with real page URLs instead of the local-demo buttons. The CSS library does not fetch or paginate data for you.
 
 ## Basic
 
-<ComponentDemo title="Basic pagination" code={`<nav aria-label="Pagination">
-  <ol class="nf-pagination">
-    <li class="nf-page-item nf-page-item-disabled">
-      <a class="nf-page-link nf-page-prev" href="#" aria-disabled="true">PREV</a>
-    </li>
-    <li class="nf-page-item nf-page-item-active">
-      <a class="nf-page-link" href="#" aria-current="page">1</a>
-    </li>
-    <li class="nf-page-item"><a class="nf-page-link" href="#">2</a></li>
-    <li class="nf-page-item"><a class="nf-page-link" href="#">3</a></li>
-    <li class="nf-page-item"><a class="nf-page-link" href="#">4</a></li>
-    <li class="nf-page-item"><a class="nf-page-link" href="#">5</a></li>
-    <li class="nf-page-item">
-      <a class="nf-page-link nf-page-next" href="#">NEXT</a>
-    </li>
-  </ol>
-</nav>`}>
-  <nav aria-label="Pagination">
-    <ol class="nf-pagination">
-      <li class="nf-page-item nf-page-item-disabled">
-        <a class="nf-page-link nf-page-prev" href="#" aria-disabled="true">PREV</a>
-      </li>
-      <li class="nf-page-item nf-page-item-active">
-        <a class="nf-page-link" href="#" aria-current="page">1</a>
-      </li>
-      <li class="nf-page-item"><a class="nf-page-link" href="#">2</a></li>
-      <li class="nf-page-item"><a class="nf-page-link" href="#">3</a></li>
-      <li class="nf-page-item"><a class="nf-page-link" href="#">4</a></li>
-      <li class="nf-page-item"><a class="nf-page-link" href="#">5</a></li>
-      <li class="nf-page-item">
-        <a class="nf-page-link nf-page-next" href="#">NEXT</a>
-      </li>
-    </ol>
-  </nav>
-</ComponentDemo>
+<PaginationExample pages={5} title="Basic pagination" />
 
 ## With ellipsis
 
-<ComponentDemo title="Truncated range" code={`<nav aria-label="Pagination">
-  <ol class="nf-pagination">
-    <li class="nf-page-item"><a class="nf-page-link nf-page-prev" href="#">PREV</a></li>
-    <li class="nf-page-item"><a class="nf-page-link" href="#">1</a></li>
-    <li class="nf-page-item nf-page-ellipsis"><span class="nf-page-link">…</span></li>
-    <li class="nf-page-item"><a class="nf-page-link" href="#">7</a></li>
-    <li class="nf-page-item nf-page-item-active"><a class="nf-page-link" href="#" aria-current="page">8</a></li>
-    <li class="nf-page-item"><a class="nf-page-link" href="#">9</a></li>
-    <li class="nf-page-item nf-page-ellipsis"><span class="nf-page-link">…</span></li>
-    <li class="nf-page-item"><a class="nf-page-link" href="#">24</a></li>
-    <li class="nf-page-item"><a class="nf-page-link nf-page-next" href="#">NEXT</a></li>
-  </ol>
-</nav>`}>
-  <nav aria-label="Pagination">
-    <ol class="nf-pagination">
-      <li class="nf-page-item"><a class="nf-page-link nf-page-prev" href="#">PREV</a></li>
-      <li class="nf-page-item"><a class="nf-page-link" href="#">1</a></li>
-      <li class="nf-page-item nf-page-ellipsis"><span class="nf-page-link">…</span></li>
-      <li class="nf-page-item"><a class="nf-page-link" href="#">7</a></li>
-      <li class="nf-page-item nf-page-item-active"><a class="nf-page-link" href="#" aria-current="page">8</a></li>
-      <li class="nf-page-item"><a class="nf-page-link" href="#">9</a></li>
-      <li class="nf-page-item nf-page-ellipsis"><span class="nf-page-link">…</span></li>
-      <li class="nf-page-item"><a class="nf-page-link" href="#">24</a></li>
-      <li class="nf-page-item"><a class="nf-page-link nf-page-next" href="#">NEXT</a></li>
-    </ol>
-  </nav>
-</ComponentDemo>
+<PaginationExample pages={24} initialPage={8} title="Truncated range" />
+
+## JavaScript
+
+The optional controller below runs both examples. Copy it alongside the HTML, then replace the sample `records` array with your own data. The ellipsis range updates as you move through the pages.
+
+<ExampleBehavior component="pagination" />
+
+```js
+document.querySelectorAll('[data-pagination]').forEach((demo) => {
+  const pages = Number(demo.dataset.pages);
+  let current = Number(demo.dataset.page);
+  const list = demo.querySelector('.nf-pagination');
+  const status = demo.querySelector('[data-page-status]');
+  const results = demo.querySelector('[data-page-results]');
+  const records = Array.from({ length: pages * 3 }, (_, i) => 'NODE_' + String(i + 1).padStart(3, '0'));
+
+  function render(focusAction) {
+    const numbers = pages <= 7
+      ? Array.from({ length: pages }, (_, i) => i + 1)
+      : [1, ...[current - 1, current, current + 1].filter((p) => p > 1 && p < pages), pages];
+    list.replaceChildren();
+    function control(label, page, action) {
+      const item = document.createElement('li');
+      item.className = 'nf-page-item';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'nf-page-link' + (action === 'page' ? '' : ' nf-page-' + action);
+      button.textContent = label;
+      button.dataset.page = String(page);
+      button.dataset.action = action;
+      if (action === 'page' && page === current) {
+        item.classList.add('nf-page-item-active');
+        button.setAttribute('aria-current', 'page');
+      }
+      if (page < 1 || page > pages) {
+        item.classList.add('nf-page-item-disabled');
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+      }
+      item.append(button);
+      list.append(item);
+    }
+    control('PREV', current - 1, 'prev');
+    numbers.forEach((page, i) => {
+      if (i && page - numbers[i - 1] > 1) {
+        const item = document.createElement('li');
+        item.className = 'nf-page-item nf-page-ellipsis';
+        const dots = document.createElement('span');
+        dots.className = 'nf-page-link';
+        dots.textContent = '…';
+        dots.setAttribute('aria-hidden', 'true');
+        item.append(dots);
+        list.append(item);
+      }
+      control(String(page), page, 'page');
+    });
+    control('NEXT', current + 1, 'next');
+    demo.dataset.page = String(current);
+    status.textContent = 'Page ' + current + ' of ' + pages;
+    results.replaceChildren(...records.slice((current - 1) * 3, current * 3).map((record) => {
+      const item = document.createElement('li');
+      item.textContent = record;
+      return item;
+    }));
+    if (focusAction) {
+      const candidate = list.querySelector('[data-action="' + focusAction + '"]:not(:disabled)');
+      (focusAction === 'page' ? list.querySelector('[aria-current="page"]') : candidate || list.querySelector('[aria-current="page"]')).focus();
+    }
+  }
+
+  demo.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-page]');
+    if (!button || button.disabled) return;
+    const page = Number(button.dataset.page);
+    if (page < 1 || page > pages || page === current) return;
+    current = page;
+    render(button.dataset.action);
+  });
+  render();
+});
+```
 
 ## Class reference
 
 | Class | Description |
 |---|---|
-| `nf-pagination` | `<ol>` wrapper — flex row, no gap |
-| `nf-page-item` | `<li>` wrapper — collapses adjacent right borders |
-| `nf-page-item-active` | Fills the page link with primary color |
-| `nf-page-item-disabled` | Dims and disables pointer events |
+| `nf-pagination` | `<ol>` wrapper — wrapping flex row with a small gap |
+| `nf-page-item` | `<li>` wrapper |
+| `nf-page-item-active` | Fills the current page control with primary colour |
+| `nf-page-item-disabled` | Dims controls; also set `disabled` on buttons or `aria-disabled` on links |
 | `nf-page-ellipsis` | Non-interactive spacer item |
-| `nf-page-link` | The anchor or span inside each item |
-| `nf-page-prev` | Prev label styling |
+| `nf-page-link` | Anchor, button or span inside each item |
+| `nf-page-prev` | Previous label styling |
 | `nf-page-next` | Next label styling |

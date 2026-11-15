@@ -8,7 +8,7 @@ import ComponentDemo from '../../components/ComponentDemo.astro';
 
 # Spinner
 
-CSS border-based spinning indicators for loading states.
+Signal-cell loading indicators: a stationary square frame with slow, alternating diagonal cells. No rotating borders or jagged moving edges. A full pulse takes 2.4 seconds; reduced-motion mode shows steady cells. Existing size and colour classes are unchanged.
 
 ## Default
 
@@ -42,7 +42,7 @@ CSS border-based spinning indicators for loading states.
 
 ## Block spinner
 
-Centered in its container with an optional blinking label:
+Centered in its container with an optional steady label:
 
 <ComponentDemo stacked title="Block" code={`<div class="nf-spinner-block">
   <span class="nf-spinner nf-spinner-lg" role="status" aria-label="Loading"></span>
@@ -58,12 +58,14 @@ Centered in its container with an optional blinking label:
 
 | Class | Description |
 |---|---|
-| `nf-spinner` | Base — 1.5rem, primary top border, spinning |
+| `nf-spinner` | Base — 1.5rem signal-cell loader, primary colour |
 | `nf-spinner-sm` | 1rem |
 | `nf-spinner-lg` | 2.5rem |
 | `nf-spinner-xl` | 4rem |
-| `nf-spinner-secondary` | Magenta top border |
-| `nf-spinner-tertiary` | Tertiary top border |
-| `nf-spinner-error` | Error red top border |
+| `nf-spinner-secondary` | Secondary-colour cells |
+| `nf-spinner-tertiary` | Tertiary-colour cells |
+| `nf-spinner-error` | Error-colour cells |
 | `nf-spinner-block` | Centered flex column wrapper |
-| `nf-spinner-label` | Blinking text label inside `.nf-spinner-block` |
+| `nf-spinner-label` | Steady text label inside `.nf-spinner-block` |
+
+Tune `--nf-spinner-speed` (default `2.4s`) if needed. Keep a meaningful loading label; do not use animation alone to communicate status.

@@ -5,7 +5,7 @@
 // High-visibility hazard palette. Aggressive contrast.
 // Primary: Hazard Yellow  #FCEE09
 // Secondary: Cyan         #00F0FF
-// Tertiary/Danger: Red    #FF003C
+// Tertiary/Danger: Red    #FF547C
 
 .nf-theme-night-city {
   // Surfaces — pure black base, neutral dark gray stack
@@ -30,12 +30,12 @@
   --nf-color-secondary-dim:     #00c8d4;
 
   // Tertiary — Vibrant Red
-  --nf-color-tertiary:          #ff003c;
+  --nf-color-tertiary:          #ff547c;
   --nf-color-on-tertiary:       #000000;
   --nf-color-tertiary-dim:      #cc0030;
 
   // Semantic
-  --nf-color-error:             #ff003c;
+  --nf-color-error:             #ff547c;
   --nf-color-error-container:   #7a0018;
   --nf-color-on-error:          #ffd0da;
 

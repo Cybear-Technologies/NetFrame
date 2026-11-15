@@ -7,22 +7,19 @@
 .nf-pagination {
   display: flex;
   align-items: center;
-  gap: 0;
+  flex-wrap: wrap;
+  gap: var(--nf-space-1);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 // ---------------------------------------------------------------------------
-// Page item (li wrapper)
+// Page item (li wrapper) — independent borders allow clean wrapping
 // ---------------------------------------------------------------------------
 
 .nf-page-item {
   display: inline-flex;
-
-  &:not(:last-child) .nf-page-link {
-    border-right: none;
-  }
 }
 
 // ---------------------------------------------------------------------------

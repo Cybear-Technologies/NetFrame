@@ -1,0 +1,10 @@
+---
+// Run the same controller that readers copy from the dropdown documentation.
+// The raw import is local build-time content, never user-provided HTML.
+import source from '../pages/components/dropdown.mdx?raw';
+
+const script = /## JavaScript\s+```js\n([\s\S]*?)```/.exec(source)?.[1];
+if (!script) throw new Error('Dropdown documentation is missing its JavaScript controller');
+---
+
+<script is:inline set:html={script} />

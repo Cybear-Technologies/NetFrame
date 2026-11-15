@@ -32,9 +32,9 @@ Thumbs.db
 .claude/
 AGENT.md
 
-# Changeset
-.changeset/*.md
-!.changeset/config.json
+# Playwright output
+test-results/
+playwright-report/
 
 # Cache
 .cache/

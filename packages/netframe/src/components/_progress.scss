@@ -69,7 +69,7 @@
   --nf-ring-size: 3rem;
   --nf-ring-stroke: 3px;
   --nf-ring-progress: 0;
-  --nf-ring-circumference: 94.25; // 2π × 15 (r=15 in a 32×32 viewBox)
+  --nf-ring-circumference: 94.2478; // 2π × 15 (r=15 in a 32×32 viewBox)
 
   position: relative;
   display: inline-flex;
@@ -84,6 +84,7 @@
     width: 100%;
     height: 100%;
     transform: rotate(-90deg);
+    overflow: visible;
   }
 
   // Track
@@ -98,13 +99,23 @@
     fill: none;
     stroke: var(--nf-color-primary);
     stroke-width: var(--nf-ring-stroke);
-    stroke-linecap: square;
+    stroke-linecap: butt;
+    // Suppress the rasterized seam at exactly zero progress.
+    opacity: clamp(0, var(--nf-ring-progress), 1);
     stroke-dasharray: var(--nf-ring-circumference);
+    // The calc result must be a length. Firefox rejects a number-only calc
+    // for stroke-dashoffset and silently renders a fully filled ring.
     stroke-dashoffset: calc(
-      var(--nf-ring-circumference) -
-      (var(--nf-ring-circumference) * var(--nf-ring-progress) / 100)
+      var(--nf-ring-circumference) *
+      (1 - clamp(0, var(--nf-ring-progress), 100) / 100) * 1px
     );
     transition: stroke-dashoffset var(--nf-duration-slow) var(--nf-ease-default);
+  }
+
+  // Normalized SVG paths make percentages exact, independent of the radius.
+  // Legacy r=15 circles without pathLength keep the circumference above.
+  .nf-ring-fill[pathLength='100'] {
+    --nf-ring-circumference: 100;
   }
 
   .nf-ring-label {

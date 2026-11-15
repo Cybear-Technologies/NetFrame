@@ -1,38 +1,57 @@
 {
   "name": "netframe",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A cyberpunk-themed CSS component library",
   "type": "module",
   "license": "GPL-3.0-only",
   "author": "Cybear Technologies",
-  "keywords": ["css", "cyberpunk", "ui", "design-system", "sass", "scss"],
-  "homepage": "https://github.com/Cybear Technologies/NetFrame#readme",
+  "contributors": [
+    "Jackson Chandler"
+  ],
+  "bugs": "https://github.com/JacksonChandler/NetFrame/issues",
+  "keywords": [
+    "css",
+    "cyberpunk",
+    "ui",
+    "design-system",
+    "sass",
+    "scss"
+  ],
+  "homepage": "https://github.com/JacksonChandler/NetFrame#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Cybear Technologies/NetFrame.git",
+    "url": "git+https://github.com/JacksonChandler/NetFrame.git",
     "directory": "packages/netframe"
   },
   "exports": {
     ".": {
       "style": "./dist/netframe.css",
-      "sass": "./dist/scss/netframe.scss"
+      "sass": "./dist/scss/netframe.scss",
+      "default": "./dist/netframe.css"
     },
     "./min": {
-      "style": "./dist/netframe.min.css"
+      "style": "./dist/netframe.min.css",
+      "default": "./dist/netframe.min.css"
     },
     "./themes": {
       "style": "./dist/themes.css",
-      "sass": "./dist/scss/themes/themes.scss"
+      "sass": "./dist/scss/themes/themes.scss",
+      "default": "./dist/themes.css"
     },
     "./themes/min": {
-      "style": "./dist/themes.min.css"
+      "style": "./dist/themes.min.css",
+      "default": "./dist/themes.min.css"
     },
-    "./scss/*": "./dist/scss/*"
+    "./scss/*": "./dist/scss/*",
+    "./fonts/*": "./dist/fonts/*",
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
   },
   "main": "./dist/netframe.css",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": [
     "*.css",
@@ -40,15 +59,21 @@
   ],
   "scripts": {
     "build": "tsx scripts/build.ts",
+    "lint": "stylelint \"src/**/*.scss\"",
     "dev": "tsx scripts/build.ts --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "tsx scripts/build.ts && node --test \"test/*.test.mjs\""
   },
   "devDependencies": {
-    "autoprefixer": "^10.5.0",
-    "cssnano": "^7.1.7",
-    "postcss": "^8.5.12",
-    "sass": "^1.99.0",
-    "tsx": "^4.21.0",
+    "@types/node": "^22.20.5",
+    "autoprefixer": "^10.6.2",
+    "cssnano": "^7.1.9",
+    "postcss": "^8.5.33",
+    "sass": "^1.108.2",
+    "stylelint": "^18.0.0",
+    "stylelint-config-standard-scss": "^18.0.0",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3"
   }
 }

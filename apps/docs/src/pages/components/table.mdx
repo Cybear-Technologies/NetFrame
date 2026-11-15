@@ -5,6 +5,7 @@ description: 'Data tables with sortable headers and row states.'
 ---
 
 import ComponentDemo from '../../components/ComponentDemo.astro';
+import ExampleBehavior from '../../components/ExampleBehavior.astro';
 
 # Table
 
@@ -16,10 +17,10 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
   <table class="nf-table">
     <thead>
       <tr>
-        <th>NODE_ID</th>
-        <th>STATUS</th>
-        <th>LATENCY</th>
-        <th>UPTIME</th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="NODE_ID">NODE_ID</button></th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="STATUS">STATUS</button></th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="LATENCY">LATENCY</button></th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="UPTIME">UPTIME</button></th>
       </tr>
     </thead>
     <tbody>
@@ -48,10 +49,10 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
     <table class="nf-table">
       <thead>
         <tr>
-          <th>NODE_ID</th>
-          <th>STATUS</th>
-          <th>LATENCY</th>
-          <th>UPTIME</th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="NODE_ID">NODE_ID</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="STATUS">STATUS</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="LATENCY">LATENCY</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="UPTIME">UPTIME</button></th>
         </tr>
       </thead>
       <tbody>
@@ -84,10 +85,10 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
   <table class="nf-table nf-table-striped">
     <thead>
       <tr>
-        <th>PROCESS</th>
-        <th>PID</th>
-        <th>CPU</th>
-        <th>MEM</th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="PROCESS">PROCESS</button></th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="PID">PID</button></th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="CPU">CPU</button></th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="MEM">MEM</button></th>
       </tr>
     </thead>
     <tbody>
@@ -102,10 +103,10 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
     <table class="nf-table nf-table-striped">
       <thead>
         <tr>
-          <th>PROCESS</th>
-          <th>PID</th>
-          <th>CPU</th>
-          <th>MEM</th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="PROCESS">PROCESS</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="PID">PID</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="CPU">CPU</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="MEM">MEM</button></th>
         </tr>
       </thead>
       <tbody>
@@ -124,9 +125,9 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
   <table class="nf-table">
     <thead>
       <tr>
-        <th>NODE_ID</th>
-        <th>STATUS</th>
-        <th>ACTION</th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="NODE_ID">NODE_ID</button></th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="STATUS">STATUS</button></th>
+        <th scope="col"><button class="nf-table-sort" type="button" aria-label="ACTION">ACTION</button></th>
       </tr>
     </thead>
     <tbody>
@@ -140,9 +141,9 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
     <table class="nf-table">
       <thead>
         <tr>
-          <th>NODE_ID</th>
-          <th>STATUS</th>
-          <th>ACTION</th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="NODE_ID">NODE_ID</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="STATUS">STATUS</button></th>
+          <th scope="col"><button class="nf-table-sort" type="button" aria-label="ACTION">ACTION</button></th>
         </tr>
       </thead>
       <tbody>
@@ -154,12 +155,53 @@ Data tables. Wrap in `.nf-table-wrap` to handle horizontal overflow on small scr
   </div>
 </ComponentDemo>
 
+## JavaScript
+
+Every demo above supports header sorting with a mouse, touch, Enter or Space.
+NetFrame supplies the styles; this optional controller sorts rows and updates
+`aria-sort`. Numeric values (including ms, %, MB and PIDs) sort numerically;
+missing values stay last. Sorting does not change the underlying dataset.
+
+<ExampleBehavior component="table" />
+
+```js
+document.querySelectorAll('.nf-table').forEach((table) => {
+  const headers = [...table.querySelectorAll('thead th')];
+  const body = table.querySelector('tbody');
+  if (!body) return;
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  const value = (row, column) => row.cells[column].textContent.trim();
+  const missing = (text) => text === '' || text === '—';
+  const numeric = (text) => /^-?\d+(?:\.\d+)?(?:ms|%|MB)?$/i.test(text);
+  headers.forEach((header, column) => {
+    const button = header.querySelector('.nf-table-sort');
+    if (!button) return;
+    button.addEventListener('click', () => {
+      const direction = header.getAttribute('aria-sort') === 'ascending' ? -1 : 1;
+      const rows = [...body.rows].sort((a, b) => {
+        const x = value(a, column);
+        const y = value(b, column);
+        if (missing(x) || missing(y)) return Number(missing(x)) - Number(missing(y));
+        const order = numeric(x) && numeric(y)
+          ? parseFloat(x) - parseFloat(y)
+          : collator.compare(x, y);
+        return order * direction;
+      });
+      headers.forEach((other) => other.removeAttribute('aria-sort'));
+      header.setAttribute('aria-sort', direction === 1 ? 'ascending' : 'descending');
+      body.append(...rows);
+    });
+  });
+});
+```
+
 ## Class reference
 
 | Class | Description |
 |---|---|
 | `nf-table-wrap` | Overflow wrapper — apply to a `<div>` around the table |
 | `nf-table` | Table element — full width, collapsed borders |
+| `nf-table-sort` | Header button — optional sorting controller uses `aria-sort` on its `<th>` |
 | `nf-table-striped` | Alternates even row background |
 | `nf-table-row-active` | Green left border accent — selected row |
 | `nf-table-row-danger` | Error left border accent — critical row |

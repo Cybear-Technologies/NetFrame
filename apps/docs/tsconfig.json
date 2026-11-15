@@ -5,9 +5,20 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["src", "astro.config.ts"],
-  "exclude": ["node_modules", "dist", ".astro"]
+  "include": [
+    "src",
+    "astro.config.ts",
+    "playwright.config.ts",
+    "tests"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".astro"
+  ]
 }

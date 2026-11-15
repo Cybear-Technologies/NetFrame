@@ -1,7 +1,7 @@
 ---
 layout: '../../layouts/DocsLayout.astro'
 title: 'Button'
-description: 'Trigger actions and navigate. Four variants, three sizes.'
+description: 'Trigger actions and navigate. Five variants, three sizes.'
 ---
 
 import ComponentDemo from '../../components/ComponentDemo.astro';
@@ -52,13 +52,15 @@ Buttons trigger actions. All variants share `.nf-button` as the base class.
 
 ## As anchor
 
-Any element works — use `role="button"` on non-button elements:
+Use a link when the control navigates. The classes style `<a>` the same way; keep it a link (no `role="button"`), because links and buttons have different keyboard and screen-reader behaviour:
 
 ```html
 <a href="/dashboard" class="nf-button nf-button-primary">
   ENTER SYSTEM
 </a>
 ```
+
+For actions, use a real `<button type="button">`.
 
 ## Class reference
 

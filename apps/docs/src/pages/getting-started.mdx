@@ -36,15 +36,24 @@ import 'netframe/dist/netframe.css';
 
 ### Sass consumers
 
-If you want access to the raw Sass tokens and mixins in your own `.scss` files:
+If you want access to the raw Sass tokens and mixins in your own `.scss` files, use Dart Sass's
+Node package importer (`pkg:` URLs, Sass 1.71+; enable it with `--pkg-importer=node` on the CLI or
+`importers: [new NodePackageImporter()]` in the JS API):
 
 ```scss
 // Import everything
-@use 'netframe/scss/netframe';
+@use 'pkg:netframe/scss/netframe';
 
 // Or cherry-pick
-@use 'netframe/scss/tokens';
-@use 'netframe/scss/mixins/neon-glow' as *;
+@use 'pkg:netframe/scss/tokens';
+@use 'pkg:netframe/scss/mixins/neon-glow' as *;
+```
+
+Fonts are referenced as `../fonts/*.woff2` relative to the output CSS. Serve the files from
+`netframe/fonts/` (e.g. copy them next to your CSS), or point the URLs elsewhere:
+
+```scss
+@use 'pkg:netframe/scss/netframe' with ($nf-font-path: '/assets/fonts');
 ```
 
 ---

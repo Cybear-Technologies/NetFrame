@@ -5,13 +5,17 @@
 
 import BaseLayout from './BaseLayout.astro';
 import Sidebar from '../components/Sidebar.astro';
+import { version } from 'netframe/package.json';
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
+  frontmatter?: { title?: string; description?: string };
 }
 
-const { title, description } = Astro.props;
+// MDX layouts receive metadata under frontmatter; direct Astro usage passes props.
+const title = Astro.props.title ?? Astro.props.frontmatter?.title ?? 'Documentation';
+const description = Astro.props.description ?? Astro.props.frontmatter?.description;
 const currentPath = Astro.url.pathname;
 ---
 
@@ -45,7 +49,7 @@ const currentPath = Astro.url.pathname;
           </select>
           <a
             class="docs-topbar-link nf-tracking-display nf-uppercase nf-text-muted"
-            href="https://github.com/CybearTechnologies/NetFrame"
+            href="https://github.com/JacksonChandler/NetFrame"
             target="_blank"
             rel="noopener"
           >
@@ -62,7 +66,7 @@ const currentPath = Astro.url.pathname;
 
       <!-- Status footer -->
       <footer class="docs-footer nf-tracking-display nf-uppercase">
-        <span class="nf-text-muted">NETFRAME v0.1.0 // CYBEAR_TECHNOLOGIES</span>
+        <span class="nf-text-muted">NETFRAME v{version} // CYBEAR_TECHNOLOGIES</span>
         <span class="nf-text-subtle">GPL-3.0</span>
       </footer>
     </div>
@@ -185,14 +189,7 @@ const currentPath = Astro.url.pathname;
 </style>
 
 <script>
-  const THEMES = [
-    'nf-theme-night-city',
-    'nf-theme-chiba-city',
-    'nf-theme-neon-80s',
-    'nf-theme-renaissance',
-    'nf-theme-code-rain',
-    'nf-theme-iron-signal',
-  ];
+  import { applyTheme, readTheme } from '../scripts/theme';
 
   // Mobile sidebar toggle
   const toggle = document.querySelector<HTMLButtonElement>('.sidebar-toggle');
@@ -212,14 +209,9 @@ const currentPath = Astro.url.pathname;
   const select = document.getElementById('theme-switcher') as HTMLSelectElement;
 
   // Restore saved theme on load
-  const saved = localStorage.getItem('nf-theme') ?? '';
-  select.value = saved;
+  select.value = readTheme();
 
   select.addEventListener('change', () => {
-    const next = select.value;
-    // Remove all theme classes, apply the selected one
-    document.documentElement.classList.remove(...THEMES);
-    if (next) document.documentElement.classList.add(next);
-    localStorage.setItem('nf-theme', next);
+    select.value = applyTheme(select.value);
   });
 </script>

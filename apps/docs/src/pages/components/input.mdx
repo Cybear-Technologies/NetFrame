@@ -10,47 +10,49 @@ import ComponentDemo from '../../components/ComponentDemo.astro';
 
 Form controls. Wrap each control in `.nf-field` for consistent label + helper text spacing.
 
+Connect every `.nf-label` to its control with `for`/`id` (or wrap the control in the `<label>`), and point the control at its helper text with `aria-describedby`. For errors, set `aria-invalid="true"`: it applies the same error styling as `.nf-input-error`, so the visual and announced states stay in sync.
+
 ## Text input
 
 <ComponentDemo stacked title="Default" code={`<div class="nf-field">
-  <label class="nf-label">User_ID</label>
-  <input class="nf-input" type="text" placeholder="GUEST_####" />
-  <span class="nf-helper">UNIQUE_SYSTEM_ID_REQUIRED</span>
+  <label class="nf-label" for="user-id">User_ID</label>
+  <input class="nf-input" id="user-id" type="text" placeholder="GUEST_####" aria-describedby="user-id-help" />
+  <span class="nf-helper" id="user-id-help">UNIQUE_SYSTEM_ID_REQUIRED</span>
 </div>`}>
   <div class="nf-field" style="width: 100%; max-width: 20rem;">
-    <label class="nf-label">User_ID</label>
-    <input class="nf-input" type="text" placeholder="GUEST_####" />
-    <span class="nf-helper">UNIQUE_SYSTEM_ID_REQUIRED</span>
+    <label class="nf-label" for="user-id">User_ID</label>
+    <input class="nf-input" id="user-id" type="text" placeholder="GUEST_####" aria-describedby="user-id-help" />
+    <span class="nf-helper" id="user-id-help">UNIQUE_SYSTEM_ID_REQUIRED</span>
   </div>
 </ComponentDemo>
 
 ## Error state
 
 <ComponentDemo stacked title="Error" code={`<div class="nf-field">
-  <label class="nf-label">Encryption_Key</label>
-  <input class="nf-input nf-input-error" type="text" value="CORRUPT_DATA" />
-  <span class="nf-helper nf-helper-error">ERR: INVALID_FORMAT</span>
+  <label class="nf-label" for="enc-key">Encryption_Key</label>
+  <input class="nf-input nf-input-error" id="enc-key" type="text" value="CORRUPT_DATA" aria-invalid="true" aria-describedby="enc-key-error" />
+  <span class="nf-helper nf-helper-error" id="enc-key-error">ERR: INVALID_FORMAT</span>
 </div>`}>
   <div class="nf-field" style="width: 100%; max-width: 20rem;">
-    <label class="nf-label">Encryption_Key</label>
-    <input class="nf-input nf-input-error" type="text" value="CORRUPT_DATA" />
-    <span class="nf-helper nf-helper-error">ERR: INVALID_FORMAT</span>
+    <label class="nf-label" for="enc-key">Encryption_Key</label>
+    <input class="nf-input nf-input-error" id="enc-key" type="text" value="CORRUPT_DATA" aria-invalid="true" aria-describedby="enc-key-error" />
+    <span class="nf-helper nf-helper-error" id="enc-key-error">ERR: INVALID_FORMAT</span>
   </div>
 </ComponentDemo>
 
 ## Select
 
 <ComponentDemo stacked title="Select" code={`<div class="nf-field">
-  <label class="nf-label">Access_Level</label>
-  <select class="nf-select">
+  <label class="nf-label" for="access-level">Access_Level</label>
+  <select class="nf-select" id="access-level">
     <option>LEVEL_LOW</option>
     <option>LEVEL_MID</option>
     <option>LEVEL_ROOT</option>
   </select>
 </div>`}>
   <div class="nf-field" style="width: 100%; max-width: 20rem;">
-    <label class="nf-label">Access_Level</label>
-    <select class="nf-select">
+    <label class="nf-label" for="access-level">Access_Level</label>
+    <select class="nf-select" id="access-level">
       <option>LEVEL_LOW</option>
       <option>LEVEL_MID</option>
       <option>LEVEL_ROOT</option>
@@ -73,11 +75,11 @@ Form controls. Wrap each control in `.nf-field` for consistent label + helper te
 ## Textarea
 
 <ComponentDemo stacked title="Textarea" code={`<div class="nf-field">
-  <label class="nf-label">System_Log</label>
-  <textarea class="nf-textarea" placeholder="ENTER LOG DATA..."></textarea>
+  <label class="nf-label" for="system-log">System_Log</label>
+  <textarea class="nf-textarea" id="system-log" placeholder="ENTER LOG DATA..."></textarea>
 </div>`}>
   <div class="nf-field" style="width: 100%; max-width: 20rem;">
-    <label class="nf-label">System_Log</label>
-    <textarea class="nf-textarea" placeholder="ENTER LOG DATA..."></textarea>
+    <label class="nf-label" for="system-log">System_Log</label>
+    <textarea class="nf-textarea" id="system-log" placeholder="ENTER LOG DATA..."></textarea>
   </div>
 </ComponentDemo>
