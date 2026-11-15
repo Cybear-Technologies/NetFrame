@@ -1,12 +1,25 @@
 # Release setup
 
-## Status (2026-11-14)
+## Status
 
-- `netframe@0.2.0` was published manually (no provenance; it predates trusted publishing).
-- npm trusted publisher is configured (maintainer-reported): `Cybear-Technologies/NetFrame`, `release.yml`, environment `release`.
-- Repository moved to the `Cybear-Technologies` org. The npm trusted publisher must name **`Cybear-Technologies` / `NetFrame`** (not `JacksonChandler`); update it on npmjs.com if it was set up with the old owner. Provenance also requires `repository.url` in package.json to match the repo.
-- **Remaining:** set the `NPM_RELEASE_ENABLED=true` Actions variable, then verify the first automated release (next version PR → approve → publish). Confirm provenance appears on the npm package page.
-- No release happens on merge until a Changeset exists: with none pending, `pnpm release` finds `0.2.0` already on npm and publishes nothing. The manual 0.2.0 publish created no git tag or GitHub release; add them by hand if wanted.
+- `netframe@0.2.0` was published manually (no provenance). `0.2.1` was the first release through GitHub Actions trusted publishing (git tag `netframe@0.2.1` created). At the time of writing the registry listing was still propagating: confirm `npm view netframe versions dist-tags` shows 0.2.1 as `latest`, and that the npm page shows a provenance badge.
+- `0.0.0-stage` is a placeholder version on npm from the initial setup. Harmless; npm does not allow reuse of its number.
+- Release automation is enabled (`NPM_RELEASE_ENABLED=true`). Trusted publisher: `Cybear-Technologies` / `NetFrame`, `release.yml`, environment `release`.
+
+## Open items
+
+- [ ] Create the Cloudflare project (see Docs hosting), attach `netframe.cybeartech.com`, then confirm an unknown URL returns HTTP 404 with the branded page.
+- [ ] Run **Actions → Cross-browser verification → Run workflow** once, then confirm the nightly schedule runs.
+- [ ] Optional: create GitHub Releases for `netframe@0.2.0` (no tag exists) and `netframe@0.2.1`.
+- Deferred: docs hosted under a URL prefix such as `/netframe/` (needs code and test work; unneeded for root-domain hosting). Brand colours are tuned for 4.5:1 text contrast on all surfaces; keep `test/css.test.mjs` passing when changing palettes.
+
+## Normal release flow
+
+1. Add a Changeset for any user-facing change (`pnpm changeset`) and merge it to `main`.
+2. The workflow opens a "chore: version packages" PR. Merge it and approve the `release` environment.
+3. The publish step runs `pnpm release`, publishes with provenance and tags the version.
+4. With no pending Changeset, a merge to `main` publishes nothing.
+5. TypeScript stays on 6.x: `astro check` rejects 7 (Dependabot ignores >=7).
 
 NetFrame is authored by Cybear Technologies; Jackson Chandler is the developer.
 The source repository is https://github.com/Cybear-Technologies/NetFrame.
@@ -23,11 +36,23 @@ The source repository is https://github.com/Cybear-Technologies/NetFrame.
    - Workflow filename: `release.yml`
    - Environment: `release`
    - Allow direct `npm publish` if npm presents that permission.
-6. (Next step) Set the GitHub repository Actions variable **NPM_RELEASE_ENABLED** to `true` only after steps 1–5. Until then, the release job is skipped. No npm token is required by the workflow; remove obsolete publishing secrets only after validating OIDC.
+6. Set the GitHub repository Actions variable **NPM_RELEASE_ENABLED** to `true` only after steps 1–5. Until then, the release job is skipped. No npm token is required by the workflow; remove obsolete publishing secrets only after validating OIDC.
 
-## Docs hosting
+## Docs hosting (Cloudflare Workers static assets)
 
-The docs build emits `apps/docs/dist/404.html`. Configure your static host to serve it with HTTP **404** for unknown routes (not a redirect to `/` or an SPA fallback). Astro preview tests verify the local behaviour; the deployed host must preserve it. The canonical docs origin is `https://netframe.cybeartech.com`, served at the domain root.
+Config lives in `apps/docs/wrangler.jsonc`; `not_found_handling: "404-page"` serves `dist/404.html` with HTTP 404 for unknown routes. Locally verified with `wrangler dev`: real pages 200, unknown route 404 with the branded page, extensionless URLs 307 to the trailing-slash form.
+
+Cloudflare project settings (Workers & Pages → Create → connect `Cybear-Technologies/NetFrame`):
+
+| Field | Value |
+| --- | --- |
+| Root directory | `apps/docs` |
+| Build command | `pnpm install --frozen-lockfile && pnpm --filter netframe run build && pnpm --filter @netframe/docs run build` |
+| Deploy command | `npx wrangler deploy` |
+| Variables | `NODE_VERSION=22`, `PNPM_VERSION=9.15.9` |
+| Custom domain | `netframe.cybeartech.com` (project → Settings → Domains) |
+
+The library must build before the docs: the docs copy its CSS and fonts into `public/`. The canonical origin is `https://netframe.cybeartech.com`, served at the domain root (links are root-relative).
 
 ## Workflow
 
