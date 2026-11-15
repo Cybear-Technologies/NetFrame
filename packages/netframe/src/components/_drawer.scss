@@ -35,7 +35,9 @@
   background-color: var(--nf-color-surface-low);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  // If header/footer plus body padding exceed a short screen, keep actions
+  // reachable by scrolling the panel instead of clipping them.
+  overflow: hidden auto;
 
   transition: transform var(--nf-duration-slow) var(--nf-ease-out);
 
@@ -87,6 +89,10 @@
   padding: var(--nf-space-5) var(--nf-space-6);
   border-bottom: var(--nf-border-medium) solid var(--nf-color-primary);
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--nf-color-surface-low);
 
   .nf-drawer-title {
     min-width: 0;
@@ -103,7 +109,9 @@
 
 .nf-drawer-body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--nf-space-6);
   overflow-wrap: anywhere;
 }

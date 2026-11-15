@@ -24,6 +24,8 @@ CSS-only tooltips triggered on hover or `:focus-visible`. Wrap the target in `.n
 
 ## Positions
 
+Side-positioned demos use full-width previews and token-based side spacing so the trigger label and tooltip both fit, including wider Iron Signal text. This is example layout, not automatic collision handling.
+
 <ComponentDemo title="Bottom" code={`<span class="nf-tooltip-wrap">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip nf-tooltip-bottom">BELOW</span>
@@ -34,21 +36,21 @@ CSS-only tooltips triggered on hover or `:focus-visible`. Wrap the target in `.n
   </span>
 </ComponentDemo>
 
-<ComponentDemo title="Left" code={`<span class="nf-tooltip-wrap">
+<ComponentDemo stacked title="Left" code={`<span class="nf-tooltip-wrap" style="margin-inline-start:var(--nf-space-20)">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip nf-tooltip-left">LEFT</span>
   </span>`}>
-  <span class="nf-tooltip-wrap" style="margin-left: 6rem;">
+  <span class="nf-tooltip-wrap" style="margin-inline-start:var(--nf-space-20)">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip nf-tooltip-left">LEFT</span>
   </span>
 </ComponentDemo>
 
-<ComponentDemo title="Right" code={`<span class="nf-tooltip-wrap">
+<ComponentDemo stacked title="Right" code={`<span class="nf-tooltip-wrap" style="margin-inline-end:var(--nf-space-20)">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip nf-tooltip-right">RIGHT</span>
   </span>`}>
-  <span class="nf-tooltip-wrap">
+  <span class="nf-tooltip-wrap" style="margin-inline-end:var(--nf-space-20)">
     <button class="nf-button nf-button-ghost">HOVER_ME</button>
     <span class="nf-tooltip nf-tooltip-right">RIGHT</span>
   </span>

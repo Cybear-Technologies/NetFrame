@@ -1,12 +1,14 @@
 ---
 name: netframe-interactive
-description: Add behaviour to NetFrame CSS components. Use when building a working dropdown, tabs, accordion, modal, drawer, toast, sortable table, pagination or notification control with NetFrame classes, or when keyboard, focus and ARIA handling for them is needed.
+description: Add behaviour to NetFrame CSS components. Use when building a working dropdown, tabs, accordion, modal, drawer, toast, sortable table, pagination, dismissible alert, closable tag or notification control with NetFrame classes, or when keyboard, focus and ARIA handling for them is needed.
 license: GPL-3.0-only
 ---
 
 # Interactive NetFrame patterns
 
 NetFrame ships styles only. Open/closed and selected state is read from ARIA attributes and `hidden`, so your JavaScript sets those. `references/patterns.md` has the reference markup and a controller for each pattern. These are the docs' own snippets, executed by the NetFrame browser test suite, so prefer them over rewriting.
+
+Native switches require no controller: the checkbox's `checked` property owns state, and native submission/reset rules apply. Do not synchronize redundant `aria-checked`.
 
 ## Principles
 
@@ -29,6 +31,8 @@ NetFrame ships styles only. Open/closed and selected state is read from ARIA att
 | Blocking dialog | Modal |
 | Side panel | Drawer |
 | Transient messages | Toast |
+| Removable filter chips | Closable tags (preserve focus when removing the active close control) |
+| Persistent callouts with optional dismissal or dynamic feedback | Alert (static callouts need no controller) |
 | Click-to-sort columns | Table sorting |
 | Paged lists | Pagination (local demo; for real navigation use anchors with real URLs) |
 | Unread indicator with a list | Notification disclosure (badge dot) |

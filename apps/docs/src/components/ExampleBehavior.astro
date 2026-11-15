@@ -6,12 +6,14 @@ import table from '../pages/components/table.mdx?raw';
 import pagination from '../pages/components/pagination.mdx?raw';
 import tabs from '../pages/components/tabs.mdx?raw';
 import badge from '../pages/components/badge.mdx?raw';
+import alert from '../pages/components/alert.mdx?raw';
+import tag from '../pages/components/tag.mdx?raw';
 
 interface Props {
-  component: 'accordion' | 'table' | 'pagination' | 'tabs' | 'badge';
+  component: 'accordion' | 'table' | 'pagination' | 'tabs' | 'badge' | 'alert' | 'tag';
 }
 
-const sources = { accordion, table, pagination, tabs, badge };
+const sources = { accordion, table, pagination, tabs, badge, alert, tag };
 const { component } = Astro.props;
 const script = /## JavaScript[\s\S]*?```js\n([\s\S]*?)```/.exec(sources[component])?.[1];
 if (!script) throw new Error(`${component} documentation is missing its JavaScript controller`);

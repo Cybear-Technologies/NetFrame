@@ -40,6 +40,12 @@
 
 .docs-content a { overflow-wrap: anywhere; }
 
+/* Prose links must not rely on color alone, including cross-component guides. */
+.docs-content p a:not(.nf-button) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* Inline code is a unit: keep a short token (a class name, an attribute) on one line
    and move it whole to the next line instead of splitting its box mid-word. A token
    longer than the line (a URL, a long class list) still breaks rather than widening

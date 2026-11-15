@@ -92,14 +92,24 @@ document.querySelectorAll('.nf-tab-list').forEach((list) => {
       t.tabIndex = active ? 0 : -1; // roving tabindex: one tab stop per list
       document.getElementById(t.getAttribute('aria-controls'))?.toggleAttribute('hidden', !active);
     });
-    // Keep the selected tab visible when the tab list scrolls (many or long labels).
-    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
-    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
-    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
+    revealSelected();
     if (focus) tab.focus();
   }
 
+  function revealSelected() {
+    const tab = tabs.find((t) => t.getAttribute('aria-selected') === 'true');
+    if (!tab) return;
+    // Scroll only the list, never the page. Font swaps and container resizing
+    // can change these bounds after the initial selection.
+    const a = tab.getBoundingClientRect(), b = list.getBoundingClientRect();
+    if (a.left < b.left) list.scrollLeft -= b.left - a.left;
+    else if (a.right > b.right) list.scrollLeft += a.right - b.right;
+  }
+
   select(enabled().find((t) => t.getAttribute('aria-selected') === 'true') ?? enabled()[0]);
+  const resize = new ResizeObserver(revealSelected);
+  resize.observe(list);
+  tabs.forEach((tab) => resize.observe(tab));
 
   list.addEventListener('click', (e) => {
     const tab = e.target.closest('.nf-tab');

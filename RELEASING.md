@@ -2,6 +2,8 @@
 
 ## Status
 
+- `netframe@0.2.4` is prepared in the working tree at the maintainer's requested exact version. Pending mobile, first-batch component, drawer/tabs, tag, and tooltip Changesets have been consolidated into `packages/netframe/CHANGELOG.md` and consumed; no additional minor bump is pending. This is local release preparation, not confirmation of npm publication. Push/merge and release-environment approval remain maintainer actions.
+
 - `netframe@0.2.0` was published manually (no provenance). `0.2.1` was the first release through GitHub Actions trusted publishing (git tag `netframe@0.2.1` created). At the time of writing the registry listing was still propagating: confirm `npm view netframe versions dist-tags` shows 0.2.1 as `latest`, and that the npm page shows a provenance badge.
 - `0.0.0-stage` is a placeholder version on npm from the initial setup. Harmless; npm does not allow reuse of its number.
 - Release automation is enabled (`NPM_RELEASE_ENABLED=true`). Trusted publisher: `Cybear-Technologies` / `NetFrame`, `release.yml`, environment `release`.

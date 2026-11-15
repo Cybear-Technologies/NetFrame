@@ -17,6 +17,24 @@ Docs: https://netframe.cybeartech.com/components/accordion/
 | `nf-accordion-item` | Individual collapsible section |
 | `nf-accordion-trigger` | Clickable header button — set `aria-expanded` |
 
+## Alert (component)
+
+Docs: https://netframe.cybeartech.com/components/alert/
+
+| Class | Description |
+| --- | --- |
+| `nf-alert` | Persistent surface with wrapping content |
+| `nf-alert-actions` | Wrapping actions inside content |
+| `nf-alert-close` | Optional dismissal button; needs consumer behavior |
+| `nf-alert-content` | Shrinkable content column |
+| `nf-alert-error` | Error status rail |
+| `nf-alert-icon` | Optional non-shrinking consumer icon |
+| `nf-alert-info` | Informational tertiary status rail |
+| `nf-alert-success` | Success primary status rail |
+| `nf-alert-title` | Visible message heading |
+| `nf-alert-warning` | Warning secondary status rail |
+| `nf-button` | Base — required on all buttons |
+
 ## Avatar (component)
 
 Docs: https://netframe.cybeartech.com/components/avatar/
@@ -161,10 +179,23 @@ Docs: https://netframe.cybeartech.com/components/input/
 | `nf-label` | Field label; associate it with `for`/`id` |
 | `nf-radio` | Styled radio button |
 | `nf-range` | Range slider |
-| `nf-select` | Select with a custom arrow |
+| `nf-select` | Native select with a platform arrow |
 | `nf-select-error` | Error state for a select |
 | `nf-textarea` | Multi-line text input |
 | `nf-textarea-error` | Error state for a textarea |
+
+## Input-group (component)
+
+Docs: https://netframe.cybeartech.com/components/input-group/
+
+| Class | Description |
+| --- | --- |
+| `nf-button` | Base — required on all buttons |
+| `nf-input` | Text input |
+| `nf-input-group` | Joined row of direct input, select, addon, or button children |
+| `nf-input-group-addon` | Bounded, wrapping prefix or suffix; associate meaningful content |
+| `nf-input-group-stacked` | Explicit full-width vertical composition with shared borders |
+| `nf-select` | Native select with a platform arrow |
 
 ## Modal (component)
 
@@ -250,6 +281,17 @@ Docs: https://netframe.cybeartech.com/components/spinner/
 | `nf-spinner-sm` | 1rem |
 | `nf-spinner-tertiary` | Tertiary-colour cells |
 | `nf-spinner-xl` | 4rem |
+
+## Switch (component)
+
+Docs: https://netframe.cybeartech.com/components/switch/
+
+| Class | Description |
+| --- | --- |
+| `nf-switch` | Wrapping clickable label for a native on/off checkbox |
+| `nf-switch-input` | Visually hidden, keyboard-accessible native checkbox |
+| `nf-switch-label` | Stable accessible label; wraps long text |
+| `nf-switch-track` | Decorative square track and position-based state indicator |
 
 ## Table (component)
 

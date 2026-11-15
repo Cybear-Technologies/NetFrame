@@ -37,6 +37,9 @@ import 'netframe/dist/themes.css'; // optional: six alternate palettes
 
 NetFrame styles states; you supply the semantics.
 
+- Switches use a native checkbox with `role="switch"`; `checked` owns state, not redundant `aria-checked`. Use native `disabled`; unchecked and disabled values are omitted from submission.
+- Alerts are persistent, not automatically live regions. Establish a polite status region before routine updates; reserve alerts for urgent changes. Dismissal must preserve focus.
+- Input groups support direct control/addon/button children; use `nf-input-group-stacked` for long content or narrow parents. Meaningful units use `aria-describedby`.
 - Every form control needs a `<label for>`; link helper or error text with `aria-describedby`; mark invalid fields with `aria-invalid="true"` (styled like `nf-input-error`).
 - Progress bars and rings need `role="progressbar"`, an accessible name and `aria-valuenow/min/max`. Omit `aria-valuenow` when indeterminate.
 - Links styled as buttons stay `<a class="nf-button">`; do not add `role="button"`.
@@ -56,9 +59,9 @@ NetFrame styles states; you supply the semantics.
 
 1. Look up each component in `references/classes.md` and read its docs page for markup structure.
 2. Write markup using only those classes; add any custom styles with tokens.
-3. For anything with behaviour, copy the matching controller from the `netframe-interactive` skill.
+3. Keep native form behavior. For optional custom behavior, copy the matching controller from the `netframe-interactive` skill.
 4. Check keyboard use, focus visibility, labels and contrast before finishing.
 
 ## Components and utilities
 
-Components: accordion, avatar, badge, breadcrumb, button, card, divider, drawer, dropdown, input (field, select, textarea, checkbox, radio, range), modal, pagination, progress, skeleton, spinner, table, tabs, tag, toast, tooltip. Utility groups: glow and shadows, scanlines and CRT, glitch, layout. The per-class tables are in `references/classes.md`.
+Components: accordion, alert, avatar, badge, breadcrumb, button, card, divider, drawer, dropdown, input (field, select, textarea, checkbox, radio, range), input group, modal, pagination, progress, skeleton, spinner, switch, table, tabs, tag, toast, tooltip. Utility groups: glow and shadows, scanlines and CRT, glitch, layout. The per-class tables are in `references/classes.md`.
