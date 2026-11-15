@@ -1,6 +1,6 @@
 {
   // Cloudflare Workers static assets: serves the built Astro site.
-  // Build: pnpm install --frozen-lockfile && pnpm --filter netframe run build && pnpm --filter @netframe/docs run build
+  // Build: pnpm run build:cloudflare   (builds the library first, then the docs)
   // Deploy: npx wrangler deploy   (Root directory: apps/docs)
   "name": "netframe-docs",
   "compatibility_date": "2026-11-15",

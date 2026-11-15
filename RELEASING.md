@@ -47,12 +47,12 @@ Cloudflare project settings (Workers & Pages → Create → connect `Cybear-Tech
 | Field | Value |
 | --- | --- |
 | Root directory | `apps/docs` |
-| Build command | `pnpm install --frozen-lockfile && pnpm --filter netframe run build && pnpm --filter @netframe/docs run build` |
+| Build command | `pnpm run build:cloudflare` (single line; Cloudflare installs dependencies itself) |
 | Deploy command | `npx wrangler deploy` |
 | Variables | `NODE_VERSION=22`, `PNPM_VERSION=9.15.9` |
 | Custom domain | `netframe.cybeartech.com` (project → Settings → Domains) |
 
-The library must build before the docs: the docs copy its CSS and fonts into `public/`. The canonical origin is `https://netframe.cybeartech.com`, served at the domain root (links are root-relative).
+`build:cloudflare` (in `apps/docs/package.json`) builds the library, then the docs. Keep the dashboard field to that one short command: a pasted line break splits `&&` chains and `sh` fails with `Syntax error: "&&" unexpected`. The library must build before the docs: the docs copy its CSS and fonts into `public/`. The canonical origin is `https://netframe.cybeartech.com`, served at the domain root (links are root-relative).
 
 ## Workflow
 
